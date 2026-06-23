@@ -30,13 +30,15 @@ import {
   TEMPLE_CAMPS, TEMPLE_DUNGEON_DEFS, TEMPLE_DUNGEON_MOBS, TEMPLE_ITEMS, TEMPLE_MOBS,
   TEMPLE_NPCS, TEMPLE_OBJECTS, TEMPLE_PROPS, TEMPLE_QUEST_ORDER, TEMPLE_QUESTS,
 } from './content/temple';
-// NOTE: The Greywater witcher questline (src/sim/content/greywater.ts) exercises the
-// per-player choice/consequence quest engine. It is authored and end-to-end tested
-// (tests/greywater_choices.test.ts) but intentionally NOT merged into the live world
-// tables yet: doing so requires a 13-locale translation pass (the repo's unconditional
-// i18n-completeness gate) and rebaselining the RNG-pinned determinism tests (new world
-// monsters shift the shared spawn/AI RNG stream). Flip it on by re-adding the spreads
-// below once those two maintainer-scale steps are done.
+// The Greywater witcher questline (src/sim/content/greywater.ts) drives the per-player
+// choice/consequence quest engine. Its monster camps are all `lazy`, so they spawn only
+// when a player walks into the valley and never perturb the shared world-gen RNG. New
+// player-facing strings ship English first; the maintainer batch-translates the 13
+// locales at release (the i18n-completeness suites stay red until then, by design).
+import {
+  GREYWATER_CAMPS, GREYWATER_ITEMS, GREYWATER_MOBS, GREYWATER_NPCS, GREYWATER_OBJECTS,
+  GREYWATER_QUEST_ORDER, GREYWATER_QUESTS,
+} from './content/greywater';
 
 function mergeItems(...parts: Record<string, ItemDef>[]): Record<string, ItemDef> {
   const merged = Object.assign({}, ...parts);
@@ -59,23 +61,23 @@ export type {
 // Merged content tables
 // ---------------------------------------------------------------------------
 
-export const ITEMS: Record<string, ItemDef> = mergeItems(BASE_ITEMS, ZONE2_ITEMS, ZONE3_ITEMS, TEMPLE_ITEMS);
+export const ITEMS: Record<string, ItemDef> = mergeItems(BASE_ITEMS, ZONE2_ITEMS, ZONE3_ITEMS, TEMPLE_ITEMS, GREYWATER_ITEMS);
 
 export const MOBS: Record<string, MobTemplate> = {
   ...ZONE1_MOBS, ...ZONE2_MOBS, ...ZONE3_MOBS, ...DUNGEON_MOBS,
-  ...WARLOCK_PET_MOBS, ...TEMPLE_MOBS, ...TEMPLE_DUNGEON_MOBS,
+  ...WARLOCK_PET_MOBS, ...TEMPLE_MOBS, ...TEMPLE_DUNGEON_MOBS, ...GREYWATER_MOBS,
 };
 
 export const NPCS: Record<string, NpcDef> = {
-  ...ZONE1_NPCS, ...ZONE2_NPCS, ...ZONE3_NPCS, ...TEMPLE_NPCS,
+  ...ZONE1_NPCS, ...ZONE2_NPCS, ...ZONE3_NPCS, ...TEMPLE_NPCS, ...GREYWATER_NPCS,
 };
 
 export const QUESTS: Record<string, QuestDef> = {
-  ...ZONE1_QUESTS, ...ZONE2_QUESTS, ...ZONE3_QUESTS, ...TEMPLE_QUESTS,
+  ...ZONE1_QUESTS, ...ZONE2_QUESTS, ...ZONE3_QUESTS, ...TEMPLE_QUESTS, ...GREYWATER_QUESTS,
 };
 
 export const QUEST_ORDER: string[] = [
-  ...ZONE1_QUEST_ORDER, ...ZONE2_QUEST_ORDER, ...ZONE3_QUEST_ORDER, ...TEMPLE_QUEST_ORDER,
+  ...ZONE1_QUEST_ORDER, ...ZONE2_QUEST_ORDER, ...ZONE3_QUEST_ORDER, ...TEMPLE_QUEST_ORDER, ...GREYWATER_QUEST_ORDER,
 ];
 
 // Camps spawn in array order, each drawing world-gen RNG, so an entry inserted
@@ -85,9 +87,12 @@ export const QUEST_ORDER: string[] = [
 export const CAMPS: CampDef[] = [
   ...ZONE1_CAMPS, ...ZONE2_CAMPS, ...ZONE3_CAMPS, ...TEMPLE_CAMPS, ...ZONE1_CHAPEL_CAMPS,
   { mobId: 'grix_the_tunnelking', center: { x: -95, z: -78 }, radius: 4, count: 1 },
+  // Greywater Valley camps are all `lazy` (spawn on player approach), so appending
+  // them never changes existing camps' spawn RNG and they draw no RNG until visited.
+  ...GREYWATER_CAMPS,
 ];
 
-export const GROUND_OBJECTS: GroundObjectDef[] = [...ZONE1_OBJECTS, ...ZONE2_OBJECTS, ...ZONE3_OBJECTS, ...TEMPLE_OBJECTS];
+export const GROUND_OBJECTS: GroundObjectDef[] = [...ZONE1_OBJECTS, ...ZONE2_OBJECTS, ...ZONE3_OBJECTS, ...TEMPLE_OBJECTS, ...GREYWATER_OBJECTS];
 
 export const ROADS: { x: number; z: number }[][] = [...ZONE1_ROADS, ...ZONE2_ROADS, ...ZONE3_ROADS];
 

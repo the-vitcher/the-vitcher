@@ -23,11 +23,13 @@ const WAR: PlayerClass[] = ['warrior', 'paladin', 'shaman'];
 const MAG: PlayerClass[] = ['mage', 'priest', 'warlock', 'druid'];
 const ROG: PlayerClass[] = ['rogue', 'hunter'];
 
-// The valley corridor runs north along the western edge of Eastbrook Vale (x ~ -150
-// to -120), from the ford in the south to Greywater Mill in the far north.
-export const GREYWATER_FORD = { x: -148, z: -150 };
-export const GREYWATER_CAVE = { x: -158, z: -120 };
-export const GREYWATER_MILL = { x: -132, z: 160 };
+// The valley corridor runs north along the eastern edge of Eastbrook Vale (x ~ +120
+// to +168), from the ford in the south to Greywater Mill in the far north. (Kept clear
+// of the western test areas - Mirror Lake and the far-west corner - so the lazy camps
+// never activate during the existing determinism tests.)
+export const GREYWATER_FORD = { x: 148, z: -150 };
+export const GREYWATER_CAVE = { x: 158, z: -120 };
+export const GREYWATER_MILL = { x: 132, z: 160 };
 
 // ---------------------------------------------------------------------------
 // Mobs - the Witcher bestiary of the valley
@@ -146,31 +148,31 @@ export const GREYWATER_MOBS: Record<string, MobTemplate> = {
 export const GREYWATER_NPCS: Record<string, NpcDef> = {
   calla: {
     id: 'calla', name: 'Calla', title: 'Caravan Survivor',
-    pos: { x: -146, z: -148 }, facing: 1.2, color: 0x6fae6f,
+    pos: { x: 146, z: -148 }, facing: 1.2, color: 0x6fae6f,
     questIds: ['gw_caravan'],
     greeting: "You're the witcher. Thank every god. The caravan went under at dawn, $C, and my master's strongbox went with it.",
   },
   reeve_ondrin: {
     id: 'reeve_ondrin', name: 'Reeve Ondrin', title: 'Reeve of Aldermere',
-    pos: { x: -140, z: -60 }, facing: 2.2, color: 0x9a7b4f,
+    pos: { x: 140, z: -60 }, facing: 2.2, color: 0x9a7b4f,
     questIds: ['gw_aldermere'],
     greeting: 'Witcher. Good. The gallows are built and the crowd is past patience. We need a word, $C, that the rope is righteous.',
   },
   ines: {
     id: 'ines', name: 'Ines', title: 'The Velvet Debt',
-    pos: { x: -150, z: 4 }, facing: 0.4, color: 0xb05a8e,
+    pos: { x: 150, z: 4 }, facing: 0.4, color: 0xb05a8e,
     questIds: ['gw_velvet'],
     greeting: 'You took your time, $C. I once put a knife between your spine and a striga\'s claw, and now I am calling the whole debt in at once.',
   },
   ortega: {
     id: 'ortega', name: 'Ortega', title: 'Tournament Conspirator',
-    pos: { x: -138, z: 92 }, facing: 3.0, color: 0xcf8a3a,
+    pos: { x: 138, z: 92 }, facing: 3.0, color: 0xcf8a3a,
     questIds: ['gw_champion'],
     greeting: "Don't look at the banners, $C, look under them. This whole pageant is the governor's, and I have spent my blood setting this match.",
   },
   goodwife_sera: {
     id: 'goodwife_sera', name: 'Goodwife Sera', title: 'Miller of Greywater',
-    pos: { x: -134, z: 158 }, facing: -1.6, color: 0x5f8fae,
+    pos: { x: 134, z: 158 }, facing: -1.6, color: 0x5f8fae,
     questIds: ['gw_mill'],
     greeting: "So you're the heir, $C. We wondered when paper would come walking. We made this dead mill breathe again; it feeds half the valley now.",
   },
@@ -399,17 +401,19 @@ export const GREYWATER_QUEST_ORDER = [
 // so the existing world's deterministic spawn RNG draw order is preserved).
 // ---------------------------------------------------------------------------
 
+// All lazy: the valley spawns only when a player walks into it, so adding this
+// region never perturbs the shared world-gen / AI RNG stream elsewhere.
 export const GREYWATER_CAMPS: CampDef[] = [
-  { mobId: 'greywater_drowner', center: { x: -150, z: -130 }, radius: 16, count: 7 },
-  { mobId: 'greywater_drowner', center: { x: -160, z: -118 }, radius: 12, count: 5 },
-  { mobId: 'bog_ghoul', center: { x: -142, z: -64 }, radius: 16, count: 7 },
-  { mobId: 'valley_nekker', center: { x: -158, z: -20 }, radius: 16, count: 8 },
-  { mobId: 'margrave_guard', center: { x: -150, z: 8 }, radius: 14, count: 7 },
-  { mobId: 'tournament_brawler', center: { x: -140, z: 92 }, radius: 16, count: 7 },
-  { mobId: 'tournament_champion', center: { x: -132, z: 100 }, radius: 4, count: 1 },
-  { mobId: 'reclamation_mercenary', center: { x: -138, z: 150 }, radius: 16, count: 7 },
-  { mobId: 'greywater_hag', center: { x: -120, z: 168 }, radius: 5, count: 1 },
-  { mobId: 'valley_leshen', center: { x: -168, z: 40 }, radius: 5, count: 1 },
+  { mobId: 'greywater_drowner', center: { x: 150, z: -130 }, radius: 16, count: 7, lazy: true },
+  { mobId: 'greywater_drowner', center: { x: 160, z: -118 }, radius: 12, count: 5, lazy: true },
+  { mobId: 'bog_ghoul', center: { x: 142, z: -64 }, radius: 16, count: 7, lazy: true },
+  { mobId: 'valley_nekker', center: { x: 158, z: -20 }, radius: 16, count: 8, lazy: true },
+  { mobId: 'margrave_guard', center: { x: 150, z: 8 }, radius: 14, count: 7, lazy: true },
+  { mobId: 'tournament_brawler', center: { x: 140, z: 92 }, radius: 16, count: 7, lazy: true },
+  { mobId: 'tournament_champion', center: { x: 132, z: 100 }, radius: 4, count: 1, lazy: true },
+  { mobId: 'reclamation_mercenary', center: { x: 138, z: 150 }, radius: 16, count: 7, lazy: true },
+  { mobId: 'greywater_hag', center: { x: 120, z: 168 }, radius: 5, count: 1, lazy: true },
+  { mobId: 'valley_leshen', center: { x: 168, z: 40 }, radius: 5, count: 1, lazy: true },
 ];
 
 // ---------------------------------------------------------------------------
@@ -420,12 +424,12 @@ export const GREYWATER_OBJECTS: GroundObjectDef[] = [
   {
     itemId: 'slaver_strongbox',
     name: "Slaver's Strongbox",
-    positions: [{ x: -158, z: -122 }, { x: -161, z: -118 }, { x: -155, z: -116 }],
+    positions: [{ x: 158, z: -122 }, { x: 161, z: -118 }, { x: 155, z: -116 }],
   },
   {
     itemId: 'girls_shawl',
     name: "The Girl's Shawl",
-    positions: [{ x: -138, z: -58 }, { x: -142, z: -62 }],
+    positions: [{ x: 138, z: -58 }, { x: 142, z: -62 }],
   },
 ];
 

@@ -4667,6 +4667,33 @@ export const zh_CN: EnTranslations = {
       "brightwood_monarch": {
         "name": "明木君主"
       },
+      "greywater_drowner": {
+        "name": "Drowner"
+      },
+      "bog_ghoul": {
+        "name": "Bog Ghoul"
+      },
+      "valley_nekker": {
+        "name": "Nekker"
+      },
+      "margrave_guard": {
+        "name": "Margrave's Guard"
+      },
+      "tournament_brawler": {
+        "name": "Tournament Brawler"
+      },
+      "tournament_champion": {
+        "name": "The Governor's Champion"
+      },
+      "reclamation_mercenary": {
+        "name": "Reclamation Mercenary"
+      },
+      "greywater_hag": {
+        "name": "Greywater Water Hag"
+      },
+      "valley_leshen": {
+        "name": "Valley Leshen"
+      },
       "elder_bristleback": {
         "name": "年长硬鬃"
       },
@@ -4890,6 +4917,31 @@ export const zh_CN: EnTranslations = {
         "name": "奥德里克修士",
         "title": "山谷牧师",
         "greeting": "从礼拜堂墓地到世界屋脊... 线索到这里结束。我感觉山正在聆听。"
+      },
+      "calla": {
+        "name": "Calla",
+        "title": "Caravan Survivor",
+        "greeting": "You're the witcher. Thank every god. The caravan went under at dawn, {className}, and my master's strongbox went with it."
+      },
+      "reeve_ondrin": {
+        "name": "Reeve Ondrin",
+        "title": "Reeve of Aldermere",
+        "greeting": "Witcher. Good. The gallows are built and the crowd is past patience. We need a word, {className}, that the rope is righteous."
+      },
+      "ines": {
+        "name": "Ines",
+        "title": "The Velvet Debt",
+        "greeting": "You took your time, {className}. I once put a knife between your spine and a striga's claw, and now I am calling the whole debt in at once."
+      },
+      "ortega": {
+        "name": "Ortega",
+        "title": "Tournament Conspirator",
+        "greeting": "Don't look at the banners, {className}, look under them. This whole pageant is the governor's, and I have spent my blood setting this match."
+      },
+      "goodwife_sera": {
+        "name": "Goodwife Sera",
+        "title": "Miller of Greywater",
+        "greeting": "So you're the heir, {className}. We wondered when paper would come walking. We made this dead mill breathe again; it feeds half the valley now."
       },
       "tidewatcher_ondrel": {
         "name": "翁德雷尔·凡恩",
@@ -5766,6 +5818,214 @@ export const zh_CN: EnTranslations = {
           },
           "1": {
             "label": "击杀维尔兰队长"
+          }
+        }
+      },
+      "gw_caravan": {
+        "title": "The Drowned Caravan",
+        "text": "The river took the caravan at the ford, {playerName}, and my master's strongbox with it. The current dragged it into the drowned cave to the west, and the drowners nest there now. Clear them, bring me the box, and his widow will have what she is owed.",
+        "completion": "You went down where Calla could not and found no ledgers in the box: cut gems, and a manifest. Not goods. People, tallied by the head. Her gentle dead master was a slaver, and halfway down the list, in a child's hand, is Calla's own name. The box is in your hands now. What you do with it is yours to choose.",
+        "objectives": {
+          "0": {
+            "label": "Drowner slain"
+          },
+          "1": {
+            "label": "Slaver's Strongbox recovered"
+          }
+        },
+        "choices": {
+          "looters": {
+            "label": "Cut the mudlarks in. Split the gems, leave Calla nothing.",
+            "result": "Three river-thieves were already wading in. You bargain rather than argue, and the gems go into wet leather and into the reeds. Behind you, smaller and smaller, Calla is still calling your name across the water. You don't turn around. That's the trick of it: not turning around."
+          },
+          "giveCalla": {
+            "label": "Put the box in Calla's hands. The list is hers to burn.",
+            "result": "You press the cold box into her arms. She reads her own name on the manifest and her face does something you have no word for. No thanks, no tears, just a long breath let out over two years. Then she's gone into the reeds, box and gems and ghost, without looking back.",
+            "looming": "Months on, two rumors reach you and never resolve: a gentle new ring spiriting branded folk to freedom, and a girl spending fistfuls of gems alone in a faraway port. You will never learn which one you made."
+          },
+          "magistrate": {
+            "label": "Carry the manifest to the magistrate. Let the law have it all.",
+            "result": "The magistrate reads it twice, grey to the lips, and thanks you in the flat voice of a man signing names onto a gallows. By nightfall a warehouse on the docks is chained shut. By the next, the cells are full.",
+            "looming": "Calla hangs as an accessory to her own captivity; the law cannot tell a name on a list from a person on it. Her cellmate, a fence with a long memory, learns who brought the manifest in. She will send knives down the road after you."
+          },
+          "burn": {
+            "label": "Keep the gems. Burn the manifest. End the trade with the proof.",
+            "result": "You hold the manifest to your torch and watch a hundred names curl into ash and lift off the river like grey moths. No evidence, no trade, and the gems are warm and heavy in your palm.",
+            "looming": "You burned the ledger, not the men who kept it. Untraceable now, the boss who owned that list simply moves his stock to a quieter road. A season on, you will walk that road and find it thick with the trade you were sure you had ended."
+          }
+        }
+      },
+      "gw_aldermere": {
+        "title": "An Eye for Aldermere",
+        "text": "A child is dead and a drifter named Hask was found by the body with her ribbon in his fist. The crowd wants a neck. Before you say a word over the rope, walk the gallows-yard, {playerName}: take the girl's shawl from my table, and put down the bog ghouls that have crept up from the fen to the corpse.",
+        "completion": "Hask reeks of river-mud and terror and nothing else. But the dead girl's shawl carries another scent: bitter herbs, a healer's hands. Her uncle's hands. The reeve knows it too, and is begging you with his eyes to say the word over Hask anyway. The rope is greased. The choice is yours.",
+        "objectives": {
+          "0": {
+            "label": "The girl's shawl examined"
+          },
+          "1": {
+            "label": "Bog Ghoul slain"
+          }
+        },
+        "choices": {
+          "bless": {
+            "label": "Take the purse. Bless the hanging. Don't make trouble.",
+            "result": "You give them the nod they paid for. The trap drops; the rope speaks once. Coins are pressed into hands that can't quite look at the hands they're filling. Everyone goes home. Nothing is solved. Everyone knew it wouldn't be."
+          },
+          "expose": {
+            "label": "Name the uncle. The truth, whatever it costs the valley.",
+            "result": "You lay the shawl on the table and say the name. The healer is dragged off, his bag spilling roots into the mud. The girl's mother does not thank you. She screams that you have taken the last two things she had, and she is not wrong.",
+            "looming": "With no healer left in the valley, the winter fever comes and finds no one to turn it back. People you will never meet die of your being right. Justice, it turns out, has a body count too."
+          },
+          "freeHask": {
+            "label": "Cut Hask loose. Leave the crime unanswered.",
+            "result": "You sever the rope and put Hask on the dusk road with bread and a shove. He doesn't understand he's been saved, only that he's being sent away again, and he goes the way a kicked dog goes. The yard mutters at your back.",
+            "looming": "A province over and a season later, you find Hask in a ditch. The rumor outran him on the road, and a different village finished what this one started. Your mercy only moved his grave."
+          },
+          "judge": {
+            "label": "Defer to the circuit judge. Let the law run its course.",
+            "result": "You refuse the word and tell them to wait for the law. They wait. The judge arrives saddle-sore and hangs Hask before his boots are dry: the same rope, three days slower. You kept your hands clean by handing the knife to someone else.",
+            "looming": "Afterward the uncle finds you alone and thanks you, softly, smiling, and lets slip that he knows you knew. He has learned that you can be steered by silence. He will use it."
+          }
+        }
+      },
+      "gw_velvet": {
+        "title": "The Velvet Debt",
+        "text": "The margrave keeps me in a gilded cage at the only pass north, {playerName}, and he holds the road you need open this season. Get me out. I don't care how, that's a lie, I care a great deal how. Brew me a sleeping-draught from wolfsbane the nekkers guard in the wood, and cut a path through his guards.",
+        "completion": "The draught is brewed and the guards are down. The margrave loves Ines ruinously, the way men love a thing they are certain feels the same. He is not cruel. He is lonely, and patient, and he holds the only key. How Ines walks free, and what it costs, is yours to decide.",
+        "objectives": {
+          "0": {
+            "label": "Wolfsbane gathered"
+          },
+          "1": {
+            "label": "Margrave's Guard slain"
+          }
+        },
+        "choices": {
+          "betray": {
+            "label": "Sell her to the rival noble, for the purse and the night.",
+            "result": "The margrave's rival pays well for a delivered woman and a settled score. Ines doesn't struggle when his men come. She just finds your eyes across the room and holds them once, with an expression you'll be paying off long after the purse is empty. Then she looks away, and never that way again."
+          },
+          "truth": {
+            "label": "Tell the margrave the truth: that she never loved him.",
+            "result": "You say the plain thing in the plain light of his solar. He folds in on himself like paper taking flame, and then, very quietly, gives the order that seals the pass: the one door he still controls. Ines walks out free.",
+            "looming": "Ines respects you for the honesty and calls you a fool for it to your face, because the pass you needed is shut now behind a heartbroken man with a key and a grudge. Some truths only cost the person telling them."
+          },
+          "fake": {
+            "label": "Fake her death. Let him grieve a beautiful lie.",
+            "result": "A sleeping-draught, a closed coffin, and nerve. He weeps the way only the truly fooled can weep, purely, and because grief makes men generous he reopens the pass in her memory. Ines is three valleys away before the flowers wilt.",
+            "looming": "A faked grave is a debt with teeth. If the margrave ever lifts that lid, you make an enemy of a man with an army, a reason, and a tender broken heart turned hard."
+          },
+          "frame": {
+            "label": "Frame the jealous steward. Make the margrave exile her himself.",
+            "result": "You plant the letters where they'll be found and let the margrave's own suspicion do the cutting. The steward, sour but innocent this time, is cast out for an affair he never had, and in the noise Ines simply walks free. No one suspects the witcher. No one ever does.",
+            "looming": "The steward had a daughter. She will surface an act from now, in a moment when you need a door opened, and she will know your face and remember exactly what it cost her family, and give you nothing."
+          }
+        },
+        "callbacks": {
+          "0": {
+            "text": "Ines: 'Before you speak, there's a story on the road already. A witcher hands the docks a slaver's ledger and a girl hangs for the names in it. Don't deny it; I can see it on you. It only tells me how literal you are willing to be about the law. I'll price every word I ask of you accordingly.'"
+          },
+          "1": {
+            "text": "Ines: 'You still smell of the ford, of wet gems and other people's bad luck. I won't ask what you carried up out of that water. I'll only note that you carried it, and price my trust to match.'"
+          },
+          "2": {
+            "text": "Ines: 'They say the slaver trade runs louder than ever this season, down a quieter road. Funny, that, right after a witcher burned the only ledger that named it. I'll keep my own counsel about what you bring me.'"
+          }
+        }
+      },
+      "gw_champion": {
+        "title": "The People's Champion",
+        "text": "The tournament is the governor's pageant, {playerName}, and I have spent my life rigging this one match. Win it clean: cut down the brawlers in the lists, then put down the Governor's Champion in the winner's bout. What you do from the winner's circle after that will decide whether this city rises or kneels.",
+        "completion": "You stand in the winner's circle with the crown in your hands and the crowd drunk on a victory you won. Ortega wants you to throw the laurel down and name the governor's crimes until the city rises. The governor's man wants you to kneel quietly for a captaincy and a keep. Both want the same hour of your life. Only one of them is dying for it.",
+        "objectives": {
+          "0": {
+            "label": "Tournament Brawler defeated"
+          },
+          "1": {
+            "label": "Governor's Champion defeated"
+          }
+        },
+        "choices": {
+          "rig": {
+            "label": "Rig it. Poison a rival, bribe the marshals, win risk-free.",
+            "result": "A little something in a waterskin, a little something in a marshal's palm, and the bracket bends your way like a reed. As they raise your arm, the head marshal gives you a smile that says your secret has at least one more owner than you'd like.",
+            "looming": "A rigged win is a rumor with a slow fuse. It will sit quiet for a year, then one drunk marshal in one wrong tavern will light it, and your shining name will curdle into a punchline."
+          },
+          "captaincy": {
+            "label": "Win clean. Take the governor's captaincy, title, and keep.",
+            "result": "You win honestly, then kneel, and rise a captain with a keep of your own and a tyrant's warm hand on your shoulder like a yoke that fits. Ortega watches you do it from the crowd. He doesn't curse you. He just stops looking, which is worse.",
+            "looming": "Leaderless, Ortega's rising is crushed in a single ugly night you spend behind your new walls. In the valleys below, mothers will use your name to mean the man who could have, and instead was paid."
+          },
+          "revolt": {
+            "label": "Win clean. Refuse the laurel. Light the city.",
+            "result": "You win, and at the apex of the cheering you hurl the crown into the dust and read out the governor's crimes until the cheering changes shape. The square ignites; joy and fury are the same color from a distance. By dark the people are chanting a name. Yours.",
+            "looming": "Hundreds die in the rising you sparked; the arithmetic of liberation is never as clean as the speech. And the man you raised up lives just long enough to become exactly the kind of strongman you helped pull down."
+          },
+          "neutral": {
+            "label": "Win clean. Keep the laurel. Stay out of all of it.",
+            "result": "You fight for yourself and no one else, take the crown and the purse, and ride out before the politics can stick to your boots. Clean hands, full purse, no blood you can name. The governor still governs. Nothing, anywhere, has changed by so much as an inch.",
+            "looming": "Because nothing changed, the maimed tax-debtor who shared his last cup with you the night before is hanged on the next market day, on schedule, unremarked. You kept your hands clean. The world stayed as dirty as you left it."
+          }
+        },
+        "callbacks": {
+          "0": {
+            "text": "Ortega: 'Word before you draw: knife-men have been asking after a witcher. That fence whose docks you emptied keeps a long arm, and a cheering crowd is a fine place to lose a body. Win quick. Mind the gaps in the noise.'"
+          },
+          "1": {
+            "text": "The governor's man greets you by a name you never gave him, smiling like a buyer who already owns the stall. Somewhere a healer's brother has been writing letters. You arrive already known, and already thought biddable."
+          },
+          "2": {
+            "text": "You came in on a road thick with coffles, the trade you were sure you drowned at the ford, only louder now and unashamed of the daylight. Over all of it the tournament banners hang bright and bored."
+          }
+        }
+      },
+      "gw_mill": {
+        "title": "The Inheritance of Greywater Mill",
+        "text": "The deed in your pack calls Greywater Mill derelict. The deed is a liar, {playerName}. We are war-folk; we found this place dead and made it breathe, and it feeds the valley now. But a reclamation company wants to buy your deed, turn us out, and dam the river, drowning three villages downstream. Drive their mercenaries off, and put down the water hag their digging has stirred from the mud.",
+        "completion": "The mercenaries are routed and the hag is dead in the reeds. The paper says the mill is yours, stone and stream and all. The bread says it is theirs. The river, which would drown three villages if it were dammed, doesn't care either way. So, Sera asks: what does the witcher say?",
+        "objectives": {
+          "0": {
+            "label": "Reclamation Mercenary driven off"
+          },
+          "1": {
+            "label": "Greywater Water Hag slain"
+          }
+        },
+        "choices": {
+          "sell": {
+            "label": "Sign the deed to the company, quietly, for the gold.",
+            "result": "You sign where the registrar points and take the heavy bag before the surveyors arrive with their stakes. You're over the next ridge by the time the shouting starts, and well past the river-bend before it could be anything but shouting. The gold doesn't make a sound. That's what you're paying it for.",
+            "looming": "The company dams the river on schedule. Three villages downstream drown in their sleep, and the mill that fed the valley becomes a still pond behind a wall."
+          },
+          "evict": {
+            "label": "Read out the deed. Evict them. Keep the mill yourself.",
+            "result": "You read the law aloud in the swept yard, and the law does what it does. They don't fight you; that's the part that stays with you. They gather their children and their two years and file out onto the road in a quiet line, and Sera is the last to go, and she only looks back once, at the wheel still turning.",
+            "looming": "You have a home now, and a yard that is always a little too quiet. One of the children you turned out today will grow up around the shape of this morning, and come back to it years from now, as a beggar at your gate or an enemy at your wall. You won't know which until they speak."
+          },
+          "commune": {
+            "label": "Tear the deed. Give the land to them, free.",
+            "result": "You tear the deed clean across and put the halves in Sera's flour-dusted hands. For a moment she doesn't understand; then she does, and the yard hears, and the cheer that goes up has your name in it, thrown at the sky like a cap. It's the cleanest you'll feel all year.",
+            "looming": "But the deed was the only leash on the river. Thwarted here, the company buys a dam-site downstream and builds anyway; the three villages drown on schedule. Only the owner of Greywater could have fought the water-rights in court, and you gave that owner away to a cheering crowd."
+          },
+          "tenancy": {
+            "label": "Keep the deed. Let them stay as tenants, under your roof and law.",
+            "result": "You strike the hard middle bargain in front of everyone: the home stays theirs to work, the deed stays yours to defend, the river stays undammed because its owner says so. It is not a cheer and it is not a curse. It is a handshake, and a weight, and the particular loneliness of being the one who decides.",
+            "looming": "You kept both the people and the power to protect them, and made yourself the thing the company now has to remove. They won't send lawyers next time. They'll send men in the dark, and you will never quite be finished with this place."
+          }
+        },
+        "callbacks": {
+          "0": {
+            "text": "You'd know that face anywhere. Calla, alive, her sleeves white with flour, kneading bread in the mill yard as though born to it. She meets your eye and does not say your name. She only nods, once. It is enough. It is, somehow, the whole point of everything since the ford."
+          },
+          "1": {
+            "text": "Goodwife Sera: 'We know what you became up at the keep, witcher, the governor's own captain, rid down here to read poor folk their own deed back to them. Say your piece. We haven't much say in the hearing, have we.'"
+          },
+          "2": {
+            "text": "Goodwife Sera: 'Half these hands walked in from the city with the smoke still in their hair, the month you set it alight. Some name you a saint. Some can't look at you at all. Most are only hungry, and past caring which you were.'"
+          },
+          "3": {
+            "text": "A young woman among the refugees watches you the whole while and never once blinks: the steward's daughter, turned out of a great house by a letter you forged a valley south. Whatever help she might have been to you here shut like a door the day you signed another man's ruin."
           }
         }
       },

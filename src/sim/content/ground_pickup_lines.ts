@@ -9,6 +9,15 @@ export interface GroundPickupLines {
 }
 
 export const GROUND_PICKUP_LINES: Record<string, GroundPickupLines> = {
+  // Greywater Valley
+  slaver_strongbox: {
+    deny: 'The strongbox is wedged in the silt; you have no reason to haul it up yet.',
+    enough: "You already carry the slaver's strongbox.",
+  },
+  girls_shawl: {
+    deny: "The reeve has not asked you to handle the girl's shawl yet.",
+    enough: "You have already examined the girl's shawl.",
+  },
   supply_crate: {
     deny: 'The crate is nailed shut.',
     enough: 'You already have enough supply crates.',

@@ -660,6 +660,11 @@ export interface CampDef {
   center: { x: number; z: number };
   radius: number;
   count: number;
+  // Lazy camps are NOT spawned at world init; they spawn the first time any player
+  // comes within CAMP_LAZY_ACTIVATE_RADIUS of the camp center. This keeps a remote
+  // region (the Greywater Valley) from drawing world-gen RNG until someone visits it,
+  // so adding it never perturbs the shared spawn/AI RNG stream elsewhere.
+  lazy?: boolean;
 }
 
 // Ground interactables (sparkle objects)

@@ -31,7 +31,7 @@ import {
 import { groundHeight, WATER_LEVEL } from './world';
 import type { AccountCosmetics, LeaderboardEntry } from '../world_api';
 import {
-  AbilityDef, AbilityEffect, Aura, AuraKind, CAST_PUSHBACK_SEC, CHANNEL_PUSHBACK_FRACTION, CONSUME_DURATION, ItemDef,
+  AbilityDef, AbilityEffect, Aura, AuraKind, CampDef, CAST_PUSHBACK_SEC, CHANNEL_PUSHBACK_FRACTION, CONSUME_DURATION, ItemDef,
   DEFAULT_PARTY_LOOT_STRATEGIES,
   CONSUME_TICKS, CrowdControlDrCategory, DT, Entity, EquipSlot, FISHING_CAST_ID, FISHING_CAST_TIME, GCD,
   CurrencyLootStrategy, INTERACT_RANGE, InvSlot, ItemLootStrategy, LootEntry, LootRollChoice, LootSlot, LootStrategies, MELEE_RANGE, MAX_LEVEL, MobFamily, MobTemplate,
@@ -48,6 +48,10 @@ import {
 
 const LEASH_DISTANCE = 45;
 const DUNGEON_LEASH_DISTANCE = 70;
+// A lazy camp (CampDef.lazy) spawns the first time any player comes within this
+// many yards of its center. Wide enough that mobs are present before the player
+// arrives, but only once the region is actually being visited.
+const CAMP_LAZY_ACTIVATE_RADIUS = 55;
 // Classic "trivial con": a wild mob this many levels below the player goes
 // passive and will not auto-aggro from proximity (it still fights back if
 // attacked). Elites, rares, and bosses are never trivial.
@@ -782,6 +786,8 @@ export class Sim {
   readonly grid = new SpatialGrid();
   readonly playerGrid = new SpatialGrid();
   private engagedPids = new Set<number>();
+  // Camps held back from world init that spawn on first player approach (see CampDef.lazy).
+  private lazyCamps: CampDef[] = [];
   primaryId = -1; // the local/RL player in single-player contexts
   nextId = 1;
   events: SimEvent[] = [];
@@ -849,24 +855,13 @@ export class Sim {
     }
     this.seedHouseListings();
 
-    // Mobs from camps
+    // Mobs from camps. Lazy camps (a remote region like the Greywater Valley) are
+    // held back and spawned on first approach (updateLazyCamps) so they never draw
+    // world-gen RNG until a player actually visits — keeping the shared RNG stream
+    // (and every seed-pinned test elsewhere) unperturbed.
     for (const camp of CAMPS) {
-      const template = MOBS[camp.mobId];
-      // Aquatic/flagged swimmers may wade in the shallows; everyone else
-      // still spawns on dry land even though combat movement can enter water.
-      const minHeight = this.mobCanSpawnInWater(template) ? WATER_LEVEL - 0.5 : WATER_LEVEL + 0.4;
-      for (let i = 0; i < camp.count; i++) {
-        const ang = this.rng.range(0, Math.PI * 2);
-        const r = Math.sqrt(this.rng.next()) * camp.radius;
-        const safe = this.findSafePos(camp.center.x + Math.sin(ang) * r, camp.center.z + Math.cos(ang) * r, minHeight);
-        const pos = this.groundPos(safe.x, safe.z);
-        const level = this.rng.int(template.minLevel, template.maxLevel);
-        const mob = createMob(this.nextId++, template, level, pos);
-        mob.facing = this.rng.range(-Math.PI, Math.PI);
-        mob.prevFacing = mob.facing;
-        mob.wanderTimer = this.rng.range(2, 10);
-        this.addEntity(mob);
-      }
+      if (camp.lazy) this.lazyCamps.push(camp);
+      else this.spawnCamp(camp);
     }
 
     // Ground objects
@@ -1738,6 +1733,10 @@ export class Sim {
       this.updateTimers(p);
       this.updateAuras(p);
     }
+
+    // Spawn remote lazy camps (e.g. the Greywater Valley) the moment a player walks
+    // into range, before the mob-AI pass so freshly-spawned mobs tick this frame.
+    this.updateLazyCamps();
 
     for (const e of this.entities.values()) {
       if (e.kind === 'mob') {
@@ -4989,6 +4988,43 @@ export class Sim {
     const template = MOBS[mob.templateId];
     if (template.elite || template.rare || template.boss) return false;
     return player.level - mob.level >= TRIVIAL_LEVEL_GAP;
+  }
+
+  // Spawn one camp's mobs (shared by world init and lazy activation). Draws this.rng
+  // identically to the original inline init loop, so a non-lazy camp is unchanged.
+  private spawnCamp(camp: CampDef): void {
+    const template = MOBS[camp.mobId];
+    const minHeight = this.mobCanSpawnInWater(template) ? WATER_LEVEL - 0.5 : WATER_LEVEL + 0.4;
+    for (let i = 0; i < camp.count; i++) {
+      const ang = this.rng.range(0, Math.PI * 2);
+      const r = Math.sqrt(this.rng.next()) * camp.radius;
+      const safe = this.findSafePos(camp.center.x + Math.sin(ang) * r, camp.center.z + Math.cos(ang) * r, minHeight);
+      const pos = this.groundPos(safe.x, safe.z);
+      const level = this.rng.int(template.minLevel, template.maxLevel);
+      const mob = createMob(this.nextId++, template, level, pos);
+      mob.facing = this.rng.range(-Math.PI, Math.PI);
+      mob.prevFacing = mob.facing;
+      mob.wanderTimer = this.rng.range(2, 10);
+      this.addEntity(mob);
+    }
+  }
+
+  // Spawn any lazy camp a player has come within range of. Camps are checked in
+  // array order (deterministic), and each activates at most once. Until activated a
+  // lazy camp draws NO RNG, so remote regions never perturb the shared stream.
+  private updateLazyCamps(): void {
+    if (this.lazyCamps.length === 0) return;
+    const remaining: CampDef[] = [];
+    for (const camp of this.lazyCamps) {
+      let near = false;
+      for (const meta of this.players.values()) {
+        const p = this.entities.get(meta.entityId);
+        if (p && !p.dead && Math.hypot(p.pos.x - camp.center.x, p.pos.z - camp.center.z) <= CAMP_LAZY_ACTIVATE_RADIUS) { near = true; break; }
+      }
+      if (near) this.spawnCamp(camp); // forward order keeps RNG draws deterministic
+      else remaining.push(camp);
+    }
+    this.lazyCamps = remaining;
   }
 
   private updateMob(mob: Entity): void {

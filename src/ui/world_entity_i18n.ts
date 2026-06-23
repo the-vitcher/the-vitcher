@@ -35,6 +35,9 @@ const MOB_IDS = [
   'brightwood_hare', 'glade_fox', 'spotted_fawn', 'meadow_crane', 'thornpelt_badger',
   'dawnmane_doe', 'bramble_lynx', 'brightwood_stag', 'grovetusk_boar', 'sunhide_bear',
   'brightwood_monarch',
+  // Greywater Valley witcher bestiary
+  'greywater_drowner', 'bog_ghoul', 'valley_nekker', 'margrave_guard', 'tournament_brawler',
+  'tournament_champion', 'reclamation_mercenary', 'greywater_hag', 'valley_leshen',
 ] as const;
 
 const NPC_IDS = [
@@ -44,6 +47,8 @@ const NPC_IDS = [
   'brother_aldric_highwatch', 'scout_maren_highwatch', 'quartermaster_bree', 'armorer_hode',
   'loremaster_caddis', 'ranger_elwyn',
   'brother_aldric_raid', // dynamically-spawned raid turn-in NPC (Crypt of Nythraxis)
+  // Greywater Valley quest givers
+  'calla', 'reeve_ondrin', 'ines', 'ortega', 'goodwife_sera',
 ] as const;
 
 const QUEST_IDS = [
@@ -65,6 +70,8 @@ const QUEST_IDS = [
   'q_ledger_first_duty', 'q_ledger_teeth', 'q_ledger_reedwater', 'q_ledger_silk',
   'q_ledger_brood', 'q_ledger_deepvermin', 'q_ledger_toll', 'q_ledger_vigil',
   'q_ledger_great_boar', 'q_ledger_outlaw_captain',
+  // Greywater Valley witcher questline
+  'gw_caravan', 'gw_aldermere', 'gw_velvet', 'gw_champion', 'gw_mill',
 ] as const;
 
 const ZONE_IDS = ['eastbrook_vale', 'mirefen_marsh', 'thornpeak_heights'] as const;
