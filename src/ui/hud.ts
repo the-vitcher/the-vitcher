@@ -887,10 +887,11 @@ export class Hud {
     btn.textContent = 'Level Up (dev)';
     btn.setAttribute('aria-label', 'Developer: raise your level by one');
     btn.style.cssText = [
-      'position:fixed', 'left:12px', 'bottom:12px', 'z-index:9999',
-      'min-height:40px', 'padding:8px 14px', 'cursor:pointer',
-      'font:600 13px/1.2 system-ui,sans-serif', 'color:#ffe9b0',
-      'background:rgba(28,20,12,0.92)', 'border:1px solid #b7950b', 'border-radius:8px',
+      'position:fixed', 'left:14px', 'top:50%', 'transform:translateY(-50%)', 'z-index:100000',
+      'min-height:48px', 'padding:12px 18px', 'cursor:pointer',
+      'font:700 15px/1.2 system-ui,sans-serif', 'color:#1a1206',
+      'background:#ffcc33', 'border:2px solid #7a5a10', 'border-radius:10px',
+      'box-shadow:0 2px 10px rgba(0,0,0,0.5)',
     ].join(';');
     btn.addEventListener('click', () => this.sim.devLevelUp());
     document.body.appendChild(btn);
