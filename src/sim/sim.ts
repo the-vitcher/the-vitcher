@@ -35,7 +35,7 @@ import {
   DEFAULT_PARTY_LOOT_STRATEGIES,
   CONSUME_TICKS, CrowdControlDrCategory, DT, Entity, EquipSlot, FISHING_CAST_ID, FISHING_CAST_TIME, GCD,
   CurrencyLootStrategy, INTERACT_RANGE, InvSlot, ItemLootStrategy, LootEntry, LootRollChoice, LootSlot, LootStrategies, MELEE_RANGE, MAX_LEVEL, MobFamily, MobTemplate,
-  MoveInput, OverheadEmoteId, PetMode, PlayerClass, QuestProgress, QuestState, RUN_SPEED, SimConfig, SimEvent, TURN_SPEED, Vec3,
+  MoveInput, OverheadEmoteId, PetMode, PlayerClass, QuestCallback, QuestChoice, QuestProgress, QuestState, RUN_SPEED, SimConfig, SimEvent, TURN_SPEED, Vec3,
   angleTo, armorReduction, dist2d, emptyMoveInput, isConsuming, meleeMissChance, mobXpValue, normAngle,
   rageFromDealing, rageFromTaking, spellHitChance, xpForLevel, isQuestTurnInNpc, questTurnInNpcIds,
   MILESTONES, virtualLevel, xpToReachLevel, canPrestige,
@@ -533,6 +533,11 @@ export interface PlayerMeta {
   known: ResolvedAbility[];
   questLog: Map<string, QuestProgress>;
   questsDone: Set<string>;
+  // Greywater moral-choice state (personal, never world-mutating). `questFlags` is a
+  // flat set keyed "<questId>__<choiceId>" (mirrors questsDone; insertion order kept
+  // for deterministic save round-trips); `reputation` is the per-player faction tally.
+  questFlags: Set<string>;
+  reputation: Map<string, number>;
   counters: RewardCounters;
   autoEquip: boolean;
   // sim.time when this character entered the world; powers /played. Session-only
@@ -649,6 +654,11 @@ export interface CharacterState {
   vendorBuyback?: InvSlot[];
   questLog: { questId: string; counts: number[]; state: 'active' | 'ready' | 'done' }[];
   questsDone: string[];
+  // Greywater moral-choice state. Optional so saves predating the choice system load
+  // cleanly (default to empty). `questFlags` are the chosen-option flags
+  // ("<questId>__<choiceId>"); `reputation` is the personal faction tally.
+  questFlags?: string[];
+  reputation?: Record<string, number>;
   // Legacy arenaRating/Wins/Losses are treated as 1v1 data. The explicit
   // 1v1 fields are written by new saves, while old saves fall back cleanly.
   arenaRating?: number;
@@ -990,6 +1000,8 @@ export class Sim {
       known: [],
       questLog: new Map(),
       questsDone: new Set(),
+      questFlags: new Set(),
+      reputation: new Map(),
       counters: freshCounters(),
       autoEquip: opts?.autoEquip ?? false,
       joinedAt: this.time,
@@ -1038,6 +1050,8 @@ export class Sim {
         if (q.state !== 'done') meta.questLog.set(q.questId, { questId: q.questId, counts: [...q.counts], state: q.state });
       }
       for (const q of s.questsDone) meta.questsDone.add(q);
+      for (const f of s.questFlags ?? []) meta.questFlags.add(f);
+      for (const [k, v] of Object.entries(s.reputation ?? {})) meta.reputation.set(k, v);
       if (s.talents) meta.talents = { spec: s.talents.spec ?? null, ranks: { ...s.talents.ranks }, choices: { ...s.talents.choices } };
       if (s.loadouts) meta.loadouts = s.loadouts.map((l) => ({ name: l.name, alloc: cloneAllocation(l.alloc), bar: [...(l.bar ?? [])] }));
       if (typeof s.activeLoadout === 'number') meta.activeLoadout = s.activeLoadout;
@@ -1141,6 +1155,8 @@ export class Sim {
       vendorBuyback: meta.vendorBuyback.map((i) => ({ ...i })),
       questLog: [...meta.questLog.values()].map((q) => ({ questId: q.questId, counts: [...q.counts], state: q.state })),
       questsDone: [...meta.questsDone],
+      questFlags: [...meta.questFlags],
+      reputation: Object.fromEntries(meta.reputation),
       arenaRating: meta.arenaRating,
       arenaWins: meta.arenaWins,
       arenaLosses: meta.arenaLosses,
@@ -1363,6 +1379,12 @@ export class Sim {
   }
   get questsDone(): Set<string> {
     return this.primary.questsDone;
+  }
+  get questFlags(): Set<string> {
+    return this.primary.questFlags;
+  }
+  get reputation(): Map<string, number> {
+    return this.primary.reputation;
   }
   get counters(): RewardCounters {
     return this.primary.counters;
@@ -7987,7 +8009,9 @@ export class Sim {
     for (const qid of npc.questIds) {
       const quest = QUESTS[qid];
       if (quest && isQuestTurnInNpc(quest, npc.templateId) && meta.questLog.get(qid)?.state === 'ready') {
-        this.turnInQuest(qid, meta.entityId);
+        // No choiceId here: a choice-quest emits a `questChoices` prompt (the HUD then
+        // re-issues turn-in with the picked option); a plain quest completes outright.
+        this.turnInQuest(qid, undefined, meta.entityId);
         return;
       }
     }
@@ -8072,7 +8096,7 @@ export class Sim {
     this.emit({ type: 'log', text: `Quest abandoned: ${QUESTS[questId].name}`, color: '#f66', pid: meta.entityId });
   }
 
-  turnInQuest(questId: string, pid?: number): void {
+  turnInQuest(questId: string, choiceId?: string, pid?: number): void {
     const r = this.resolve(pid);
     if (!r) return;
     const { meta, e: p } = r;
@@ -8087,6 +8111,19 @@ export class Sim {
       return;
     }
 
+    // Choice-quests are a two-step turn-in: with no (or an invalid) choiceId we prompt
+    // the client to present the options and bail without completing. The quest stays
+    // `ready`; the HUD re-issues turn-in with the chosen option. Server-authoritative:
+    // the chosen id is re-validated here against the quest's own option list.
+    let choice: QuestChoice | undefined;
+    if (quest.choices && quest.choices.length > 0) {
+      choice = quest.choices.find((c) => c.id === choiceId);
+      if (!choice) {
+        this.emit({ type: 'questChoices', questId, choices: quest.choices.map((c) => ({ id: c.id })), pid: meta.entityId });
+        return;
+      }
+    }
+
     for (const obj of quest.objectives) {
       if (obj.type === 'collect' && obj.itemId) this.removeItem(obj.itemId, obj.count, meta.entityId);
     }
@@ -8094,15 +8131,48 @@ export class Sim {
     meta.questLog.delete(questId);
     meta.questsDone.add(questId);
     meta.counters.questsCompleted++;
-    if (quest.copperReward > 0) {
-      meta.copper += quest.copperReward;
-      this.emit({ type: 'loot', text: `You receive ${formatMoney(quest.copperReward)}.`, pid: meta.entityId });
+    // Base copper, then the chosen option's bonus/penalty copper.
+    const copperReward = quest.copperReward + (choice?.effect.copper ?? 0);
+    if (copperReward > 0) {
+      meta.copper += copperReward;
+      this.emit({ type: 'loot', text: `You receive ${formatMoney(copperReward)}.`, pid: meta.entityId });
     }
-    const rewardItem = questRewardItemId(quest, meta.cls);
+    // The chosen option may override the per-class reward item.
+    const rewardItem = choice?.effect.itemRewards
+      ? questRewardItemId({ ...quest, itemRewards: choice.effect.itemRewards }, meta.cls)
+      : questRewardItemId(quest, meta.cls);
     if (rewardItem) this.addItem(rewardItem, 1, meta.entityId);
+    // Record the moral choice as personal flags + reputation (read by later quests).
+    if (choice) {
+      for (const flag of choice.effect.setFlags ?? []) meta.questFlags.add(`${questId}__${flag}`);
+      for (const [faction, delta] of Object.entries(choice.effect.reputation ?? {})) {
+        meta.reputation.set(faction, (meta.reputation.get(faction) ?? 0) + delta);
+      }
+    }
     this.grantXp(quest.xpReward, meta);
     this.emit({ type: 'questDone', questId, pid: meta.entityId });
     this.emit({ type: 'log', text: `Quest completed: ${quest.name}`, color: '#ff0', pid: meta.entityId });
+  }
+
+  // Has this player recorded a Greywater moral-choice flag? ("<questId>__<choiceId>")
+  questFlag(flag: string, pid?: number): boolean {
+    const r = this.resolve(pid);
+    return r ? r.meta.questFlags.has(flag) : false;
+  }
+
+  // This player's personal reputation tally for a faction (0 if untouched).
+  reputationOf(faction: string, pid?: number): number {
+    const r = this.resolve(pid);
+    return r ? r.meta.reputation.get(faction) ?? 0 : 0;
+  }
+
+  // The earlier-flag-gated callback lines that apply to this player for a quest,
+  // in declaration order. Feeds the HUD's dialogue text (the cross-quest consequence).
+  questCallbacksFor(questId: string, pid?: number): QuestCallback[] {
+    const r = this.resolve(pid);
+    const quest = QUESTS[questId];
+    if (!r || !quest?.callbacks) return [];
+    return quest.callbacks.filter((cb) => r.meta.questFlags.has(cb.requiresFlag));
   }
 
   // No-op in offline mode

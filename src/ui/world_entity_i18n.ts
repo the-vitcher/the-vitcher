@@ -78,7 +78,16 @@ type DungeonId = typeof DUNGEON_IDS[number];
 
 type MobTranslations = Record<MobId, { name: string }>;
 type NpcTranslations = Record<NpcId, { name: string; title: string; greeting: string }>;
-type QuestTranslation = { title: string; text: string; completion: string; objectives: Record<number, { label: string }> };
+type QuestChoiceTranslation = { label: string; result: string; looming?: string };
+type QuestTranslation = {
+  title: string;
+  text: string;
+  completion: string;
+  objectives: Record<number, { label: string }>;
+  // Greywater moral-choice strings (present only on choice-quests).
+  choices?: Record<string, QuestChoiceTranslation>;
+  callbacks?: Record<number, { text: string }>;
+};
 type QuestTranslations = Record<QuestId, QuestTranslation>;
 type ZoneTranslations = Record<ZoneId, { name: string; welcome: string; pois: Record<number, { label: string }> }>;
 type DungeonTranslations = Record<DungeonId, { name: string; enterText: string; leaveText: string }>;
@@ -130,12 +139,27 @@ function makeEnglishWorldEntities(): WorldEntityTranslations {
     quest.objectives.forEach((objective, objectiveIndex) => {
       objectiveRecord[objectiveIndex] = { label: objective.label };
     });
-    quests[quest.id as QuestId] = {
+    const entry: QuestTranslation = {
       title: quest.name,
       text: normalizeSourceText(quest.text),
       completion: normalizeSourceText(quest.completionText),
       objectives: objectiveRecord,
     };
+    if (quest.choices && quest.choices.length > 0) {
+      const choiceRecord = {} as Record<string, QuestChoiceTranslation>;
+      quest.choices.forEach((choice) => {
+        const t: QuestChoiceTranslation = { label: choice.label, result: normalizeSourceText(choice.result) };
+        if (choice.looming) t.looming = normalizeSourceText(choice.looming);
+        choiceRecord[choice.id] = t;
+      });
+      entry.choices = choiceRecord;
+    }
+    if (quest.callbacks && quest.callbacks.length > 0) {
+      const callbackRecord = {} as Record<number, { text: string }>;
+      quest.callbacks.forEach((callback, index) => { callbackRecord[index] = { text: normalizeSourceText(callback.text) }; });
+      entry.callbacks = callbackRecord;
+    }
+    quests[quest.id as QuestId] = entry;
   });
 
   const zones = {} as ZoneTranslations;

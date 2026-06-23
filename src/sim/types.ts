@@ -778,6 +778,36 @@ export interface QuestDef {
   minLevel?: number;
   retired?: boolean; // remains finishable if already accepted, but cannot be newly accepted
   suggestedPlayers?: number; // group quests ("Suggested players: 5")
+  // Moral-choice turn-in (Greywater). When present, the quest is NOT completed by a
+  // plain turn-in: the player must pick exactly one `choices` option, whose `effect`
+  // is applied IN ADDITION to the base xp/copper/item rewards. The choice is recorded
+  // as a per-player flag ("<questId>__<choiceId>") that later quests read via
+  // `callbacks` to change their dialogue. Everything is personal per-player quest
+  // state, never world-mutating (MMO-safe).
+  choices?: QuestChoice[];
+  // Earlier-flag-gated extra dialogue lines, appended to this quest's offer/turn-in
+  // text when the player carries the gating flag (the cross-quest "consequence").
+  callbacks?: QuestCallback[];
+}
+
+export interface QuestChoiceEffect {
+  copper?: number; // bonus/penalty copper granted on top of QuestDef.copperReward
+  itemRewards?: Partial<Record<PlayerClass, string>>; // overrides QuestDef.itemRewards when present
+  setFlags?: string[]; // per-player flags to set (stored as "<questId>__<flag>")
+  reputation?: Record<string, number>; // personal faction-tally deltas (justice/smallfolk/nobility/underworld/ines)
+}
+
+export interface QuestChoice {
+  id: string; // stable, unique within the quest (e.g. 'spare', 'execute')
+  label: string; // short English button text (localized at the client via tEntity)
+  result: string; // English post-choice narration shown in the log/journal
+  looming?: string; // English delayed-consequence line for the journal
+  effect: QuestChoiceEffect;
+}
+
+export interface QuestCallback {
+  requiresFlag: string; // an earlier choice's flag ("<questId>__<choiceId>")
+  text: string; // English line appended to this quest's dialogue when the flag is set
 }
 
 export function questTurnInNpcIds(quest: QuestDef): readonly string[] {
@@ -1015,6 +1045,10 @@ export type SimEvent = { pid?: number } & (
   | { type: 'questProgress'; questId: string; text: string }
   | { type: 'questReady'; questId: string }
   | { type: 'questDone'; questId: string }
+  // A choice-quest reached turn-in: the client must present these options (ids only;
+  // labels localize client-side via tEntity, so no sim_i18n matcher is needed). The
+  // player completes the quest by re-issuing turn-in with the chosen choiceId.
+  | { type: 'questChoices'; questId: string; choices: { id: string }[] }
   | { type: 'aura'; targetId: number; name: string; gained: boolean }
   | { type: 'castStart'; entityId: number; ability: string; time: number }
   | { type: 'castStop'; entityId: number; success: boolean }

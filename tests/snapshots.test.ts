@@ -18,7 +18,7 @@ import { ClientWorld } from '../src/net/online';
 import { Sim } from '../src/sim/sim';
 import { DT, type PlayerClass } from '../src/sim/types';
 
-const DELTA_KEYS = ['inv', 'buyback', 'equip', 'qlog', 'qdone', 'cds', 'stats', 'weapon', 'party', 'trade', 'duel'];
+const DELTA_KEYS = ['inv', 'buyback', 'equip', 'qlog', 'qdone', 'qflags', 'rep', 'cds', 'stats', 'weapon', 'party', 'trade', 'duel'];
 
 interface FakeClient {
   sent: any[];

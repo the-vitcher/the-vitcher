@@ -1,6 +1,6 @@
 // Online play: REST auth client + WebSocket world mirror.
 
-import { NPCS, abilitiesKnownAt } from '../sim/data';
+import { NPCS, QUESTS, abilitiesKnownAt } from '../sim/data';
 import { computeQuestState, ResolvedAbility } from '../sim/sim';
 import {
   cloneAllocation, computeTalentModifiers, emptyAllocation, talentPointsAtLevel, pointsSpent,
@@ -499,6 +499,9 @@ export class ClientWorld implements IWorld {
   activeLoadout = -1;
   questLog = new Map<string, QuestProgress>();
   questsDone = new Set<string>();
+  // Greywater moral-choice state, mirrored from the server self-snapshot (delta-guarded).
+  questFlags = new Set<string>();
+  reputation = new Map<string, number>();
   partyInfo: PartyInfo | null = null;
   tradeInfo: TradeInfo | null = null;
   duelInfo: DuelInfo | null = null;
@@ -941,6 +944,8 @@ export class ClientWorld implements IWorld {
       }
       if (s.qlog !== undefined) this.questLog = new Map((s.qlog as QuestProgress[]).map((q) => [q.questId, q]));
       if (s.qdone !== undefined) this.questsDone = new Set(s.qdone);
+      if (s.qflags !== undefined) this.questFlags = new Set(s.qflags as string[]);
+      if (s.rep !== undefined) this.reputation = new Map(Object.entries(s.rep as Record<string, number>));
       if (s.qlog !== undefined || s.qdone !== undefined) this.pendingQuestCommands?.clear();
       // talent state (heavy field, sent on change): mirror it, then resolve known
       // with the precomputed modifiers so granted abilities + tweaks show locally.
@@ -1099,10 +1104,14 @@ export class ClientWorld implements IWorld {
     this.pendingQuestCommands.set(questId, 'accept');
     this.cmd({ cmd: 'accept', quest: questId });
   }
-  turnInQuest(questId: string): void {
+  turnInQuest(questId: string, choiceId?: string): void {
     if (!this.canSendCommand()) return;
-    this.pendingQuestCommands.set(questId, 'turnin');
-    this.cmd({ cmd: 'turnin', quest: questId });
+    // Reflect the completion optimistically EXCEPT when this is the first tap on a
+    // choice-quest (no choiceId): there the server only PROMPTS (sends `questChoices`)
+    // and the quest stays `ready`, so optimism would wrongly hide the choice UI.
+    const isChoicePrompt = choiceId === undefined && (QUESTS[questId]?.choices?.length ?? 0) > 0;
+    if (!isChoicePrompt) this.pendingQuestCommands.set(questId, 'turnin');
+    this.cmd({ cmd: 'turnin', quest: questId, choice: choiceId });
   }
   reportTelemetry(kind: string, data: Record<string, number>): void {
     if (!this.canSendCommand()) return;

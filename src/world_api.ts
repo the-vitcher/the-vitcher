@@ -267,6 +267,10 @@ export interface IWorld {
   known: ResolvedAbility[];
   questLog: Map<string, QuestProgress>;
   questsDone: Set<string>;
+  // Greywater moral-choice state (personal, read by the quest log / "Your Legend"
+  // epilogue). `questFlags` keys are "<questId>__<choiceId>".
+  questFlags: Set<string>;
+  reputation: Map<string, number>;
   questState(questId: string): QuestState;
   castAbility(abilityId: string): void;
   castAbilityBySlot(slot: number): void;
@@ -281,7 +285,9 @@ export interface IWorld {
   submitLootRoll(rollId: number, choice: LootRollChoice): void;
   pickUpObject(id: number): void;
   acceptQuest(questId: string): void;
-  turnInQuest(questId: string): void;
+  // `choiceId` selects a moral-choice option on choice-quests; omitted on a plain
+  // turn-in (which, for a choice-quest, prompts the client with the options instead).
+  turnInQuest(questId: string, choiceId?: string): void;
   reportTelemetry(kind: string, data: Record<string, number>): void;
   abandonQuest(questId: string): void;
   equipItem(itemId: string): void;

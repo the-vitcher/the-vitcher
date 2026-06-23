@@ -1224,7 +1224,9 @@ export class GameServer {
       case 'turnin':
         if (typeof msg.quest === 'string') {
           const beforeDone = sim.meta(pid)?.questsDone.has(msg.quest) ?? false;
-          sim.turnInQuest(msg.quest, pid);
+          // Optional moral-choice id for choice-quests; the Sim re-validates it.
+          const choiceId = typeof msg.choice === 'string' ? msg.choice : undefined;
+          sim.turnInQuest(msg.quest, choiceId, pid);
           const afterDone = sim.meta(pid)?.questsDone.has(msg.quest) ?? false;
           if (!beforeDone && afterDone && msg.quest === ALDRIC_METEOR_QUEST_ID) {
             this.noteAccountQuestComplete(session, msg.quest);
@@ -1665,6 +1667,8 @@ export class GameServer {
     maybe('cosmetics', session.accountCosmetics);
     maybe('qlog', [...meta.questLog.values()]);
     maybe('qdone', [...meta.questsDone]);
+    maybe('qflags', [...meta.questFlags]);
+    maybe('rep', Object.fromEntries(meta.reputation));
     maybe('milestones', [...meta.unlockedMilestones]);
     maybe('cds', Object.fromEntries([...p.cooldowns.entries()].map(([k, v]) => [k, round2(v)])));
     maybe('stats', p.stats);
@@ -2046,6 +2050,8 @@ export class GameServer {
   private resyncQuests(session: ClientSession): void {
     delete session.lastSent.qlog;
     delete session.lastSent.qdone;
+    delete session.lastSent.qflags;
+    delete session.lastSent.rep;
   }
 
   private send(session: ClientSession, obj: unknown): void {

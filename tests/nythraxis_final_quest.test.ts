@@ -206,7 +206,7 @@ describe('Nythraxis final quest', () => {
 
     const beforeCopper = playerMeta(sim, pid).copper;
     moveToHighwatchAldric(sim, pid);
-    sim.turnInQuest(FINAL_QUEST_ID, pid);
+    sim.turnInQuest(FINAL_QUEST_ID, undefined, pid);
 
     const meta = playerMeta(sim, pid);
     expect(meta.questsDone.has(FINAL_QUEST_ID)).toBe(true);

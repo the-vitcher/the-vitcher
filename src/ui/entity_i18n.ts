@@ -11,8 +11,8 @@ import {
 } from './i18n';
 
 export type EntityTranslationGroup = 'classAbility' | 'item' | 'world';
-export type EntityTranslationKind = 'class' | 'ability' | 'item' | 'mob' | 'npc' | 'quest' | 'questObjective' | 'zone' | 'zonePoi' | 'dungeon';
-export type EntityTranslationField = 'name' | 'description' | 'title' | 'text' | 'completion' | 'greeting' | 'label' | 'welcome' | 'enterText' | 'leaveText';
+export type EntityTranslationKind = 'class' | 'ability' | 'item' | 'mob' | 'npc' | 'quest' | 'questObjective' | 'questChoice' | 'questCallback' | 'zone' | 'zonePoi' | 'dungeon';
+export type EntityTranslationField = 'name' | 'description' | 'title' | 'text' | 'completion' | 'greeting' | 'label' | 'result' | 'looming' | 'welcome' | 'enterText' | 'leaveText';
 
 export type EntityTranslationRequest =
   | { kind: 'class'; id: PlayerClass; field: 'name' | 'description'; values?: InterpolationValues }
@@ -22,6 +22,10 @@ export type EntityTranslationRequest =
   | { kind: 'npc'; id: string; field: 'name' | 'title' | 'greeting'; values?: InterpolationValues }
   | { kind: 'quest'; id: string; field: 'title' | 'text' | 'completion'; values?: InterpolationValues }
   | { kind: 'questObjective'; questId: string; objectiveIndex: number; field: 'label'; values?: InterpolationValues }
+  // Greywater moral-choice strings: a choice's button label / result narration / looming
+  // consequence line, and the earlier-flag-gated callback lines.
+  | { kind: 'questChoice'; questId: string; choiceId: string; field: 'label' | 'result' | 'looming'; values?: InterpolationValues }
+  | { kind: 'questCallback'; questId: string; callbackIndex: number; field: 'text'; values?: InterpolationValues }
   | { kind: 'zone'; id: string; field: 'name' | 'welcome'; values?: InterpolationValues }
   | { kind: 'zonePoi'; zoneId: string; poiIndex: number; field: 'label'; values?: InterpolationValues }
   | { kind: 'dungeon'; id: string; field: 'name' | 'enterText' | 'leaveText'; values?: InterpolationValues };
@@ -137,6 +141,15 @@ function canonicalEntityText(request: EntityTranslationRequest): string {
     }
     case 'questObjective':
       return QUESTS[request.questId]?.objectives[request.objectiveIndex]?.label ?? `${request.questId}.${request.objectiveIndex}`;
+    case 'questChoice': {
+      const choice = QUESTS[request.questId]?.choices?.find((c) => c.id === request.choiceId);
+      if (!choice) return `${request.questId}.${request.choiceId}`;
+      if (request.field === 'result') return choice.result;
+      if (request.field === 'looming') return choice.looming ?? '';
+      return choice.label;
+    }
+    case 'questCallback':
+      return QUESTS[request.questId]?.callbacks?.[request.callbackIndex]?.text ?? `${request.questId}.cb.${request.callbackIndex}`;
     case 'zone': {
       const zone = ZONES.find((candidate) => candidate.id === request.id);
       if (!zone) return request.id;
@@ -172,6 +185,10 @@ export function entityTranslationKey(request: EntityTranslationRequest): string 
       return `entities.quests.${entityPathSegment(request.id)}.${request.field}`;
     case 'questObjective':
       return `entities.quests.${entityPathSegment(request.questId)}.objectives.${request.objectiveIndex}.label`;
+    case 'questChoice':
+      return `entities.quests.${entityPathSegment(request.questId)}.choices.${entityPathSegment(request.choiceId)}.${request.field}`;
+    case 'questCallback':
+      return `entities.quests.${entityPathSegment(request.questId)}.callbacks.${request.callbackIndex}.text`;
     case 'zone':
       return `entities.zones.${entityPathSegment(request.id)}.${request.field}`;
     case 'zonePoi':
@@ -184,9 +201,13 @@ export function entityTranslationKey(request: EntityTranslationRequest): string 
 function requestManifestEntry(request: EntityTranslationRequest): EntityTranslationManifestEntry {
   const id = request.kind === 'questObjective'
     ? `${request.questId}.objectives.${request.objectiveIndex}`
-    : request.kind === 'zonePoi'
-      ? `${request.zoneId}.pois.${request.poiIndex}`
-      : request.id;
+    : request.kind === 'questChoice'
+      ? `${request.questId}.choices.${request.choiceId}`
+      : request.kind === 'questCallback'
+        ? `${request.questId}.callbacks.${request.callbackIndex}`
+        : request.kind === 'zonePoi'
+          ? `${request.zoneId}.pois.${request.poiIndex}`
+          : request.id;
   const group: EntityTranslationGroup =
     request.kind === 'class' || request.kind === 'ability' ? 'classAbility'
       : request.kind === 'item' ? 'item'
@@ -251,6 +272,29 @@ export function entityTranslationManifest(): EntityTranslationManifestEntry[] {
         objective.label,
         'world',
         entityTranslationKey({ kind: 'questObjective', questId: quest.id, objectiveIndex, field: 'label' }),
+      ));
+    });
+    (quest.choices ?? []).forEach((choice) => {
+      const choiceFields: ('label' | 'result' | 'looming')[] = choice.looming ? ['label', 'result', 'looming'] : ['label', 'result'];
+      for (const field of choiceFields) {
+        entries.push(entry(
+          'questChoice',
+          `${quest.id}.choices.${choice.id}`,
+          field,
+          field === 'result' ? choice.result : field === 'looming' ? choice.looming ?? '' : choice.label,
+          'world',
+          entityTranslationKey({ kind: 'questChoice', questId: quest.id, choiceId: choice.id, field }),
+        ));
+      }
+    });
+    (quest.callbacks ?? []).forEach((callback, callbackIndex) => {
+      entries.push(entry(
+        'questCallback',
+        `${quest.id}.callbacks.${callbackIndex}`,
+        'text',
+        callback.text,
+        'world',
+        entityTranslationKey({ kind: 'questCallback', questId: quest.id, callbackIndex, field: 'text' }),
       ));
     });
   }

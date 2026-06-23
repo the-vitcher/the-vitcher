@@ -87,6 +87,7 @@ import { TouchPeekGuard, TOOLTIP_PEEK_MS } from './touch_peek';
 import { maskProfanity } from './profanity';
 import { formatMoney as formatLocalizedMoney, formatNumber, getLanguage, isSupportedLanguage, moneyParts, supportedLanguages, t, tOptional, tPlural, type SupportedLanguage, type TranslationKey } from './i18n';
 import { tEntity } from './entity_i18n';
+import { questHasChoices, questChoiceButtons, questChoiceResult, questChoiceLooming, questCallbackLines } from './quest_choices';
 import { localizeServerText, localizeZone } from './server_i18n';
 import { localizeSimText, localizeSimAuraName } from './sim_i18n';
 import { tTalent, localizeTalentTitle } from './talent_i18n';
@@ -4211,6 +4212,16 @@ export class Hud {
           audio.questDone();
           this.refreshGossip();
           break;
+        case 'questChoices': {
+          // A choice-quest reached turn-in (e.g. via pressing interact at the giver):
+          // open the dialog on the giving NPC so the moral-choice buttons are shown.
+          const npc = this.questTurnInNpcNear(ev.questId);
+          if (npc) {
+            this.openGossipNpcId = npc.id;
+            this.renderQuestDetail(npc, ev.questId);
+          }
+          break;
+        }
         case 'chat': {
           if (this.isChatIgnored(ev.from)) break;
           switch (ev.channel) {
@@ -5066,6 +5077,22 @@ export class Hud {
   // Quest dialog (gossip)
   // -------------------------------------------------------------------------
 
+  // The nearest visible NPC that can take this quest's turn-in (for opening the
+  // moral-choice panel when a `questChoices` prompt arrives). Null if none in range.
+  private questTurnInNpcNear(questId: string): Entity | null {
+    const quest = QUESTS[questId];
+    if (!quest) return null;
+    const p = this.sim.player;
+    let best: Entity | null = null;
+    let bestDist = Infinity;
+    for (const e of this.sim.entities.values()) {
+      if (e.kind !== 'npc' || !isQuestTurnInNpc(quest, e.templateId)) continue;
+      const d = dist2d(p.pos, e.pos);
+      if (d < bestDist) { bestDist = d; best = e; }
+    }
+    return best;
+  }
+
   openQuestDialog(npcId: number): void {
     const npc = this.sim.entities.get(npcId);
     if (!npc || npc.kind !== 'npc') return;
@@ -5171,6 +5198,11 @@ export class Hud {
       html += `<div class="qd-req">${esc(t('questUi.detail.requiresLevel', { level: this.questNumber(quest.minLevel) }))}</div>`;
     }
     html += `<div class="qd-text">${esc(text)}</div>`;
+    // Greywater: earlier moral choices surface as extra dialogue beats here (the
+    // cross-quest consequence), gated on this player's recorded flags.
+    for (const line of questCallbackLines(questId, this.sim.questFlags)) {
+      html += `<div class="qd-text qd-callback">${esc(line)}</div>`;
+    }
     if (state !== 'ready') {
       const qp = this.sim.questLog.get(questId);
       html += `<div class="qd-sub">${esc(t('questUi.detail.objectives'))}</div>`;
@@ -5198,6 +5230,21 @@ export class Hud {
         this.renderGossip(npc);
       });
       el.appendChild(btn);
+    } else if (state === 'ready' && questHasChoices(questId)) {
+      // A choice-quest: one button per moral option. Picking one completes the quest
+      // (server-validated) and shows its result + looming-consequence beat.
+      for (const choice of questChoiceButtons(questId)) {
+        const btn = document.createElement('button');
+        btn.className = 'btn qd-choice';
+        btn.type = 'button';
+        btn.textContent = choice.label;
+        btn.addEventListener('click', () => {
+          this.sim.turnInQuest(questId, choice.id);
+          this.sim.reportTelemetry('quest_turnin', { timeMs: performance.now() - this.questDialogOpenedAtMs });
+          this.showQuestChoiceOutcome(npc, questId, choice.id);
+        });
+        el.appendChild(btn);
+      }
     } else if (state === 'ready') {
       const btn = document.createElement('button');
       btn.className = 'btn';
@@ -5216,6 +5263,27 @@ export class Hud {
     back.textContent = t('questUi.dialog.back');
     back.addEventListener('click', () => this.renderGossip(npc));
     el.appendChild(back);
+    el.querySelector('[data-close]')?.addEventListener('click', () => this.closeQuestDialog());
+    el.style.display = 'block';
+    this.focusFirstInteractive(el);
+  }
+
+  // After a moral choice is picked, play back its result narration and any looming
+  // consequence (the Witcher-3 "consequence beat"), then return to the giver's gossip.
+  private showQuestChoiceOutcome(npc: Entity, questId: string, choiceId: string): void {
+    const el = $('#quest-dialog');
+    const result = questChoiceResult(questId, choiceId);
+    const looming = questChoiceLooming(questId, choiceId);
+    let html = `<div class="panel-title"><span id="quest-dialog-title">${esc(questTitle(questId))}</span><button type="button" class="x-btn" data-close aria-label="${esc(t('questUi.dialog.close'))}">${svgIcon('close')}</button></div>`;
+    html += `<div class="qd-text">${esc(result)}</div>`;
+    if (looming) html += `<div class="qd-text qd-looming">${esc(looming)}</div>`;
+    el.innerHTML = html;
+    const cont = document.createElement('button');
+    cont.className = 'btn';
+    cont.type = 'button';
+    cont.textContent = t('questUi.dialog.continue');
+    cont.addEventListener('click', () => this.renderGossip(npc));
+    el.appendChild(cont);
     el.querySelector('[data-close]')?.addEventListener('click', () => this.closeQuestDialog());
     el.style.display = 'block';
     this.focusFirstInteractive(el);

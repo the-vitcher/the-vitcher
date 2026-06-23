@@ -219,7 +219,7 @@ describe('[GUARD] turning in Scourge\'s End at Aldric works server-side', () => 
     const { tankPid, a, meta } = readyToTurnIn(sim);
     teleport(sim, tankPid, a.pos.x, a.pos.z);
     const before = meta.copper;
-    sim.turnInQuest(FINAL_QUEST, tankPid);
+    sim.turnInQuest(FINAL_QUEST, undefined, tankPid);
     expect(meta.questsDone.has(FINAL_QUEST)).toBe(true);
     expect(meta.copper).toBe(before + QUESTS[FINAL_QUEST].copperReward);
   });
@@ -228,7 +228,7 @@ describe('[GUARD] turning in Scourge\'s End at Aldric works server-side', () => 
     const sim = makeWorld();
     const { tankPid, meta } = readyToTurnIn(sim);
     teleport(sim, tankPid, 99999, 99999);
-    const events = sim.turnInQuest(FINAL_QUEST, tankPid) as unknown as { type: string; text?: string }[] | void;
+    const events = sim.turnInQuest(FINAL_QUEST, undefined, tankPid) as unknown as { type: string; text?: string }[] | void;
     expect(meta.questsDone.has(FINAL_QUEST)).toBe(false);
     void events;
   });

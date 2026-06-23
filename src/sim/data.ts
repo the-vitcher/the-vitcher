@@ -30,6 +30,13 @@ import {
   TEMPLE_CAMPS, TEMPLE_DUNGEON_DEFS, TEMPLE_DUNGEON_MOBS, TEMPLE_ITEMS, TEMPLE_MOBS,
   TEMPLE_NPCS, TEMPLE_OBJECTS, TEMPLE_PROPS, TEMPLE_QUEST_ORDER, TEMPLE_QUESTS,
 } from './content/temple';
+// NOTE: The Greywater witcher questline (src/sim/content/greywater.ts) exercises the
+// per-player choice/consequence quest engine. It is authored and end-to-end tested
+// (tests/greywater_choices.test.ts) but intentionally NOT merged into the live world
+// tables yet: doing so requires a 13-locale translation pass (the repo's unconditional
+// i18n-completeness gate) and rebaselining the RNG-pinned determinism tests (new world
+// monsters shift the shared spawn/AI RNG stream). Flip it on by re-adding the spreads
+// below once those two maintainer-scale steps are done.
 
 function mergeItems(...parts: Record<string, ItemDef>[]): Record<string, ItemDef> {
   const merged = Object.assign({}, ...parts);
