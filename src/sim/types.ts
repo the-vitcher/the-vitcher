@@ -781,6 +781,10 @@ export interface QuestDef {
   copperReward: number;
   itemRewards: Partial<Record<PlayerClass, string>>;
   requiresQuest?: string; // prerequisite quest id (must be turned in)
+  // Gated on a per-player choice flag ("<questId>__<choiceId>"): the quest only
+  // becomes available once the player has made the gating moral choice. Powers
+  // branch-specific follow-ups (e.g. the magistrate path's jail-chest reward).
+  requiresFlag?: string;
   requiredItems?: string[]; // quest items obtained earlier (e.g. a prerequisite reward) that this
   // quest needs; re-granted on accept if the player no longer has them, to avoid a progression block
   minLevel?: number;

@@ -18,6 +18,10 @@ export const GROUND_PICKUP_LINES: Record<string, GroundPickupLines> = {
     deny: "The reeve has not asked you to handle the girl's shawl yet.",
     enough: "You have already examined the girl's shawl.",
   },
+  jail_chest: {
+    deny: 'The jailhouse chest is locked until the magistrate sends you to it.',
+    enough: 'You have already claimed your fee from the jailhouse chest.',
+  },
   supply_crate: {
     deny: 'The crate is nailed shut.',
     enough: 'You already have enough supply crates.',

@@ -8,7 +8,7 @@
 // registries itself, exercising the engine + the authored quests without polluting
 // the global world. Vitest isolates modules per file, so the injection is local.
 import { describe, expect, it, beforeAll } from 'vitest';
-import { Sim } from '../src/sim/sim';
+import { Sim, computeQuestState } from '../src/sim/sim';
 import { QUESTS, NPCS, MOBS, ITEMS } from '../src/sim/data';
 import { groundHeight } from '../src/sim/world';
 import {
@@ -27,6 +27,13 @@ beforeAll(() => {
 function makeWorld(): Sim {
   return new Sim({ seed: 42, playerClass: 'warrior', noPlayer: true });
 }
+
+describe('flag-gated follow-up quest (magistrate branch)', () => {
+  it('gw_jail_chest is unavailable without the magistrate flag, available with it', () => {
+    expect(computeQuestState('gw_jail_chest', new Map(), new Set(), 20, new Set())).toBe('unavailable');
+    expect(computeQuestState('gw_jail_chest', new Map(), new Set(), 20, new Set(['gw_caravan__callaHanged']))).toBe('available');
+  });
+});
 
 function teleport(sim: Sim, pid: number, x: number, z: number): void {
   const e = sim.entities.get(pid)!;

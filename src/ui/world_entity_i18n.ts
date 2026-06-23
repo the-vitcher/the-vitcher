@@ -48,7 +48,7 @@ const NPC_IDS = [
   'loremaster_caddis', 'ranger_elwyn',
   'brother_aldric_raid', // dynamically-spawned raid turn-in NPC (Crypt of Nythraxis)
   // Greywater Valley quest givers
-  'calla', 'reeve_ondrin', 'ines', 'ortega', 'goodwife_sera',
+  'calla', 'reeve_ondrin', 'ines', 'ortega', 'goodwife_sera', 'magistrate_holt',
 ] as const;
 
 const QUEST_IDS = [
@@ -71,7 +71,7 @@ const QUEST_IDS = [
   'q_ledger_brood', 'q_ledger_deepvermin', 'q_ledger_toll', 'q_ledger_vigil',
   'q_ledger_great_boar', 'q_ledger_outlaw_captain',
   // Greywater Valley witcher questline
-  'gw_caravan', 'gw_aldermere', 'gw_velvet', 'gw_champion', 'gw_mill',
+  'gw_caravan', 'gw_aldermere', 'gw_velvet', 'gw_champion', 'gw_mill', 'gw_jail_chest',
 ] as const;
 
 const ZONE_IDS = ['eastbrook_vale', 'mirefen_marsh', 'thornpeak_heights'] as const;

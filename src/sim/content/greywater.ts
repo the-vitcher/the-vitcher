@@ -180,6 +180,13 @@ export const GREYWATER_NPCS: Record<string, NpcDef> = {
     questIds: ['gw_mill'],
     greeting: "So you're the heir, $C. We wondered when paper would come walking. We made this dead mill breathe again; it feeds half the valley now.",
   },
+  // In Eastbrook town: only relevant if you took the manifest to the law at the ford.
+  magistrate_holt: {
+    id: 'magistrate_holt', name: 'Magistrate Holt', title: 'Magistrate of Eastbrook',
+    pos: { x: 13, z: 7 }, facing: -2.0, color: 0x8a8f9a,
+    questIds: ['gw_jail_chest'],
+    greeting: "You're the witcher who brought me the slaver's manifest, $C. The cells are full because of it. There's a chest in the jailhouse with your fee in it.",
+  },
 };
 
 // ---------------------------------------------------------------------------
@@ -214,10 +221,10 @@ export const GREYWATER_QUESTS: Record<string, QuestDef> = {
       },
       {
         id: 'magistrate', label: 'Carry the manifest to the magistrate. Let the law have it all.',
-        result: 'The magistrate reads it twice, grey to the lips, and thanks you in the flat voice of a man signing names onto a gallows. By nightfall a warehouse on the docks is chained shut. By the next, the cells are full.',
+        result: "You carry the manifest the long road back to Eastbrook and lay it before Magistrate Holt. He reads it twice, grey to the lips, and tells you to come find him in town: there is a chest in the jailhouse, and a witcher's fee inside it. By nightfall a warehouse on the docks is chained shut. By the next, the cells are full.",
         looming: "Calla hangs as an accessory to her own captivity; the law cannot tell a name on a list from a person on it. Her cellmate, a fence with a long memory, learns who brought the manifest in. She will send knives down the road after you.",
-        effect: { setFlags: ['callaHanged', 'assassinHunt'], reputation: { justice: 4, nobility: 2, underworld: -2 },
-          itemRewards: { warrior: 'gallows_iron_blade', mage: 'gallows_iron_rod', rogue: 'gallows_iron_dirk' } },
+        // Reward comes from Magistrate Holt's follow-up (gw_jail_chest), gated on this flag.
+        effect: { setFlags: ['callaHanged', 'assassinHunt'], reputation: { justice: 4, nobility: 2, underworld: -2 } },
       },
       {
         id: 'burn', label: 'Keep the gems. Burn the manifest. End the trade with the proof.',
@@ -397,10 +404,24 @@ export const GREYWATER_QUESTS: Record<string, QuestDef> = {
       },
     ],
   },
+
+  // Branch follow-up: opens only if you handed the manifest to the law at the ford
+  // (flag gw_caravan__callaHanged). Run back to town, open the jailhouse chest, claim
+  // the witcher's fee from Magistrate Holt.
+  gw_jail_chest: {
+    id: 'gw_jail_chest', name: "The Magistrate's Fee",
+    giverNpcId: 'magistrate_holt', turnInNpcId: 'magistrate_holt',
+    text: "The law pays its debts, witcher. The strongbox you brought emptied a slaver ring into my cells, and the crown's bounty on them is yours. Open the chest in the jailhouse yard and take a confiscated blade for your trouble.",
+    completionText: 'A fair blade, taken off a man who will not miss it. The trade is broken in Eastbrook, $N, and the law remembers who broke it.',
+    objectives: [{ type: 'collect', itemId: 'jail_chest', count: 1, label: 'Jailhouse chest opened' }],
+    xpReward: 380, copperReward: 200,
+    itemRewards: { warrior: 'gallows_iron_blade', mage: 'gallows_iron_rod', rogue: 'gallows_iron_dirk' },
+    requiresFlag: 'gw_caravan__callaHanged',
+  },
 };
 
 export const GREYWATER_QUEST_ORDER = [
-  'gw_caravan', 'gw_aldermere', 'gw_velvet', 'gw_champion', 'gw_mill',
+  'gw_caravan', 'gw_aldermere', 'gw_velvet', 'gw_champion', 'gw_mill', 'gw_jail_chest',
 ];
 
 // ---------------------------------------------------------------------------
@@ -471,6 +492,11 @@ export const GREYWATER_OBJECTS: GroundObjectDef[] = [
     name: "The Girl's Shawl",
     positions: [{ x: 138, z: -58 }, { x: 142, z: -62 }],
   },
+  {
+    itemId: 'jail_chest',
+    name: 'Jailhouse Chest',
+    positions: [{ x: 17, z: 9 }, { x: 16, z: 11 }], // in the Eastbrook jail yard by Magistrate Holt
+  },
 ];
 
 // ---------------------------------------------------------------------------
@@ -483,6 +509,7 @@ export const GREYWATER_ITEMS: Record<string, ItemDef> = {
   girls_shawl: { id: 'girls_shawl', name: "The Girl's Shawl", kind: 'quest', sellValue: 0, questId: 'gw_aldermere' },
   wolfsbane_sprig: { id: 'wolfsbane_sprig', name: 'Wolfsbane Sprig', kind: 'quest', sellValue: 0, questId: 'gw_velvet' },
   champions_laurel: { id: 'champions_laurel', name: "Champion's Laurel", kind: 'quest', sellValue: 0, questId: 'gw_champion' },
+  jail_chest: { id: 'jail_chest', name: 'Jailhouse Chest', kind: 'quest', sellValue: 0, questId: 'gw_jail_chest' },
 
   // --- quest reward gear (uncommon) ---
   witchers_oilcloak: {

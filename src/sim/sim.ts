@@ -719,6 +719,7 @@ export function computeQuestState(
   questLog: Map<string, QuestProgress>,
   questsDone: Set<string>,
   playerLevel: number,
+  questFlags?: ReadonlySet<string>,
 ): QuestState {
   if (questsDone.has(questId)) return 'done';
   const qp = questLog.get(questId);
@@ -726,6 +727,9 @@ export function computeQuestState(
   const quest = QUESTS[questId];
   if (!quest) return 'unavailable';
   if (quest.requiresQuest && !questsDone.has(quest.requiresQuest)) return 'unavailable';
+  // Gated on an earlier moral-choice flag (e.g. the magistrate follow-up only opens
+  // if you handed the manifest to the law at the ford).
+  if (quest.requiresFlag && !(questFlags?.has(quest.requiresFlag))) return 'unavailable';
   if (quest.minLevel && playerLevel < quest.minLevel) return 'unavailable';
   if (quest.retired) return 'unavailable';
   return 'available';
@@ -8143,7 +8147,7 @@ export class Sim {
   questState(questId: string, pid?: number): QuestState {
     const r = this.resolve(pid);
     if (!r) return 'unavailable';
-    return computeQuestState(questId, r.meta.questLog, r.meta.questsDone, r.e.level);
+    return computeQuestState(questId, r.meta.questLog, r.meta.questsDone, r.e.level, r.meta.questFlags);
   }
 
   private questNpcFor(questId: string, role: 'giver' | 'turnIn', p: Entity): { npc: Entity | null; tooFar: boolean } {

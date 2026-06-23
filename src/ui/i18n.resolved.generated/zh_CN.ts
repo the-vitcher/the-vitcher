@@ -4943,6 +4943,11 @@ export const zh_CN: EnTranslations = {
         "title": "Miller of Greywater",
         "greeting": "So you're the heir, {className}. We wondered when paper would come walking. We made this dead mill breathe again; it feeds half the valley now."
       },
+      "magistrate_holt": {
+        "name": "Magistrate Holt",
+        "title": "Magistrate of Eastbrook",
+        "greeting": "You're the witcher who brought me the slaver's manifest, {className}. The cells are full because of it. There's a chest in the jailhouse with your fee in it."
+      },
       "tidewatcher_ondrel": {
         "name": "翁德雷尔·凡恩",
         "title": "守潮者",
@@ -5845,7 +5850,7 @@ export const zh_CN: EnTranslations = {
           },
           "magistrate": {
             "label": "Carry the manifest to the magistrate. Let the law have it all.",
-            "result": "The magistrate reads it twice, grey to the lips, and thanks you in the flat voice of a man signing names onto a gallows. By nightfall a warehouse on the docks is chained shut. By the next, the cells are full.",
+            "result": "You carry the manifest the long road back to Eastbrook and lay it before Magistrate Holt. He reads it twice, grey to the lips, and tells you to come find him in town: there is a chest in the jailhouse, and a witcher's fee inside it. By nightfall a warehouse on the docks is chained shut. By the next, the cells are full.",
             "looming": "Calla hangs as an accessory to her own captivity; the law cannot tell a name on a list from a person on it. Her cellmate, a fence with a long memory, learns who brought the manifest in. She will send knives down the road after you."
           },
           "burn": {
@@ -6026,6 +6031,16 @@ export const zh_CN: EnTranslations = {
           },
           "3": {
             "text": "A young woman among the refugees watches you the whole while and never once blinks: the steward's daughter, turned out of a great house by a letter you forged a valley south. Whatever help she might have been to you here shut like a door the day you signed another man's ruin."
+          }
+        }
+      },
+      "gw_jail_chest": {
+        "title": "The Magistrate's Fee",
+        "text": "The law pays its debts, witcher. The strongbox you brought emptied a slaver ring into my cells, and the crown's bounty on them is yours. Open the chest in the jailhouse yard and take a confiscated blade for your trouble.",
+        "completion": "A fair blade, taken off a man who will not miss it. The trade is broken in Eastbrook, {playerName}, and the law remembers who broke it.",
+        "objectives": {
+          "0": {
+            "label": "Jailhouse chest opened"
           }
         }
       },
