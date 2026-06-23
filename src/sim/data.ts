@@ -37,7 +37,7 @@ import {
 // locales at release (the i18n-completeness suites stay red until then, by design).
 import {
   GREYWATER_CAMPS, GREYWATER_ITEMS, GREYWATER_MOBS, GREYWATER_NPCS, GREYWATER_OBJECTS,
-  GREYWATER_QUEST_ORDER, GREYWATER_QUESTS,
+  GREYWATER_QUEST_ORDER, GREYWATER_QUESTS, GREYWATER_ROADS,
 } from './content/greywater';
 
 function mergeItems(...parts: Record<string, ItemDef>[]): Record<string, ItemDef> {
@@ -94,7 +94,7 @@ export const CAMPS: CampDef[] = [
 
 export const GROUND_OBJECTS: GroundObjectDef[] = [...ZONE1_OBJECTS, ...ZONE2_OBJECTS, ...ZONE3_OBJECTS, ...TEMPLE_OBJECTS, ...GREYWATER_OBJECTS];
 
-export const ROADS: { x: number; z: number }[][] = [...ZONE1_ROADS, ...ZONE2_ROADS, ...ZONE3_ROADS];
+export const ROADS: { x: number; z: number }[][] = [...ZONE1_ROADS, ...ZONE2_ROADS, ...ZONE3_ROADS, ...GREYWATER_ROADS];
 
 export const PROPS: ZonePropsDef = mergeProps([ZONE1_PROPS, ZONE2_PROPS, ZONE3_PROPS, TEMPLE_PROPS]);
 

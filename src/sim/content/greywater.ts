@@ -401,6 +401,24 @@ export const GREYWATER_QUEST_ORDER = [
 // so the existing world's deterministic spawn RNG draw order is preserved).
 // ---------------------------------------------------------------------------
 
+// A road runs the length of the valley, from the ford in the south up to Greywater
+// Mill in the north, threading past each quest giver. Lazy camps spawn their mobs
+// clear of it (see spawnCamp's road-avoidance), so the player can walk the road in
+// peace and choose when to wade into the monsters off to either side.
+export const GREYWATER_ROADS: { x: number; z: number }[][] = [
+  [
+    { x: 148, z: -150 }, // the ford (Calla)
+    { x: 144, z: -100 },
+    { x: 140, z: -60 },  // Aldermere (Reeve Ondrin)
+    { x: 146, z: -28 },
+    { x: 150, z: 4 },    // the pass (Ines)
+    { x: 144, z: 50 },
+    { x: 138, z: 92 },   // the tournament city (Ortega)
+    { x: 135, z: 128 },
+    { x: 134, z: 158 },  // Greywater Mill (Goodwife Sera)
+  ],
+];
+
 // All lazy: the valley spawns only when a player walks into it, so adding this
 // region never perturbs the shared world-gen / AI RNG stream elsewhere.
 export const GREYWATER_CAMPS: CampDef[] = [

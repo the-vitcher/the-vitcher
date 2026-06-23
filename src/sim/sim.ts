@@ -1,7 +1,7 @@
 import {
   ABILITIES, ARENA_SLOT_COUNT, CAMPS, CLASSES, DUNGEONS, DUNGEON_LIST, DungeonDef, arenaOrigin, dungeonAt,
   DUNGEON_X_THRESHOLD, GROUND_OBJECTS, GROUP_XP_BONUS, INSTANCE_SLOT_COUNT, isArenaPos,
-  ITEMS, MOBS, NPCS, PLAYER_START, PROPS, QUESTS, questRewardItemId, abilitiesKnownAt, instanceOrigin,
+  ITEMS, MOBS, NPCS, PLAYER_START, PROPS, QUESTS, ROADS, questRewardItemId, abilitiesKnownAt, instanceOrigin,
   DEEPFEN_SHALLOWS_LAKE,
   zoneAt, ZONES, FISHING_TABLES, FISHING_RARE_ID,
 } from './data';
@@ -52,6 +52,9 @@ const DUNGEON_LEASH_DISTANCE = 70;
 // many yards of its center. Wide enough that mobs are present before the player
 // arrives, but only once the region is actually being visited.
 const CAMP_LAZY_ACTIVATE_RADIUS = 55;
+// Lazy-camp mobs keep at least this many yards off any road, so the path through a
+// region (e.g. the Greywater Valley) stays walkable in peace.
+const ROAD_CLEAR_DISTANCE = 11;
 // Classic "trivial con": a wild mob this many levels below the player goes
 // passive and will not auto-aggro from proximity (it still fights back if
 // attacked). Elites, rares, and bosses are never trivial.
@@ -4992,13 +4995,16 @@ export class Sim {
 
   // Spawn one camp's mobs (shared by world init and lazy activation). Draws this.rng
   // identically to the original inline init loop, so a non-lazy camp is unchanged.
-  private spawnCamp(camp: CampDef): void {
+  // `avoidRoads` (lazy camps only) nudges each spawn off the road network — a pure,
+  // RNG-free post-step, so it never changes any existing camp's positions or draws.
+  private spawnCamp(camp: CampDef, avoidRoads = false): void {
     const template = MOBS[camp.mobId];
     const minHeight = this.mobCanSpawnInWater(template) ? WATER_LEVEL - 0.5 : WATER_LEVEL + 0.4;
     for (let i = 0; i < camp.count; i++) {
       const ang = this.rng.range(0, Math.PI * 2);
       const r = Math.sqrt(this.rng.next()) * camp.radius;
-      const safe = this.findSafePos(camp.center.x + Math.sin(ang) * r, camp.center.z + Math.cos(ang) * r, minHeight);
+      let safe = this.findSafePos(camp.center.x + Math.sin(ang) * r, camp.center.z + Math.cos(ang) * r, minHeight);
+      if (avoidRoads) safe = this.clearOfRoads(safe.x, safe.z, minHeight);
       const pos = this.groundPos(safe.x, safe.z);
       const level = this.rng.int(template.minLevel, template.maxLevel);
       const mob = createMob(this.nextId++, template, level, pos);
@@ -5007,6 +5013,43 @@ export class Sim {
       mob.wanderTimer = this.rng.range(2, 10);
       this.addEntity(mob);
     }
+  }
+
+  // Squared distance from (x,z) to the nearest road segment across ROADS.
+  private distToRoadsSq(x: number, z: number): number {
+    let best = Infinity;
+    for (const road of ROADS) {
+      for (let i = 1; i < road.length; i++) {
+        const a = road[i - 1], b = road[i];
+        const dx = b.x - a.x, dz = b.z - a.z;
+        const len2 = dx * dx + dz * dz || 1;
+        let t = ((x - a.x) * dx + (z - a.z) * dz) / len2;
+        t = t < 0 ? 0 : t > 1 ? 1 : t;
+        const cx = a.x + t * dx, cz = a.z + t * dz;
+        const d2 = (x - cx) * (x - cx) + (z - cz) * (z - cz);
+        if (d2 < best) best = d2;
+      }
+    }
+    return best;
+  }
+
+  // If (x,z) sits on/near a road, search the golden-angle spiral (deterministic, no
+  // RNG) for the nearest spot that is both walkable and ROAD_CLEAR_DISTANCE off any
+  // road. Falls back to the original point if none is found.
+  private clearOfRoads(x: number, z: number, minHeight: number): { x: number; z: number } {
+    const clearSq = ROAD_CLEAR_DISTANCE * ROAD_CLEAR_DISTANCE;
+    if (this.distToRoadsSq(x, z) >= clearSq) return { x, z };
+    const GOLDEN = 2.39996;
+    for (let i = 1; i <= 60; i++) {
+      const rr = 0.9 * Math.sqrt(i) * 2.2;
+      const a = i * GOLDEN;
+      const px = x + Math.sin(a) * rr;
+      const pz = z + Math.cos(a) * rr;
+      if (this.distToRoadsSq(px, pz) < clearSq) continue;
+      const safe = this.findSafePos(px, pz, minHeight);
+      if (Math.abs(safe.x - px) < 1e-4 && Math.abs(safe.z - pz) < 1e-4) return safe;
+    }
+    return { x, z };
   }
 
   // Spawn any lazy camp a player has come within range of. Camps are checked in
@@ -5021,7 +5064,7 @@ export class Sim {
         const p = this.entities.get(meta.entityId);
         if (p && !p.dead && Math.hypot(p.pos.x - camp.center.x, p.pos.z - camp.center.z) <= CAMP_LAZY_ACTIVATE_RADIUS) { near = true; break; }
       }
-      if (near) this.spawnCamp(camp); // forward order keeps RNG draws deterministic
+      if (near) this.spawnCamp(camp, true); // avoid roads so the valley path stays walkable
       else remaining.push(camp);
     }
     this.lazyCamps = remaining;
