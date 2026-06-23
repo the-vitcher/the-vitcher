@@ -156,16 +156,31 @@ export function terrainHeight(x: number, z: number, seed: number): number {
   // content (which sits at x <= ~80) and every seed-pinned test is byte-identical.
   // Gated to the eastern strip (x>95) AND the Greywater z-band (z<~170) so it never
   // touches the Mirefen impact crater (x149.5, z295) or anything else further north.
-  const gwInto = smoothstep(95, 120, x) * (1 - smoothstep(168, 188, z));
-  if (gwInto > 0) {
-    // The valley floor sinks into marsh, but the road stays a dry raised causeway so
-    // the player can walk it (roadDistance only computed here, in the small east strip).
-    const onRoad = 1 - smoothstep(3, 22, roadDistance(x, z));
-    const thresholdHill = Math.exp(-((x - 108) * (x - 108)) / (2 * 9 * 9)) * 6 * smoothstep(95, 103, x);
-    const roll = (fbm2(x * 0.045, z * 0.045, seed + 71, 3) - 0.5) * 5 * gwInto * (1 - onRoad * 0.85);
-    const valleyDip = gwInto * -3 * (1 - onRoad);
-    const causeway = onRoad * gwInto * 2.5; // lift the road above the marsh, clear of water
-    h += thresholdHill + roll + valleyDip + causeway;
+  // Greywater Valley: its own enclosed marsh, walled off from Eastbrook Vale by a
+  // north-south mountain ridge pierced only by the road pass (z~2.5). All gated to the
+  // east strip (x>95, so all existing vale content at x<=80 is byte-identical) AND the
+  // z<~170 Greywater band (so it never touches the Mirefen crater at x149.5,z295).
+  const gwZ = 1 - smoothstep(160, 185, z);
+  if (gwZ > 0) {
+    // The dividing wall: a tight N-S ridge (peak ~x110), suppressed to an open pass
+    // where the road crosses at z~2.5. West face gated to x>95.
+    const wallGate = smoothstep(95, 107, x);
+    if (wallGate > 0) {
+      const wdx = x - 110;
+      const profile = Math.exp(-(wdx * wdx) / (2 * 10 * 10));
+      const pass = smoothstep(PASS_HALF_WIDTH, PASS_SHOULDER, Math.abs(z - 2.5));
+      const crest = 1 + (fbm2(110 * 0.03, z * 0.03, seed + 23, 2) - 0.5) * 0.7;
+      h += RIDGE_HEIGHT * crest * profile * pass * wallGate * gwZ;
+    }
+    // The sunken, rolling marsh floor east of the wall; the road stays a dry causeway.
+    const into = smoothstep(112, 132, x) * gwZ;
+    if (into > 0) {
+      const onRoad = 1 - smoothstep(3, 22, roadDistance(x, z));
+      const roll = (fbm2(x * 0.045, z * 0.045, seed + 71, 3) - 0.5) * 5 * into * (1 - onRoad * 0.85);
+      const valleyDip = into * -3 * (1 - onRoad);
+      const causeway = onRoad * into * 2.5;
+      h += roll + valleyDip + causeway;
+    }
   }
 
   // Raise the world rim so the player naturally stays in bounds
