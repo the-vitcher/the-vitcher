@@ -193,7 +193,7 @@ export const GREYWATER_QUESTS: Record<string, QuestDef> = {
       { type: 'collect', itemId: 'slaver_strongbox', count: 1, label: "Slaver's Strongbox recovered" },
     ],
     xpReward: 420, copperReward: 60, itemRewards: {},
-    minLevel: 2,
+    minLevel: 1, // entry quest: available from level 1 so Calla's map marker shows immediately
     choices: [
       {
         id: 'looters', label: 'Cut the mudlarks in. Split the gems, leave Calla nothing.',
@@ -406,6 +406,8 @@ export const GREYWATER_QUEST_ORDER = [
 // clear of it (see spawnCamp's road-avoidance), so the player can walk the road in
 // peace and choose when to wade into the monsters off to either side.
 export const GREYWATER_ROADS: { x: number; z: number }[][] = [
+  // Connector: from Eastbrook out east to the valley road, so the map shows a path in.
+  [{ x: 10, z: 0 }, { x: 55, z: 2 }, { x: 100, z: 2 }, { x: 140, z: 4 }],
   [
     { x: 148, z: -150 }, // the ford (Calla)
     { x: 144, z: -100 },

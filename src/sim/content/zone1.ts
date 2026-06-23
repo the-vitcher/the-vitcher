@@ -30,6 +30,10 @@ export const ZONE1_ZONE: ZoneDef = {
     { x: 76, z: -76, label: 'Bandit Camp' },
     { x: 80, z: 80, label: 'Fallen Chapel' },
     { x: 40, z: 140, label: 'Brightwood Glade' },
+    // Greywater Valley (eastern edge): the witcher questline, south-to-north
+    { x: 146, z: -148, label: 'Greywater Ford' },
+    { x: 142, z: 20, label: 'Greywater Valley' },
+    { x: 134, z: 158, label: 'Greywater Mill' },
   ],
   welcome: 'Find Marshal Redbrook in town — he has work for you.',
   welcomeQuestId: 'q_wolves',

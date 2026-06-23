@@ -6144,6 +6144,15 @@ export const de_DE: EnTranslations = {
           },
           "8": {
             "label": "Hellholz-Lichtung"
+          },
+          "9": {
+            "label": "Greywater Ford"
+          },
+          "10": {
+            "label": "Greywater Valley"
+          },
+          "11": {
+            "label": "Greywater Mill"
           }
         }
       },

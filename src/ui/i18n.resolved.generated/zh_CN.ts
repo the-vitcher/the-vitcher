@@ -6144,6 +6144,15 @@ export const zh_CN: EnTranslations = {
           },
           "8": {
             "label": "明木林地"
+          },
+          "9": {
+            "label": "Greywater Ford"
+          },
+          "10": {
+            "label": "Greywater Valley"
+          },
+          "11": {
+            "label": "Greywater Mill"
           }
         }
       },

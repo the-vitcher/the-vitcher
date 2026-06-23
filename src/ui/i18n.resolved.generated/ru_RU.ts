@@ -6144,6 +6144,15 @@ export const ru_RU: EnTranslations = {
           },
           "8": {
             "label": "Поляна Брайтвуда"
+          },
+          "9": {
+            "label": "Greywater Ford"
+          },
+          "10": {
+            "label": "Greywater Valley"
+          },
+          "11": {
+            "label": "Greywater Mill"
           }
         }
       },

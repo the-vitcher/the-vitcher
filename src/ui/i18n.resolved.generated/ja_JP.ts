@@ -6144,6 +6144,15 @@ export const ja_JP: EnTranslations = {
           },
           "8": {
             "label": "ブライトウッドの林間"
+          },
+          "9": {
+            "label": "Greywater Ford"
+          },
+          "10": {
+            "label": "Greywater Valley"
+          },
+          "11": {
+            "label": "Greywater Mill"
           }
         }
       },

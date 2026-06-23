@@ -149,6 +149,25 @@ export function terrainHeight(x: number, z: number, seed: number): number {
     }
   }
 
+  // Greywater Valley: reshape the far-eastern strip into a distinct sunken, marshy
+  // corridor so it reads as its own region. A low threshold rise (~x108) you crest to
+  // enter, then a gently lowered, rolling valley floor (fitting a witcher marsh of
+  // drowners and a water hag). Localized east of x=95 and blended in, so all existing
+  // content (which sits at x <= ~80) and every seed-pinned test is byte-identical.
+  // Gated to the eastern strip (x>95) AND the Greywater z-band (z<~170) so it never
+  // touches the Mirefen impact crater (x149.5, z295) or anything else further north.
+  const gwInto = smoothstep(95, 120, x) * (1 - smoothstep(168, 188, z));
+  if (gwInto > 0) {
+    // The valley floor sinks into marsh, but the road stays a dry raised causeway so
+    // the player can walk it (roadDistance only computed here, in the small east strip).
+    const onRoad = 1 - smoothstep(3, 22, roadDistance(x, z));
+    const thresholdHill = Math.exp(-((x - 108) * (x - 108)) / (2 * 9 * 9)) * 6 * smoothstep(95, 103, x);
+    const roll = (fbm2(x * 0.045, z * 0.045, seed + 71, 3) - 0.5) * 5 * gwInto * (1 - onRoad * 0.85);
+    const valleyDip = gwInto * -3 * (1 - onRoad);
+    const causeway = onRoad * gwInto * 2.5; // lift the road above the marsh, clear of water
+    h += thresholdHill + roll + valleyDip + causeway;
+  }
+
   // Raise the world rim so the player naturally stays in bounds
   const rimX = smoothstep(WORLD_MAX_X - 30, WORLD_MAX_X, Math.abs(x));
   const rimS = smoothstep(WORLD_MIN_Z + 30, WORLD_MIN_Z, z);

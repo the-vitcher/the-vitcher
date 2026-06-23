@@ -1685,7 +1685,9 @@ function sanitizeOfflineName(raw: string): string {
 async function startOffline(playerClass: PlayerClass, name: string, skin = 0): Promise<void> {
   if (!(await prepareWorldEntry())) return;
   enterLoadingState(t('loading.world'));
-  const sim = new Sim({ seed: WORLD_SEED, playerClass, playerName: name });
+  // Offline single-player: enable dev cheats (the Level Up button, /dev level N) only
+  // in a Vite dev build (`npm run dev`); a production build keeps them off.
+  const sim = new Sim({ seed: WORLD_SEED, playerClass, playerName: name, devCommands: import.meta.env.DEV });
   sim.setPlayerSkin(sim.playerId, skin);
   // Offline characters are not persisted (a fresh name is typed each session),
   // so the only stable handle is class + name. Keybinds scope to that pair.

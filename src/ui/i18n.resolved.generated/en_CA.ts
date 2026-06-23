@@ -6144,6 +6144,15 @@ export const en_CA: EnTranslations = {
           },
           "8": {
             "label": "Brightwood Glade"
+          },
+          "9": {
+            "label": "Greywater Ford"
+          },
+          "10": {
+            "label": "Greywater Valley"
+          },
+          "11": {
+            "label": "Greywater Mill"
           }
         }
       },

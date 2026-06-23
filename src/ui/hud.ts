@@ -669,6 +669,7 @@ export class Hud {
     this.buildActionBar();
     this.refreshKeybindLabels();
     this.buildXpTicks();
+    if (import.meta.env.DEV) this.initDevControls();
     document.addEventListener('woc:languagechange', () => this.refreshLocalizedDynamicUi());
     // re-render the bag footer (and re-composite an open player card) when the
     // connected wallet's $WOC balance changes
@@ -876,6 +877,23 @@ export class Hud {
     this.log(t('hud.core.welcomeZone', { zone: startZoneName }), '#ffd100');
     this.logZoneWelcome(startZone);
     this.log(t('hudChrome.tips.joinChannels'), '#7fd4ff');
+  }
+
+  // Dev-only on-screen controls (Vite dev builds only, via import.meta.env.DEV).
+  // English labels are fine here: this never ships in a production build.
+  private initDevControls(): void {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.textContent = 'Level Up (dev)';
+    btn.setAttribute('aria-label', 'Developer: raise your level by one');
+    btn.style.cssText = [
+      'position:fixed', 'left:12px', 'bottom:12px', 'z-index:9999',
+      'min-height:40px', 'padding:8px 14px', 'cursor:pointer',
+      'font:600 13px/1.2 system-ui,sans-serif', 'color:#ffe9b0',
+      'background:rgba(28,20,12,0.92)', 'border:1px solid #b7950b', 'border-radius:8px',
+    ].join(';');
+    btn.addEventListener('click', () => this.sim.devLevelUp());
+    document.body.appendChild(btn);
   }
 
   private setText(el: HTMLElement, text: string): void {

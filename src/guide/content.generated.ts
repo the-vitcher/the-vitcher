@@ -1195,7 +1195,10 @@ export const GUIDE_ZONES: GuideZoneInfo[] = [
       "Copper Dig",
       "Bandit Camp",
       "Fallen Chapel",
-      "Brightwood Glade"
+      "Brightwood Glade",
+      "Greywater Ford",
+      "Greywater Valley",
+      "Greywater Mill"
     ],
     "welcome": "Find Marshal Redbrook in town — he has work for you."
   },

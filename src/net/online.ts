@@ -1117,6 +1117,12 @@ export class ClientWorld implements IWorld {
     if (!this.canSendCommand()) return;
     this.cmd({ cmd: 'telemetry', kind, ...data });
   }
+  devLevelUp(): void {
+    if (!this.canSendCommand()) return;
+    // Server gates `dev_level` behind ALLOW_DEV_COMMANDS, so this is a no-op online
+    // unless the realm explicitly runs in dev mode.
+    this.cmd({ cmd: 'dev_level', level: Math.min(20, (this.player?.level ?? 1) + 1) });
+  }
   abandonQuest(questId: string): void {
     if (!this.canSendCommand()) return;
     this.questLog.delete(questId);

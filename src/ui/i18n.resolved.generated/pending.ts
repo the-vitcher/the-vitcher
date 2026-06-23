@@ -125,7 +125,10 @@ export const pending: Record<string, readonly string[]> = {
     "entities.quests.gw_velvet.objectives.0.label",
     "entities.quests.gw_velvet.objectives.1.label",
     "entities.quests.gw_velvet.text",
-    "entities.quests.gw_velvet.title"
+    "entities.quests.gw_velvet.title",
+    "entities.zones.eastbrook_vale.pois.10.label",
+    "entities.zones.eastbrook_vale.pois.11.label",
+    "entities.zones.eastbrook_vale.pois.9.label"
   ],
   "es_ES": [
     "entities.mobs.bog_ghoul.name",
@@ -243,7 +246,10 @@ export const pending: Record<string, readonly string[]> = {
     "entities.quests.gw_velvet.objectives.0.label",
     "entities.quests.gw_velvet.objectives.1.label",
     "entities.quests.gw_velvet.text",
-    "entities.quests.gw_velvet.title"
+    "entities.quests.gw_velvet.title",
+    "entities.zones.eastbrook_vale.pois.10.label",
+    "entities.zones.eastbrook_vale.pois.11.label",
+    "entities.zones.eastbrook_vale.pois.9.label"
   ],
   "fr_FR": [
     "entities.mobs.bog_ghoul.name",
@@ -361,7 +367,10 @@ export const pending: Record<string, readonly string[]> = {
     "entities.quests.gw_velvet.objectives.0.label",
     "entities.quests.gw_velvet.objectives.1.label",
     "entities.quests.gw_velvet.text",
-    "entities.quests.gw_velvet.title"
+    "entities.quests.gw_velvet.title",
+    "entities.zones.eastbrook_vale.pois.10.label",
+    "entities.zones.eastbrook_vale.pois.11.label",
+    "entities.zones.eastbrook_vale.pois.9.label"
   ],
   "fr_CA": [
     "entities.mobs.bog_ghoul.name",
@@ -479,7 +488,10 @@ export const pending: Record<string, readonly string[]> = {
     "entities.quests.gw_velvet.objectives.0.label",
     "entities.quests.gw_velvet.objectives.1.label",
     "entities.quests.gw_velvet.text",
-    "entities.quests.gw_velvet.title"
+    "entities.quests.gw_velvet.title",
+    "entities.zones.eastbrook_vale.pois.10.label",
+    "entities.zones.eastbrook_vale.pois.11.label",
+    "entities.zones.eastbrook_vale.pois.9.label"
   ],
   "en_CA": [],
   "it_IT": [
@@ -598,7 +610,10 @@ export const pending: Record<string, readonly string[]> = {
     "entities.quests.gw_velvet.objectives.0.label",
     "entities.quests.gw_velvet.objectives.1.label",
     "entities.quests.gw_velvet.text",
-    "entities.quests.gw_velvet.title"
+    "entities.quests.gw_velvet.title",
+    "entities.zones.eastbrook_vale.pois.10.label",
+    "entities.zones.eastbrook_vale.pois.11.label",
+    "entities.zones.eastbrook_vale.pois.9.label"
   ],
   "de_DE": [
     "entities.mobs.bog_ghoul.name",
@@ -716,7 +731,10 @@ export const pending: Record<string, readonly string[]> = {
     "entities.quests.gw_velvet.objectives.0.label",
     "entities.quests.gw_velvet.objectives.1.label",
     "entities.quests.gw_velvet.text",
-    "entities.quests.gw_velvet.title"
+    "entities.quests.gw_velvet.title",
+    "entities.zones.eastbrook_vale.pois.10.label",
+    "entities.zones.eastbrook_vale.pois.11.label",
+    "entities.zones.eastbrook_vale.pois.9.label"
   ],
   "zh_CN": [
     "entities.mobs.bog_ghoul.name",
@@ -834,7 +852,10 @@ export const pending: Record<string, readonly string[]> = {
     "entities.quests.gw_velvet.objectives.0.label",
     "entities.quests.gw_velvet.objectives.1.label",
     "entities.quests.gw_velvet.text",
-    "entities.quests.gw_velvet.title"
+    "entities.quests.gw_velvet.title",
+    "entities.zones.eastbrook_vale.pois.10.label",
+    "entities.zones.eastbrook_vale.pois.11.label",
+    "entities.zones.eastbrook_vale.pois.9.label"
   ],
   "zh_TW": [
     "entities.mobs.bog_ghoul.name",
@@ -952,7 +973,10 @@ export const pending: Record<string, readonly string[]> = {
     "entities.quests.gw_velvet.objectives.0.label",
     "entities.quests.gw_velvet.objectives.1.label",
     "entities.quests.gw_velvet.text",
-    "entities.quests.gw_velvet.title"
+    "entities.quests.gw_velvet.title",
+    "entities.zones.eastbrook_vale.pois.10.label",
+    "entities.zones.eastbrook_vale.pois.11.label",
+    "entities.zones.eastbrook_vale.pois.9.label"
   ],
   "ko_KR": [
     "entities.mobs.bog_ghoul.name",
@@ -1070,7 +1094,10 @@ export const pending: Record<string, readonly string[]> = {
     "entities.quests.gw_velvet.objectives.0.label",
     "entities.quests.gw_velvet.objectives.1.label",
     "entities.quests.gw_velvet.text",
-    "entities.quests.gw_velvet.title"
+    "entities.quests.gw_velvet.title",
+    "entities.zones.eastbrook_vale.pois.10.label",
+    "entities.zones.eastbrook_vale.pois.11.label",
+    "entities.zones.eastbrook_vale.pois.9.label"
   ],
   "ja_JP": [
     "entities.mobs.bog_ghoul.name",
@@ -1188,7 +1215,10 @@ export const pending: Record<string, readonly string[]> = {
     "entities.quests.gw_velvet.objectives.0.label",
     "entities.quests.gw_velvet.objectives.1.label",
     "entities.quests.gw_velvet.text",
-    "entities.quests.gw_velvet.title"
+    "entities.quests.gw_velvet.title",
+    "entities.zones.eastbrook_vale.pois.10.label",
+    "entities.zones.eastbrook_vale.pois.11.label",
+    "entities.zones.eastbrook_vale.pois.9.label"
   ],
   "pt_BR": [
     "entities.mobs.bog_ghoul.name",
@@ -1306,7 +1336,10 @@ export const pending: Record<string, readonly string[]> = {
     "entities.quests.gw_velvet.objectives.0.label",
     "entities.quests.gw_velvet.objectives.1.label",
     "entities.quests.gw_velvet.text",
-    "entities.quests.gw_velvet.title"
+    "entities.quests.gw_velvet.title",
+    "entities.zones.eastbrook_vale.pois.10.label",
+    "entities.zones.eastbrook_vale.pois.11.label",
+    "entities.zones.eastbrook_vale.pois.9.label"
   ],
   "ru_RU": [
     "entities.mobs.bog_ghoul.name",
@@ -1424,6 +1457,9 @@ export const pending: Record<string, readonly string[]> = {
     "entities.quests.gw_velvet.objectives.0.label",
     "entities.quests.gw_velvet.objectives.1.label",
     "entities.quests.gw_velvet.text",
-    "entities.quests.gw_velvet.title"
+    "entities.quests.gw_velvet.title",
+    "entities.zones.eastbrook_vale.pois.10.label",
+    "entities.zones.eastbrook_vale.pois.11.label",
+    "entities.zones.eastbrook_vale.pois.9.label"
   ]
 };

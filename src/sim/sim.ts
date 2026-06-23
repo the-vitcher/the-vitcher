@@ -2,7 +2,7 @@ import {
   ABILITIES, ARENA_SLOT_COUNT, CAMPS, CLASSES, DUNGEONS, DUNGEON_LIST, DungeonDef, arenaOrigin, dungeonAt,
   DUNGEON_X_THRESHOLD, GROUND_OBJECTS, GROUP_XP_BONUS, INSTANCE_SLOT_COUNT, isArenaPos,
   ITEMS, MOBS, NPCS, PLAYER_START, PROPS, QUESTS, ROADS, questRewardItemId, abilitiesKnownAt, instanceOrigin,
-  DEEPFEN_SHALLOWS_LAKE,
+  DEEPFEN_SHALLOWS_LAKE, WORLD_MIN_X, WORLD_MAX_X,
   zoneAt, ZONES, FISHING_TABLES, FISHING_RARE_ID,
 } from './data';
 import { ARENA_SPAWN_A, ARENA_SPAWN_B, ARENA_SPAWNS_A_2v2, ARENA_SPAWNS_B_2v2 } from './dungeon_layout';
@@ -53,8 +53,9 @@ const DUNGEON_LEASH_DISTANCE = 70;
 // arrives, but only once the region is actually being visited.
 const CAMP_LAZY_ACTIVATE_RADIUS = 55;
 // Lazy-camp mobs keep at least this many yards off any road, so the path through a
-// region (e.g. the Greywater Valley) stays walkable in peace.
-const ROAD_CLEAR_DISTANCE = 11;
+// region (e.g. the Greywater Valley) stays walkable in peace. Set past the aggro
+// radius cap (20) so even a high-level mob will not pull a player on the road.
+const ROAD_CLEAR_DISTANCE = 24;
 // Classic "trivial con": a wild mob this many levels below the player goes
 // passive and will not auto-aggro from proximity (it still fights back if
 // attacked). Elites, rares, and bosses are never trivial.
@@ -1495,6 +1496,16 @@ export class Sim {
     if (r.e.resourceType === 'mana') r.e.resource = r.e.maxResource;
     this.refreshKnownAbilities(r.meta, false);
     this.syncPetLevel(r.e);
+  }
+
+  // IWorld dev convenience: bump the local player one level. Gated on devCommands
+  // (offline dev play / ALLOW_DEV_COMMANDS) so it can never raise a level in a normal
+  // online session. Online goes through the server's gated `dev_level` command instead.
+  devLevelUp(pid?: number): void {
+    if (!this.devCommands) return;
+    const r = this.resolve(pid);
+    if (!r) return;
+    this.setPlayerLevel(Math.min(MAX_LEVEL, r.e.level + 1), r.meta.entityId);
   }
 
   // -------------------------------------------------------------------------
@@ -5015,9 +5026,9 @@ export class Sim {
     }
   }
 
-  // Squared distance from (x,z) to the nearest road segment across ROADS.
-  private distToRoadsSq(x: number, z: number): number {
-    let best = Infinity;
+  // Nearest point on the road network to (x,z), with the straight-line distance to it.
+  private nearestRoad(x: number, z: number): { cx: number; cz: number; d: number } {
+    let bestD2 = Infinity, cx = x, cz = z;
     for (const road of ROADS) {
       for (let i = 1; i < road.length; i++) {
         const a = road[i - 1], b = road[i];
@@ -5025,29 +5036,34 @@ export class Sim {
         const len2 = dx * dx + dz * dz || 1;
         let t = ((x - a.x) * dx + (z - a.z) * dz) / len2;
         t = t < 0 ? 0 : t > 1 ? 1 : t;
-        const cx = a.x + t * dx, cz = a.z + t * dz;
-        const d2 = (x - cx) * (x - cx) + (z - cz) * (z - cz);
-        if (d2 < best) best = d2;
+        const px = a.x + t * dx, pz = a.z + t * dz;
+        const d2 = (x - px) * (x - px) + (z - pz) * (z - pz);
+        if (d2 < bestD2) { bestD2 = d2; cx = px; cz = pz; }
       }
     }
-    return best;
+    return { cx, cz, d: Math.sqrt(bestD2) };
   }
 
-  // If (x,z) sits on/near a road, search the golden-angle spiral (deterministic, no
-  // RNG) for the nearest spot that is both walkable and ROAD_CLEAR_DISTANCE off any
-  // road. Falls back to the original point if none is found.
+  // Push a spawn point at least ROAD_CLEAR_DISTANCE off the nearest road so a player
+  // travelling the road stays beyond even a high-level mob's (level-inflated) aggro
+  // reach. Deterministic (no RNG): shove straight away from the road, try the other
+  // side if the natural one runs into the world edge, then snap to walkable ground.
+  // Falls back to the original point if nothing clears.
   private clearOfRoads(x: number, z: number, minHeight: number): { x: number; z: number } {
-    const clearSq = ROAD_CLEAR_DISTANCE * ROAD_CLEAR_DISTANCE;
-    if (this.distToRoadsSq(x, z) >= clearSq) return { x, z };
-    const GOLDEN = 2.39996;
-    for (let i = 1; i <= 60; i++) {
-      const rr = 0.9 * Math.sqrt(i) * 2.2;
-      const a = i * GOLDEN;
-      const px = x + Math.sin(a) * rr;
-      const pz = z + Math.cos(a) * rr;
-      if (this.distToRoadsSq(px, pz) < clearSq) continue;
-      const safe = this.findSafePos(px, pz, minHeight);
-      if (Math.abs(safe.x - px) < 1e-4 && Math.abs(safe.z - pz) < 1e-4) return safe;
+    const near = this.nearestRoad(x, z);
+    if (near.d >= ROAD_CLEAR_DISTANCE) return { x, z };
+    let dirX = x - near.cx, dirZ = z - near.cz;
+    let len = Math.hypot(dirX, dirZ);
+    if (len < 1e-3) { dirX = 1; dirZ = 0; len = 1; } // exactly on the road: push +x (open side)
+    dirX /= len; dirZ /= len;
+    for (const sign of [1, -1]) {
+      for (let pad = ROAD_CLEAR_DISTANCE + 2; pad <= ROAD_CLEAR_DISTANCE + 24; pad += 3) {
+        const px = Math.min(WORLD_MAX_X - 2, Math.max(WORLD_MIN_X + 2, near.cx + dirX * sign * pad));
+        const pz = near.cz + dirZ * sign * pad;
+        if (this.nearestRoad(px, pz).d < ROAD_CLEAR_DISTANCE) continue; // clamped back too close
+        const safe = this.findSafePos(px, pz, minHeight);
+        if (Math.abs(safe.x - px) < 1e-4 && Math.abs(safe.z - pz) < 1e-4) return safe;
+      }
     }
     return { x, z };
   }

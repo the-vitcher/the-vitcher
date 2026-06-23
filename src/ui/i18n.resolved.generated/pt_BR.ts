@@ -6144,6 +6144,15 @@ export const pt_BR: EnTranslations = {
           },
           "8": {
             "label": "Clareira de Brightwood"
+          },
+          "9": {
+            "label": "Greywater Ford"
+          },
+          "10": {
+            "label": "Greywater Valley"
+          },
+          "11": {
+            "label": "Greywater Mill"
           }
         }
       },

@@ -6144,6 +6144,15 @@ export const ko_KR: EnTranslations = {
           },
           "8": {
             "label": "브라이트우드 숲"
+          },
+          "9": {
+            "label": "Greywater Ford"
+          },
+          "10": {
+            "label": "Greywater Valley"
+          },
+          "11": {
+            "label": "Greywater Mill"
           }
         }
       },

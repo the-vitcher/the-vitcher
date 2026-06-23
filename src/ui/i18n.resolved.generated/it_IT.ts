@@ -6144,6 +6144,15 @@ export const it_IT: EnTranslations = {
           },
           "8": {
             "label": "Radura di Brightwood"
+          },
+          "9": {
+            "label": "Greywater Ford"
+          },
+          "10": {
+            "label": "Greywater Valley"
+          },
+          "11": {
+            "label": "Greywater Mill"
           }
         }
       },
