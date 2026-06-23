@@ -746,6 +746,9 @@ export interface ZonePropsDef {
   ruinRings: { x: number; z: number; ringR: number; columns: number }[];
   fences: { x1: number; z1: number; x2: number; z2: number }[];
   graveyards: { x: number; z: number }[]; // 6-headstone cluster anchor
+  // Standalone wagons/carts (the cart.glb model, also used for mine ore-carts).
+  // Optional so existing prop sets don't need updating.
+  carts?: { x: number; z: number; rot: number; scale: number }[];
 }
 
 export function emptyZoneProps(): ZonePropsDef {

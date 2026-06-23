@@ -90,6 +90,7 @@ function staticWorldColliders(seed: number): Collider[] {
   for (const [x, z] of PROPS.crates) out.push({ type: 'circle', x, z, r: 0.65, cameraTopY: topY(seed, x, z, 1.35), camGhost: true });
   for (const [x, z] of PROPS.campfires) out.push({ type: 'circle', x, z, r: 0.85, cameraTopY: topY(seed, x, z, 1.45), camGhost: true });
   for (const [x, z] of PROPS.mudHuts) out.push({ type: 'circle', x, z, r: 1.1, cameraTopY: topY(seed, x, z, 12.5), camGhost: true });
+  for (const c of PROPS.carts ?? []) out.push({ type: 'circle', x: c.x, z: c.z, r: 1.4 * c.scale, cameraTopY: topY(seed, c.x, c.z, 2.0 * c.scale), camGhost: true });
   for (const ruin of PROPS.ruinRings) {
     for (let i = 0; i < ruin.columns; i++) {
       const ang = (i / ruin.columns) * Math.PI * 2;

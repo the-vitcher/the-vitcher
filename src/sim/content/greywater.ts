@@ -14,7 +14,7 @@
 // leshen as rare elites. No new art: families map to existing renderer models.
 
 import type {
-  CampDef, GroundObjectDef, ItemDef, MobTemplate, NpcDef, PlayerClass, QuestDef,
+  CampDef, GroundObjectDef, ItemDef, MobTemplate, NpcDef, PlayerClass, QuestDef, ZonePropsDef,
 } from '../types';
 
 // Archetype class-locks (match content/items.ts so REWARD_ARCHETYPE hand-offs land
@@ -43,6 +43,10 @@ export const GREYWATER_MOBS: Record<string, MobTemplate> = {
     loot: [
       { copper: 18, chance: 1 },
       { itemId: 'drowner_brain', chance: 0.35 },
+      // The caravan strongbox: drops from a drowner while the quest needs it. The
+      // quest-drop gate (needsQuestDrop) stops it after you have one, so chance:1
+      // just guarantees the first kill yields it (no farming).
+      { itemId: 'slaver_strongbox', chance: 1, questId: 'gw_caravan' },
     ],
     scale: 1.0, color: 0x5d7a63,
   },
@@ -440,11 +444,24 @@ export const GREYWATER_CAMPS: CampDef[] = [
 // Ground objects - the strongbox in the drowned cave, and the girl's shawl
 // ---------------------------------------------------------------------------
 
+// The drowned caravan: a wrecked wagon, spilled crates and Calla's little camp at the
+// ford beside her (x146,-148), on the dry road causeway.
+export const GREYWATER_PROPS: ZonePropsDef = {
+  buildings: [], wells: [], stalls: [], mines: [], docks: [],
+  tents: [{ x: 143, z: -151, rot: 0.7, scale: 1.0 }],
+  crates: [[150, -147], [148, -151], [151, -150]],
+  campfires: [[145, -150]],
+  mudHuts: [], ruinRings: [], fences: [], graveyards: [],
+  carts: [{ x: 149, z: -149, rot: 1.2, scale: 1.4 }],
+};
+
 export const GREYWATER_OBJECTS: GroundObjectDef[] = [
   {
     itemId: 'slaver_strongbox',
     name: "Slaver's Strongbox",
-    positions: [{ x: 158, z: -122 }, { x: 161, z: -118 }, { x: 155, z: -116 }],
+    // On the dry road causeway right beside Calla (in addition to the drowner drop),
+    // so it is trivially findable while testing.
+    positions: [{ x: 147, z: -146 }, { x: 145, z: -143 }, { x: 149, z: -148 }],
   },
   {
     itemId: 'girls_shawl',

@@ -572,6 +572,19 @@ export function buildProps(seed: number): PropsResult {
     registerHideable(g, circleFootprint(x, z, 0.65, y + 1.35));
   });
 
+  // ---- standalone wagons/carts (e.g. the Greywater drowned caravan) ---------
+  for (const c of PROPS.carts ?? []) {
+    const a = propAsset('cart');
+    const s = (3.4 * c.scale) / Math.max(a.size.x, a.size.z);
+    const y = ground(c.x, c.z);
+    const g = new THREE.Group();
+    addParts(g, 'cart', { scale: s });
+    g.position.set(c.x, y - 0.04, c.z);
+    g.rotation.set((propRand(c.x, c.z, 8) - 0.5) * 0.05, c.rot, (propRand(c.x, c.z, 9) - 0.5) * 0.05);
+    group.add(shadowed(g));
+    registerHideable(g, circleFootprint(c.x, c.z, 1.5 * c.scale, y + 1.8 * c.scale));
+  }
+
   // ---- murloc mud huts: giant swamp mushrooms, doorway facing camp center --
   const hutCenter = PROPS.mudHuts.reduce(
     (acc, [hx, hz]) => ({ x: acc.x + hx / PROPS.mudHuts.length, z: acc.z + hz / PROPS.mudHuts.length }),
