@@ -202,19 +202,22 @@ export const GREYWATER_QUESTS: Record<string, QuestDef> = {
       {
         id: 'looters', label: 'Cut the mudlarks in. Split the gems, leave Calla nothing.',
         result: "Three river-thieves were already wading in. You bargain rather than argue, and the gems go into wet leather and into the reeds. Behind you, smaller and smaller, Calla is still calling your name across the water. You don't turn around. That's the trick of it: not turning around.",
-        effect: { copper: 60, setFlags: ['soldOutCalla'], reputation: { justice: -2, smallfolk: -2, underworld: 1 } },
+        effect: { copper: 60, setFlags: ['soldOutCalla'], reputation: { justice: -2, smallfolk: -2, underworld: 1 },
+          itemRewards: { warrior: 'looted_gemstone', mage: 'looted_gemstone', rogue: 'looted_gemstone' } },
       },
       {
         id: 'giveCalla', label: "Put the box in Calla's hands. The list is hers to burn.",
         result: "You press the cold box into her arms. She reads her own name on the manifest and her face does something you have no word for. No thanks, no tears, just a long breath let out over two years. Then she's gone into the reeds, box and gems and ghost, without looking back.",
         looming: 'Months on, two rumors reach you and never resolve: a gentle new ring spiriting branded folk to freedom, and a girl spending fistfuls of gems alone in a faraway port. You will never learn which one you made.',
-        effect: { setFlags: ['callaFreed'], reputation: { smallfolk: 3, nobility: -1 } },
+        effect: { setFlags: ['callaFreed'], reputation: { smallfolk: 3, nobility: -1 },
+          itemRewards: { warrior: 'callas_parting_gift', mage: 'callas_parting_gift', rogue: 'callas_parting_gift' } },
       },
       {
         id: 'magistrate', label: 'Carry the manifest to the magistrate. Let the law have it all.',
         result: 'The magistrate reads it twice, grey to the lips, and thanks you in the flat voice of a man signing names onto a gallows. By nightfall a warehouse on the docks is chained shut. By the next, the cells are full.',
         looming: "Calla hangs as an accessory to her own captivity; the law cannot tell a name on a list from a person on it. Her cellmate, a fence with a long memory, learns who brought the manifest in. She will send knives down the road after you.",
-        effect: { setFlags: ['callaHanged', 'assassinHunt'], reputation: { justice: 4, nobility: 2, underworld: -2 } },
+        effect: { setFlags: ['callaHanged', 'assassinHunt'], reputation: { justice: 4, nobility: 2, underworld: -2 },
+          itemRewards: { warrior: 'gallows_iron_blade', mage: 'gallows_iron_rod', rogue: 'gallows_iron_dirk' } },
       },
       {
         id: 'burn', label: 'Keep the gems. Burn the manifest. End the trade with the proof.',
@@ -522,6 +525,28 @@ export const GREYWATER_ITEMS: Record<string, ItemDef> = {
     id: 'millwardens_jerkin', name: "Millwarden's Jerkin", kind: 'armor', slot: 'chest', quality: 'rare',
     stats: { armor: 95, agi: 7, sta: 3 }, sellValue: 1100, requiredClass: ROG,
   },
+
+  // --- per-choice rewards for The Drowned Caravan ---
+  // Magistrate path: the special weapon from the jail chest he opens for you.
+  gallows_iron_blade: {
+    id: 'gallows_iron_blade', name: 'Gallows-Iron Blade', kind: 'weapon', slot: 'mainhand', quality: 'rare',
+    weapon: { min: 12, max: 20, speed: 2.4 }, stats: { str: 4, sta: 2 }, sellValue: 600, requiredClass: WAR,
+  },
+  gallows_iron_rod: {
+    id: 'gallows_iron_rod', name: 'Gallows-Iron Rod', kind: 'weapon', slot: 'mainhand', quality: 'rare',
+    weapon: { min: 13, max: 22, speed: 2.9 }, stats: { int: 5, spi: 2 }, sellValue: 600, requiredClass: MAG,
+  },
+  gallows_iron_dirk: {
+    id: 'gallows_iron_dirk', name: 'Gallows-Iron Dirk', kind: 'weapon', slot: 'mainhand', quality: 'rare',
+    weapon: { min: 8, max: 14, speed: 1.7, dagger: true }, stats: { agi: 5 }, sellValue: 600, requiredClass: ROG,
+  },
+  // Free-Calla path: her parting gift, a witcher's healing draught.
+  callas_parting_gift: {
+    id: 'callas_parting_gift', name: "Calla's Parting Gift", kind: 'potion', quality: 'uncommon',
+    potionHp: 220, sellValue: 40,
+  },
+  // Looter path: a cut gem, pure coin.
+  looted_gemstone: { id: 'looted_gemstone', name: 'Looted Gemstone', kind: 'junk', quality: 'uncommon', sellValue: 120 },
 
   // --- junk / alchemy trophies (gray) ---
   drowner_brain: { id: 'drowner_brain', name: 'Drowner Brain', kind: 'junk', quality: 'poor', sellValue: 12 },
