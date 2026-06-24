@@ -448,7 +448,7 @@ const DESPAWN_GRACE_MIN_DIST_SQ = 70 * 70;
 function blankEntity(id: number): Entity {
   return {
     id, kind: 'mob', templateId: '', name: '', level: 1, mendTimer: 0, wardTimer: 0, rallyTimer: 0, warcryTimer: 0,
-    petPath: [], petPathCooldown: 0,
+    escortOwnerId: null, petPath: [], petPathCooldown: 0,
     pos: { x: 0, y: 0, z: 0 }, prevPos: { x: 0, y: 0, z: 0 }, facing: 0, prevFacing: 0,
     vx: 0, vz: 0, vy: 0, onGround: true, jumping: false, fallStartY: 0,
     hp: 1, maxHp: 1, resource: 0, maxResource: 0, resourceType: null,

@@ -11,6 +11,7 @@
 export const pending: Record<string, readonly string[]> = {
   "es": [
     "entities.mobs.bog_ghoul.name",
+    "entities.mobs.drowned_witness.name",
     "entities.mobs.greywater_drowner.name",
     "entities.mobs.greywater_hag.name",
     "entities.mobs.margrave_guard.name",
@@ -259,6 +260,7 @@ export const pending: Record<string, readonly string[]> = {
   ],
   "es_ES": [
     "entities.mobs.bog_ghoul.name",
+    "entities.mobs.drowned_witness.name",
     "entities.mobs.greywater_drowner.name",
     "entities.mobs.greywater_hag.name",
     "entities.mobs.margrave_guard.name",
@@ -507,6 +509,7 @@ export const pending: Record<string, readonly string[]> = {
   ],
   "fr_FR": [
     "entities.mobs.bog_ghoul.name",
+    "entities.mobs.drowned_witness.name",
     "entities.mobs.greywater_drowner.name",
     "entities.mobs.greywater_hag.name",
     "entities.mobs.margrave_guard.name",
@@ -755,6 +758,7 @@ export const pending: Record<string, readonly string[]> = {
   ],
   "fr_CA": [
     "entities.mobs.bog_ghoul.name",
+    "entities.mobs.drowned_witness.name",
     "entities.mobs.greywater_drowner.name",
     "entities.mobs.greywater_hag.name",
     "entities.mobs.margrave_guard.name",
@@ -1004,6 +1008,7 @@ export const pending: Record<string, readonly string[]> = {
   "en_CA": [],
   "it_IT": [
     "entities.mobs.bog_ghoul.name",
+    "entities.mobs.drowned_witness.name",
     "entities.mobs.greywater_drowner.name",
     "entities.mobs.greywater_hag.name",
     "entities.mobs.margrave_guard.name",
@@ -1252,6 +1257,7 @@ export const pending: Record<string, readonly string[]> = {
   ],
   "de_DE": [
     "entities.mobs.bog_ghoul.name",
+    "entities.mobs.drowned_witness.name",
     "entities.mobs.greywater_drowner.name",
     "entities.mobs.greywater_hag.name",
     "entities.mobs.margrave_guard.name",
@@ -1500,6 +1506,7 @@ export const pending: Record<string, readonly string[]> = {
   ],
   "zh_CN": [
     "entities.mobs.bog_ghoul.name",
+    "entities.mobs.drowned_witness.name",
     "entities.mobs.greywater_drowner.name",
     "entities.mobs.greywater_hag.name",
     "entities.mobs.margrave_guard.name",
@@ -1748,6 +1755,7 @@ export const pending: Record<string, readonly string[]> = {
   ],
   "zh_TW": [
     "entities.mobs.bog_ghoul.name",
+    "entities.mobs.drowned_witness.name",
     "entities.mobs.greywater_drowner.name",
     "entities.mobs.greywater_hag.name",
     "entities.mobs.margrave_guard.name",
@@ -1996,6 +2004,7 @@ export const pending: Record<string, readonly string[]> = {
   ],
   "ko_KR": [
     "entities.mobs.bog_ghoul.name",
+    "entities.mobs.drowned_witness.name",
     "entities.mobs.greywater_drowner.name",
     "entities.mobs.greywater_hag.name",
     "entities.mobs.margrave_guard.name",
@@ -2244,6 +2253,7 @@ export const pending: Record<string, readonly string[]> = {
   ],
   "ja_JP": [
     "entities.mobs.bog_ghoul.name",
+    "entities.mobs.drowned_witness.name",
     "entities.mobs.greywater_drowner.name",
     "entities.mobs.greywater_hag.name",
     "entities.mobs.margrave_guard.name",
@@ -2492,6 +2502,7 @@ export const pending: Record<string, readonly string[]> = {
   ],
   "pt_BR": [
     "entities.mobs.bog_ghoul.name",
+    "entities.mobs.drowned_witness.name",
     "entities.mobs.greywater_drowner.name",
     "entities.mobs.greywater_hag.name",
     "entities.mobs.margrave_guard.name",
@@ -2740,6 +2751,7 @@ export const pending: Record<string, readonly string[]> = {
   ],
   "ru_RU": [
     "entities.mobs.bog_ghoul.name",
+    "entities.mobs.drowned_witness.name",
     "entities.mobs.greywater_drowner.name",
     "entities.mobs.greywater_hag.name",
     "entities.mobs.margrave_guard.name",

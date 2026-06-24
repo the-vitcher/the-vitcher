@@ -811,6 +811,10 @@ export interface QuestChoiceEffect {
   itemRewards?: Partial<Record<PlayerClass, string>>; // overrides QuestDef.itemRewards when present
   setFlags?: string[]; // per-player flags to set (stored as "<questId>__<flag>")
   reputation?: Record<string, number>; // personal faction-tally deltas (justice/smallfolk/nobility/underworld/ines)
+  // Spawn a player-owned escort follower (a MobTemplate id) at the turn-in, e.g. the
+  // raised "drowned witness" the player then walks to the Eastbrook court. The escort
+  // heels like a pet, never fights, and is despawned when the follow-up deed is done.
+  spawnEscort?: string;
 }
 
 export interface QuestChoice {
@@ -959,6 +963,10 @@ export interface Entity {
   forcedTargetId: number | null; // taunt/growl: attack this target while the timer runs
   forcedTargetTimer: number; // seconds left on the forced-attack window
   ownerId: number | null; // controlled pets: owning player's entity id (null = wild)
+  // Quest escort: a player-owned non-combat follower (e.g. the Drowned Caravan's
+  // raised witness) that heels to its owner like a pet but never fights, takes no
+  // damage, and is despawned when its deed resolves. Null on every normal mob.
+  escortOwnerId: number | null;
   petMode: PetMode; // hunter pet behavior stance
   petTauntTimer: number; // controlled pet Growl cooldown
   petPath: Vec3[]; // controlled pet heel route around obstacles; consumed front-to-back (like chargePath)

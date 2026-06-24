@@ -38,7 +38,7 @@ const MOB_IDS = [
   // Greywater Valley witcher bestiary
   'greywater_drowner', 'river_mudlark', 'bog_ghoul', 'valley_nekker', 'margrave_guard',
   'tournament_brawler', 'tournament_champion', 'reclamation_mercenary', 'greywater_hag', 'valley_leshen',
-  'slaver_knife',
+  'slaver_knife', 'drowned_witness',
 ] as const;
 
 const NPC_IDS = [

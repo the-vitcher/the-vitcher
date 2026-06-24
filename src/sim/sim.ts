@@ -5101,6 +5101,11 @@ export class Sim {
   }
 
   private updateMob(mob: Entity): void {
+    // Quest escort (e.g. the raised Drowned Witness): a player-owned, non-combat
+    // follower. Handled entirely here and returned before any normal mob AI, the
+    // dead/respawn path, or the owner-less-non-hostile "leak" safety net below would
+    // ever touch it (it must stay non-hostile and immortal as it heels to the court).
+    if (mob.escortOwnerId !== null) { this.updateEscort(mob); return; }
     if (mob.dead) {
       if (mob.templateId === NYTHRAXIS_BOSS_ID && mob.nythraxis && !mob.nythraxis.deathSpoken) {
         mob.nythraxis.deathSpoken = true;
@@ -6352,6 +6357,54 @@ export class Sim {
     const aim = routed ? pet.petPath[0] : owner.pos;
     const speed = Math.max(pet.moveSpeed, RUN_SPEED * 1.1) * this.moveSpeedMult(pet);
     this.moveToward(pet, aim, speed);
+  }
+
+  // ----- Quest escort follower (e.g. the Drowned Caravan's raised witness) -----
+  // A player-owned, non-combat corpse that heels to its owner like a pet (reusing
+  // `petFollow`) and is physically walked to a destination POI as part of a deed. It
+  // never fights and cannot be killed (non-hostile mobs are unattackable), so it
+  // always survives the escort. Spawned by a quest choice's `spawnEscort`, despawned
+  // when the deed is turned in (or the owner logs out / dies).
+
+  /** Animate a fresh escort follower of `mobId`, owned by player `ownerId`, at the
+   *  owner's feet. Replaces any escort the player already has (one at a time). */
+  private spawnEscort(ownerId: number, mobId: string): void {
+    const owner = this.entities.get(ownerId);
+    if (!owner) return;
+    const template = MOBS[mobId];
+    if (!template) return;
+    this.despawnEscortOf(ownerId);
+    const escort = createMob(this.nextId++, template, template.minLevel, this.groundPos(owner.pos.x, owner.pos.z));
+    escort.hostile = false;
+    escort.escortOwnerId = ownerId;
+    escort.lootable = false;
+    escort.loot = null;
+    escort.xpValue = 0;
+    this.addEntity(escort);
+  }
+
+  /** Remove this player's escort follower(s), if any (deed done / logout / death). */
+  private despawnEscortOf(ownerId: number): void {
+    for (const e of this.entities.values()) {
+      if (e.escortOwnerId === ownerId) this.dropEntity(e.id);
+    }
+  }
+
+  /** Per-tick escort behavior: heel to the owner; despawn if the owner is gone. */
+  private updateEscort(escort: Entity): void {
+    const owner = escort.escortOwnerId !== null ? this.entities.get(escort.escortOwnerId) : null;
+    if (!owner || owner.kind !== 'player' || !this.players.has(owner.id) || owner.dead) {
+      this.dropEntity(escort.id);
+      return;
+    }
+    // A risen witness is inert: it never fights and cannot die, so it always finishes
+    // the long walk to the court no matter what crosses its path.
+    escort.dead = false;
+    escort.hp = escort.maxHp;
+    escort.inCombat = false;
+    escort.aggroTargetId = null;
+    escort.targetId = null;
+    this.petFollow(escort, owner);
   }
 
   /** A ranged demon pet (imp) hurls a spell-school bolt: a telegraphed
@@ -8262,6 +8315,9 @@ export class Sim {
     meta.questLog.delete(questId);
     meta.questsDone.add(questId);
     meta.counters.questsCompleted++;
+    // The raised witness has taken the stand at the Eastbrook court: dismiss the
+    // player's escort corpse the moment its deed is turned in.
+    if (questId === 'gw_caravan_witness') this.despawnEscortOf(meta.entityId);
     // Base copper, then the chosen option's bonus/penalty copper.
     const copperReward = quest.copperReward + (choice?.effect.copper ?? 0);
     if (copperReward > 0) {
@@ -8279,6 +8335,9 @@ export class Sim {
       for (const [faction, delta] of Object.entries(choice.effect.reputation ?? {})) {
         meta.reputation.set(faction, (meta.reputation.get(faction) ?? 0) + delta);
       }
+      // Some choices play out physically: spawn a player-owned escort follower (the
+      // raised "drowned witness") that then heels to the player toward the court.
+      if (choice.effect.spawnEscort) this.spawnEscort(meta.entityId, choice.effect.spawnEscort);
     }
     this.grantXp(quest.xpReward, meta);
     this.emit({ type: 'questDone', questId, pid: meta.entityId });

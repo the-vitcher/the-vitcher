@@ -4701,6 +4701,9 @@ export const pt_BR: EnTranslations = {
       "slaver_knife": {
         "name": "Slaver's Knife"
       },
+      "drowned_witness": {
+        "name": "Drowned Witness"
+      },
       "elder_bristleback": {
         "name": "Bristleback ancião"
       },
@@ -5927,7 +5930,7 @@ export const pt_BR: EnTranslations = {
           },
           "witness": {
             "label": "Raise a drowned slave. Walk the corpse to the Eastbrook court to testify.",
-            "result": "You kneel in the shallows and call one of the manifest's dead back up out of the mud. It rises dripping and patient, and it will say the names in a courtroom that has never seated the drowned. The ring will try very hard to stop you on the road."
+            "result": "You kneel in the shallows and call one of the manifest's dead back up out of the mud. It rises dripping and patient and falls into step at your heel, and it will say the names in a courtroom that has never seated the drowned. The ring will try very hard to stop you on the road."
           }
         }
       },

@@ -153,6 +153,18 @@ export const GREYWATER_MOBS: Record<string, MobTemplate> = {
     ],
     scale: 0.95, color: 0x6a5a6a,
   },
+  // The raised "star witness" of the Drowned Caravan. NOT a normal spawn: the
+  // witness-choice animates ONE of these as a player-owned escort (escortOwnerId)
+  // that heels to the player the long road to the Eastbrook court, never fights, and
+  // is despawned when the deed is turned in. Stats are inert (it takes no damage and
+  // deals none); only the look and name matter. Renders via family 'undead'.
+  drowned_witness: {
+    id: 'drowned_witness', name: 'Drowned Witness', minLevel: 2, maxLevel: 2, family: 'undead', canSwim: true,
+    hpBase: 200, hpPerLevel: 0, dmgBase: 0, dmgPerLevel: 0, attackSpeed: 2.5,
+    armorPerLevel: 0, moveSpeed: 7.5, aggroRadius: 0,
+    loot: [],
+    scale: 1.0, color: 0x6a7e84,
+  },
   // Ambient rare elite (no quest tie): a forest spirit haunting the valley's woods.
   valley_leshen: {
     id: 'valley_leshen', name: 'Valley Leshen', minLevel: 9, maxLevel: 9, family: 'beast',
@@ -338,8 +350,8 @@ export const GREYWATER_QUESTS: Record<string, QuestDef> = {
       },
       {
         id: 'witness', label: 'Raise a drowned slave. Walk the corpse to the Eastbrook court to testify.',
-        result: "You kneel in the shallows and call one of the manifest's dead back up out of the mud. It rises dripping and patient, and it will say the names in a courtroom that has never seated the drowned. The ring will try very hard to stop you on the road.",
-        effect: { setFlags: ['witness'], reputation: { justice: 3, underworld: -2 } },
+        result: "You kneel in the shallows and call one of the manifest's dead back up out of the mud. It rises dripping and patient and falls into step at your heel, and it will say the names in a courtroom that has never seated the drowned. The ring will try very hard to stop you on the road.",
+        effect: { setFlags: ['witness'], reputation: { justice: 3, underworld: -2 }, spawnEscort: 'drowned_witness' },
       },
     ],
   },
@@ -815,6 +827,12 @@ export const GREYWATER_PROPS: ZonePropsDef = {
     { kind: 'chapel', x: 159, z: 68, w: 5, d: 6, rot: -0.6 },
     // Greywater Mill (the wheel-house over the millpond).
     { kind: 'house', x: 136, z: 150, w: 5, d: 5, rot: 0.5 },
+    // The Eastbrook Court (the Drowned Caravan's "star witness" deed): a civic hall
+    // with a bell tower, standing behind Clerk Whitlow {20,12} and the court dock so
+    // the risen witness has somewhere to take the stand. Composed from an inn-hall +
+    // chapel-tower, the same idiom as the margrave's manor above.
+    { kind: 'inn', x: 20, z: 19, w: 9, d: 7, rot: 0 },
+    { kind: 'chapel', x: 28, z: 18, w: 5, d: 6, rot: -0.4 },
   ],
   wells: [{ x: 139, z: 60, r: 1.5 }],
   stalls: [

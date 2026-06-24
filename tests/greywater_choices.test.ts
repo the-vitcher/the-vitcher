@@ -270,6 +270,54 @@ describe('Greywater moral-choice quest engine', () => {
     }
   });
 
+  it('the witness choice raises a corpse escort that is dismissed when its court deed is done', () => {
+    const sim = makeWorld();
+    const pid = sim.addPlayer('warrior', 'Geralt');
+    sim.setPlayerLevel(10);
+    readyCaravan(sim, pid);
+    const escorts = (): Entity[] => [...sim.entities.values()].filter((e) => e.templateId === 'drowned_witness');
+
+    // Before the choice: no corpse follows anyone.
+    expect(escorts()).toHaveLength(0);
+
+    // "Raise a drowned slave" physically animates a player-owned, non-hostile escort.
+    sim.turnInQuest('gw_caravan', 'witness', pid);
+    expect(sim.questFlags.has('gw_caravan__witness')).toBe(true);
+    const raised = escorts();
+    expect(raised).toHaveLength(1);
+    expect(raised[0].escortOwnerId).toBe(pid);
+    expect(raised[0].hostile).toBe(false);
+    expect(raised[0].kind).toBe('mob');
+
+    // Walk it to the Eastbrook court and seat it: completing the deed dismisses it.
+    const meta = sim.meta(pid)!;
+    const clerk = npcEntity(sim, 'court_clerk');
+    teleport(sim, pid, clerk.pos.x, clerk.pos.z);
+    sim.acceptQuest('gw_caravan_witness', pid);
+    const fakeKnife = { templateId: 'slaver_knife' } as Entity;
+    for (let i = 0; i < 4; i++) (sim as unknown as { onMobKilledForQuests(m: Entity, meta: unknown): void }).onMobKilledForQuests(fakeKnife, meta);
+    examine(sim, meta, 'court_dock');
+    expect(sim.questState('gw_caravan_witness', pid)).toBe('ready');
+
+    sim.turnInQuest('gw_caravan_witness', undefined, pid);
+    expect(sim.questsDone.has('gw_caravan_witness')).toBe(true);
+    expect(escorts()).toHaveLength(0); // the witness has taken the stand and is gone
+  });
+
+  it("a player's raised witness is their own (one escort per owner, never shared)", () => {
+    const sim = makeWorld();
+    const a = sim.addPlayer('warrior', 'Geralt');
+    const b = sim.addPlayer('mage', 'Yennefer');
+    sim.setPlayerLevel(10);
+    readyCaravan(sim, a);
+    sim.turnInQuest('gw_caravan', 'witness', a);
+
+    const escorts = (): Entity[] => [...sim.entities.values()].filter((e) => e.templateId === 'drowned_witness');
+    expect(escorts()).toHaveLength(1);
+    expect(escorts()[0].escortOwnerId).toBe(a); // belongs to Geralt, not Yennefer
+    expect(escorts().some((e) => e.escortOwnerId === b)).toBe(false);
+  });
+
   it('every Greywater choice flag referenced by a callback is actually settable', () => {
     // Guard the cross-quest wiring: each callback.requiresFlag must be produced by
     // some earlier quest's choice (questId__flag), or the consequence can never fire.
