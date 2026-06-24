@@ -120,6 +120,18 @@ describe('collision & terrain', () => {
     const sim = makeSim();
     const p = sim.player;
     teleportTo(sim, 150, 0);
+    p.facing = Math.PI / 2; // +x, toward the Greywater back wall
+    sim.moveInput.forward = true;
+    for (let i = 0; i < 400; i++) sim.tick();
+    // z=0 sits inside the opened Greywater valley, so the player climbs the eastern rise
+    // until the back wall (authored at x~170-200) stops them well short of the x220 bound.
+    expect(p.pos.x).toBeLessThan(182);
+  });
+
+  it('the generic eastern wall (outside Greywater) still stops players', () => {
+    const sim = makeSim();
+    const p = sim.player;
+    teleportTo(sim, 150, 250); // zone 3 marsh: the wall stays at its original line
     p.facing = Math.PI / 2; // +x, toward the world rim
     sim.moveInput.forward = true;
     for (let i = 0; i < 400; i++) sim.tick();

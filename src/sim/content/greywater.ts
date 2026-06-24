@@ -50,6 +50,18 @@ export const GREYWATER_MOBS: Record<string, MobTemplate> = {
     ],
     scale: 1.0, color: 0x5d7a63,
   },
+  // River-thieves working the drowned caravan at the ford. They own the wreck the
+  // way drowners own the water: a player reads "looters" off the wagon before a word.
+  river_mudlark: {
+    id: 'river_mudlark', name: 'River Mudlark', minLevel: 2, maxLevel: 3, family: 'humanoid',
+    hpBase: 28, hpPerLevel: 8, dmgBase: 5, dmgPerLevel: 1.3, attackSpeed: 2.0,
+    armorPerLevel: 5, moveSpeed: 7.5, aggroRadius: 10,
+    loot: [
+      { copper: 16, chance: 1 },
+      { itemId: 'looted_gemstone', chance: 0.12 },
+    ],
+    scale: 0.95, color: 0x7a6a52,
+  },
   bog_ghoul: {
     id: 'bog_ghoul', name: 'Bog Ghoul', minLevel: 3, maxLevel: 4, family: 'undead',
     hpBase: 40, hpPerLevel: 11, dmgBase: 6, dmgPerLevel: 1.6, attackSpeed: 2.0,

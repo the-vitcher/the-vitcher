@@ -44,6 +44,28 @@ export const MIREFEN_IMPACT_CRATER = {
   rimHeight: 0.95,
 } as const;
 
+// Greywater Valley carved water features. The valley's hydrology is one descending
+// channel: a millpond high on the northern floor (safe water that drives the wheel),
+// draining south through the marsh to the ford pool where the caravan drowned. Both
+// are carved like lakes (a radial dip pulled below WATER_LEVEL), placed clear of the
+// spine road so the causeway stays dry. Gated to the Greywater band in terrainHeight.
+export const GREYWATER_PONDS = [
+  { x: 123, z: 150, radius: 12, depth: 5.5 }, // the millpond (north, by Greywater Mill)
+  { x: 156, z: -138, radius: 11, depth: 5.0 }, // the ford pool (south, the drowned caravan)
+] as const;
+
+export function greywaterPondOffset(x: number, z: number): number {
+  let off = 0;
+  for (const p of GREYWATER_PONDS) {
+    const d = Math.sqrt((x - p.x) ** 2 + (z - p.z) ** 2);
+    if (d < p.radius * 1.6) {
+      const blend = smoothstep(p.radius * 0.5, p.radius * 1.6, d);
+      off += -p.depth * (1 - blend);
+    }
+  }
+  return off;
+}
+
 function smoothstep(edge0: number, edge1: number, x: number): number {
   const t = Math.max(0, Math.min(1, (x - edge0) / (edge1 - edge0)));
   return t * t * (3 - 2 * t);
@@ -160,9 +182,16 @@ export function terrainHeight(x: number, z: number, seed: number): number {
   // north-south mountain ridge pierced only by the road pass (z~2.5). All gated to the
   // east strip (x>95, so all existing vale content at x<=80 is byte-identical) AND the
   // z<~170 Greywater band (so it never touches the Mirefen crater at x149.5,z295).
+  // Greywater Valley: a tilted bowl read in five elevation bands from the western
+  // pass (x~110) to the eastern back wall (the world rim, x>150). The Pass is a tight
+  // N-S ridge notched by the road; the Lip is a short apron just inside it; the Marsh
+  // Flat sits below water save the road causeway; the Village Floor is crowned dry; the
+  // Rise terraces up into the rim. North-to-south the floor tilts so the millpond drains
+  // through the marsh to the drowned ford. All gated x>95 (existing vale content at
+  // x<=80 stays byte-identical) AND z<~185 (never touches the Mirefen crater at z295).
   const gwZ = 1 - smoothstep(160, 185, z);
   if (gwZ > 0) {
-    // The dividing wall: a tight N-S ridge (peak ~x110), suppressed to an open pass
+    // Band 1 - The Pass: a tight N-S ridge (peak ~x110), suppressed to an open notch
     // where the road crosses at z~2.5. West face gated to x>95.
     const wallGate = smoothstep(95, 107, x);
     if (wallGate > 0) {
@@ -172,22 +201,42 @@ export function terrainHeight(x: number, z: number, seed: number): number {
       const crest = 1 + (fbm2(110 * 0.03, z * 0.03, seed + 23, 2) - 0.5) * 0.7;
       h += RIDGE_HEIGHT * crest * profile * pass * wallGate * gwZ;
     }
-    // The sunken, rolling marsh floor east of the wall; the road stays a dry causeway.
-    const into = smoothstep(112, 132, x) * gwZ;
+    // Bands 2-5 east of the wall. `into` ramps in across the Lip; the spine road stays a
+    // dry causeway throughout. A north-south split sinks the southern Marsh Flat below
+    // water while crowning the central Village Floor, so the village reads as the one dry
+    // place and the marsh as drowned trade road.
+    const into = smoothstep(112, 134, x) * gwZ;
     if (into > 0) {
       const onRoad = 1 - smoothstep(3, 22, roadDistance(x, z));
+      const marshBand = smoothstep(40, -24, z);   // 1 in the southern marsh, 0 on the floor
+      const floorBand = smoothstep(18, 56, z) * (1 - smoothstep(132, 158, z)); // dry village window
       const roll = (fbm2(x * 0.045, z * 0.045, seed + 71, 3) - 0.5) * 5 * into * (1 - onRoad * 0.85);
-      const valleyDip = into * -3 * (1 - onRoad);
-      const causeway = onRoad * into * 2.5;
-      h += roll + valleyDip + causeway;
+      const valleyDip = into * marshBand * -3.5 * (1 - onRoad);
+      const floorCrown = into * floorBand * 2.4 * (1 - onRoad * 0.3);
+      const causeway = onRoad * into * 2.6;
+      // Carved water: the millpond and the ford pool (kept off the road by onRoad).
+      const ponds = greywaterPondOffset(x, z) * into * (1 - onRoad);
+      // Band 5 - The Rise: terrain terraces up toward the eastern back wall, lifting the
+      // margrave's manor and the leshen grove onto a shelf above the floor.
+      const rise = smoothstep(150, 172, x) * gwZ * (1 - onRoad * 0.4) * 7;
+      h += roll + valleyDip + floorCrown + causeway + ponds + rise;
     }
   }
 
-  // Raise the world rim so the player naturally stays in bounds
-  const rimX = smoothstep(WORLD_MAX_X - 30, WORLD_MAX_X, Math.abs(x));
+  // Eastern mountain wall + world rim. The world is wider than it once was, so the wall
+  // that contains the east edge is now AUTHORED at its original line (x~150-180) instead
+  // of riding the world bound; this keeps every existing eastern feature (the Mirefen
+  // crater, the zone 2/3 marsh and peaks) byte-identical. Only across the Greywater z-band
+  // does the wall step ~18yd further east, opening the valley a real basin between its pass
+  // (x~110) and its back wall. West, north, and south stay rim-bounded at the new edges, so
+  // the far west gains open vale to roam.
+  const gwWallBand = (1 - smoothstep(160, 185, z)) * smoothstep(-180, -158, z);
+  const eastWallInner = lerp(150, 170, gwWallBand);
+  const eastWall = x > 0 ? smoothstep(eastWallInner, eastWallInner + 30, x) : 0;
+  const rimW = x < 0 ? smoothstep(WORLD_MIN_X + 30, WORLD_MIN_X, x) : 0;
   const rimS = smoothstep(WORLD_MIN_Z + 30, WORLD_MIN_Z, z);
   const rimN = smoothstep(WORLD_MAX_Z - 30, WORLD_MAX_Z, z);
-  const rim = Math.max(rimX, rimS, rimN);
+  const rim = Math.max(eastWall, rimW, rimS, rimN);
   h += rim * 40;
   h += mirefenImpactCraterOffset(x, z);
   return h;

@@ -147,7 +147,9 @@ export const GROUP_XP_BONUS = [1, 1, 1.166, 1.3, 1.43];
 
 export const ZONES: ZoneDef[] = [ZONE1_ZONE, ZONE2_ZONE, ZONE3_ZONE];
 
-export const WORLD_SIZE = 360; // world width: x spans [-180, 180]
+export const WORLD_SIZE = 440; // world width: x spans [-220, 220] (widened east for the
+// Greywater Valley back wall and west for open vale; the eastern mountain wall that
+// contains play is authored in world.ts at its original line, not at this bound).
 export const WORLD_MIN_X = -WORLD_SIZE / 2;
 export const WORLD_MAX_X = WORLD_SIZE / 2;
 export const WORLD_MIN_Z = ZONES[0].zMin;
