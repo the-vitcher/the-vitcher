@@ -199,6 +199,68 @@ export const VOICE_PROMPTS = [
     sampleText:
       'I built a kingdom that should have outlived the stars. Kneel before your king. Another kingdom comes to challenge me — and you too will join the rest.',
   },
+
+  // -- Greywater Valley (the witcher questline) ----------------------------
+  {
+    npcId: 'calla',
+    name: 'Calla',
+    voiceDescription:
+      'A young caravan survivor hollowed out by shock — a soft, flat, exhausted alto, the grief '
+      + 'pressed down so hard it has gone quiet. Words come slow and even, almost numb, with a fragile '
+      + 'catch beneath them that never quite breaks. Age late 20s. Female.',
+    sampleText:
+      'You are the witcher. Thank every god. The caravan went under at dawn, and my master\'s strongbox went with it. Please, I have nothing left but what is down in that water.',
+  },
+  {
+    npcId: 'reeve_ondrin',
+    name: 'Reeve Ondrin',
+    voiceDescription:
+      'A nervous rural official greasing a rope he would rather not pull — a reedy, placating tenor, '
+      + 'over-eager and evasive, forever smoothing things over. A quick, anxious cadence that keeps '
+      + 'glancing over its shoulder; warmth worn thin by fear of the crowd. Age 50s. Male.',
+    sampleText:
+      'Witcher. Good. The gallows are built and the crowd is past patience. We need a word, just a word, that the rope is righteous, and then everyone goes home content.',
+  },
+  {
+    npcId: 'ines',
+    name: 'Ines',
+    voiceDescription:
+      'An elegant, dangerous woman who prices everything — a low, smooth, unhurried alto, velvet laid '
+      + 'over cold steel. Precise, amused, faintly mocking; every line a transaction she has already '
+      + 'won. A controlled warmth that can turn to a blade between syllables. Age 30s–40s. Female.',
+    sampleText:
+      'You took your time. I once put a knife between your spine and a striga\'s claw, and now I am calling the whole debt in at once. Do sit. We have a great deal to settle.',
+  },
+  {
+    npcId: 'ortega',
+    name: 'Ortega',
+    voiceDescription:
+      'A conspirator burning with thwarted idealism — a low, urgent, hoarse baritone kept just above '
+      + 'a whisper, fevered and confiding. Words tumble fast and close, glancing at the crowd; a '
+      + 'firebrand\'s heat banked down to a mutter. Age 40s. Male.',
+    sampleText:
+      'Don\'t look at the banners, look under them. This whole pageant is the governor\'s, and I have spent my blood setting this one match. Win it clean, and the city is ours.',
+  },
+  {
+    npcId: 'goodwife_sera',
+    name: 'Goodwife Sera',
+    voiceDescription:
+      'A weathered war-refugee miller, plain and proud — a strong, blunt, work-roughened alto with '
+      + 'no patience for paper and a deep, earned warmth underneath. Steady, level, unawed; she speaks '
+      + 'like someone who rebuilt a dead mill with her own two hands. Age 40s–50s. Female.',
+    sampleText:
+      'So you\'re the heir. We wondered when paper would come walking. We made this dead mill breathe again, witcher; it feeds half the valley now, and we are not going quietly.',
+  },
+  {
+    npcId: 'magistrate_holt',
+    name: 'Magistrate Holt',
+    voiceDescription:
+      'A grave circuit magistrate, dry and exacting — a measured, gravelled bass-baritone weighed down '
+      + 'by the law and the years. Slow, precise, weary; he weighs each word like evidence, with the '
+      + 'cold courtesy of a man who has signed a great many warrants. Age 50s–60s. Male.',
+    sampleText:
+      'You are the witcher who brought me the slaver\'s manifest. The cells are full because of it. The law pays its debts; there is a chest in the jailhouse with your fee inside it.',
+  },
 ];
 
 // Recurring NPC records → the base voice that speaks for them. gen_npc_lines.mjs
