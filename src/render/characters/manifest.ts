@@ -316,10 +316,12 @@ export const VISUALS: Record<string, VisualDef> = {
     tint: 0x3c3b45, tintStrength: 0.36,
   },
   player_priest: {
-    // Temple Healer: pale temple vestments, kept light.
-    url: `${PLAYERS}/mage.glb`, height: HUMANOID_H,
+    // Temple Healer: a distinct classic-robe model, pale temple vestments. Keep only
+    // the cape (drop the body-hiding hat and the GLB's built-in staff/wand/spellbook;
+    // the temple staff is attached below).
+    url: `${PLAYERS}/mage_classic.glb`, height: HUMANOID_H,
     clips: kaykit(['2H_Melee_Attack_Chop']),
-    show: [],
+    show: ['Mage_Cape'],
     attach: [{ url: `${WEAPONS}/staff.glb`, bone: 'handslot.r' }],
     tint: 0xe6ddc6, tintStrength: 0.5,
   },
@@ -342,15 +344,15 @@ export const VISUALS: Record<string, VisualDef> = {
     tint: 0x4d5582, tintStrength: 0.32,
   },
   player_warlock: {
-    // Necromancer: grave-touched, sickly green-black robes.
-    url: `${PLAYERS}/mage.glb`, height: HUMANOID_H,
+    // Necromancer: a distinct hooded, masked figure (the rogue-hooded model), grave-
+    // touched green-black. The hood/mask/cape are its default look, so no show filter;
+    // a wand does the casting (its spellbook is dropped to keep the silhouette clean).
+    url: `${PLAYERS}/rogue_hooded.glb`, height: HUMANOID_H,
     clips: kaykit(['Spellcast_Shoot']), // wand zap reads better than a staff bonk
-    show: [],
     attach: [
       { url: `${WEAPONS}/wand.glb`, bone: 'handslot.r' },
-      { url: `${WEAPONS}/spellbook_open.glb`, bone: 'handslot.l', gripRef: 'Spellbook_open' },
     ],
-    tint: 0x4c553f, tintStrength: 0.45,
+    tint: 0x3a4434, tintStrength: 0.5,
   },
   player_druid: {
     // Druid of the Oak: deep forest green.

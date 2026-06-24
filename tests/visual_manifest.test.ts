@@ -70,6 +70,13 @@ describe('character visual manifest', () => {
     expect(new Set(monsters).size).toBe(4);
   });
 
+  it('gives each of the 9 witcher Schools a distinct base model', () => {
+    const classes = ['warrior', 'paladin', 'hunter', 'rogue', 'priest', 'shaman', 'mage', 'warlock', 'druid'];
+    const urls = classes.map((c) => VISUALS[`player_${c}`].url);
+    for (const [i, c] of classes.entries()) expect(urls[i], `player_${c} has no model`).toBeTruthy();
+    expect(new Set(urls).size, 'two classes share a base GLB').toBe(classes.length);
+  });
+
   it('keeps held weapons and props available on low graphics', () => {
     const allWeaponUrls = manifestUrls().filter((url) => url.startsWith('models/weapons/'));
     expect(allWeaponUrls.length).toBeGreaterThan(0);
