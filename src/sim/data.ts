@@ -94,6 +94,12 @@ export const CAMPS: CampDef[] = [
 
 export const GROUND_OBJECTS: GroundObjectDef[] = [...ZONE1_OBJECTS, ...ZONE2_OBJECTS, ...ZONE3_OBJECTS, ...TEMPLE_OBJECTS, ...GREYWATER_OBJECTS];
 
+// Witcher-senses self-talk per examinable clue object (objectItemId -> spoken lines).
+// Emitted by the sim when an `interact` quest objective on that object advances.
+export const GROUND_OBJECT_EXAMINE: Record<string, string[]> = Object.fromEntries(
+  GROUND_OBJECTS.filter((o) => o.examine && o.examine.length > 0).map((o) => [o.itemId, o.examine!]),
+);
+
 export const ROADS: { x: number; z: number }[][] = [...ZONE1_ROADS, ...ZONE2_ROADS, ...ZONE3_ROADS, ...GREYWATER_ROADS];
 
 export const PROPS: ZonePropsDef = mergeProps([ZONE1_PROPS, ZONE2_PROPS, ZONE3_PROPS, TEMPLE_PROPS, GREYWATER_PROPS]);

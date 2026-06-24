@@ -1296,7 +1296,10 @@ describe('quests', () => {
   });
 
   it('every ground object has custom pickup deny and enough lines', () => {
-    const ids = [...new Set(GROUND_OBJECTS.map((o) => o.itemId))].sort();
+    // Examine-only clue objects (witcher-senses interact beats) are read in place,
+    // never picked up, so they carry a spoken `examine` monologue instead of pickup lines.
+    const collectible = GROUND_OBJECTS.filter((o) => !o.examine);
+    const ids = [...new Set(collectible.map((o) => o.itemId))].sort();
     expect(Object.keys(GROUND_PICKUP_LINES).sort()).toEqual(ids);
     for (const id of ids) {
       expect(GROUND_PICKUP_LINES[id]?.deny, `${id} deny`).toBeTruthy();

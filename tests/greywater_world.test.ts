@@ -7,6 +7,7 @@ import { describe, expect, it } from 'vitest';
 import { groundHeight, WATER_LEVEL, GREYWATER_PONDS, greywaterPondOffset } from '../src/sim/world';
 import {
   GREYWATER_NPCS, GREYWATER_CAMPS, GREYWATER_ROADS, GREYWATER_MOBS,
+  GREYWATER_OBJECTS, GREYWATER_QUESTS,
 } from '../src/sim/content/greywater';
 import { ZONE1_ZONE } from '../src/sim/content/zone1';
 
@@ -72,6 +73,35 @@ describe('Greywater Valley geography', () => {
       const a = greywaterPondOffset(x, p.z);
       const b = greywaterPondOffset(x + 3, p.z);
       expect(Math.abs(a - b)).toBeLessThan(2.2);
+    }
+  });
+
+  it('every interact objective points at a real clue object, and clues speak a monologue', () => {
+    const objIds = new Set(GREYWATER_OBJECTS.map((o) => o.itemId));
+    const examinable = new Set(GREYWATER_OBJECTS.filter((o) => o.examine?.length).map((o) => o.itemId));
+    let interactCount = 0;
+    for (const quest of Object.values(GREYWATER_QUESTS)) {
+      for (const obj of quest.objectives) {
+        if (obj.type !== 'interact' || !obj.targetObjectItemId) continue;
+        interactCount++;
+        expect(objIds, `${quest.id} examines missing object ${obj.targetObjectItemId}`)
+          .toContain(obj.targetObjectItemId);
+        // Every witcher-senses clue beat has a self-talk monologue authored.
+        expect(examinable, `${obj.targetObjectItemId} has no monologue`).toContain(obj.targetObjectItemId);
+      }
+    }
+    // The redesign added real detective beats across the questline.
+    expect(interactCount).toBeGreaterThanOrEqual(8);
+  });
+
+  it('every clue monologue is multi-line witcher self-talk, dash- and emoji-free', () => {
+    for (const o of GREYWATER_OBJECTS) {
+      if (!o.examine) continue;
+      expect(o.examine.length, `${o.itemId} monologue too short`).toBeGreaterThanOrEqual(2);
+      for (const line of o.examine) {
+        expect(line.length).toBeGreaterThan(0);
+        expect(line, `${o.itemId} line has a dash/emoji`).not.toMatch(/[‒-―‘’“”]?[—–]|\p{Extended_Pictographic}/u);
+      }
     }
   });
 

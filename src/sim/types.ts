@@ -672,6 +672,10 @@ export interface GroundObjectDef {
   itemId: string;
   name: string;
   positions: { x: number; z: number }[];
+  // Witcher self-talk: when this object is examined for an `interact` quest
+  // objective (the witcher-senses clue beat), the player hears these lines spoken
+  // in sequence, the way a witcher mutters his deductions aloud over a clue.
+  examine?: string[];
 }
 
 export interface DungeonSpawn {

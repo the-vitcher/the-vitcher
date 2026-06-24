@@ -88,6 +88,9 @@ describe('content referential integrity', () => {
       if (!MOBS[c.mobId]) problems.push(`camp at (${c.center.x},${c.center.z}): mob ${c.mobId} missing`);
     }
     for (const g of GROUND_OBJECTS) {
+      // Examine-only clue objects (witcher-senses interact beats) are read in place,
+      // never collected, so they are not inventory items and need no ITEMS entry.
+      if (g.examine) continue;
       if (!ITEMS[g.itemId]) problems.push(`ground object ${g.itemId} missing from ITEMS`);
     }
     for (const d of DUNGEON_LIST) {

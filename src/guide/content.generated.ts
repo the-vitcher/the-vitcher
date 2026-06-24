@@ -996,7 +996,7 @@ export const GUIDE_CLASSES: GuideClassInfo[] = [
       }
     ],
     "model": "player_warlock",
-    "tint": "#4c553f"
+    "tint": "#3a4434"
   },
   {
     "id": "druid",
@@ -1830,10 +1830,12 @@ export const GUIDE_MODELS: Record<string, GuideModelSpec> = {
     "tintStrength": 0.36
   },
   "player_priest": {
-    "url": "models/chars/players/mage.glb",
+    "url": "models/chars/players/mage_classic.glb",
     "idle": "Idle",
     "height": 2.6,
-    "show": [],
+    "show": [
+      "Mage_Cape"
+    ],
     "attach": [
       {
         "url": "models/weapons/staff.glb",
@@ -1873,22 +1875,16 @@ export const GUIDE_MODELS: Record<string, GuideModelSpec> = {
     "tintStrength": 0.32
   },
   "player_warlock": {
-    "url": "models/chars/players/mage.glb",
+    "url": "models/chars/players/rogue_hooded.glb",
     "idle": "Idle",
     "height": 2.6,
-    "show": [],
     "attach": [
       {
         "url": "models/weapons/wand.glb",
         "bone": "handslot.r"
-      },
-      {
-        "url": "models/weapons/spellbook_open.glb",
-        "bone": "handslot.l",
-        "gripRef": "Spellbook_open"
       }
     ],
-    "tintStrength": 0.45
+    "tintStrength": 0.5
   },
   "player_druid": {
     "url": "models/chars/players/druid.glb",

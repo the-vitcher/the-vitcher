@@ -5835,10 +5835,16 @@ export const en: EnTranslations = {
         "completion": "You went down where Calla could not and found no ledgers in the box: cut gems, and a manifest. Not goods. People, tallied by the head. Her gentle dead master was a slaver, and halfway down the list, in a child's hand, is Calla's own name. The box is in your hands now. What you do with it is yours to choose.",
         "objectives": {
           "0": {
-            "label": "Drowner slain"
+            "label": "Read the wrecked wagon (Witcher Senses)"
           },
           "1": {
+            "label": "Drowner slain"
+          },
+          "2": {
             "label": "Slaver's Strongbox recovered"
+          },
+          "3": {
+            "label": "Read the manifest (Witcher Senses)"
           }
         },
         "choices": {
@@ -5869,10 +5875,16 @@ export const en: EnTranslations = {
         "completion": "Hask reeks of river-mud and terror and nothing else. But the dead girl's shawl carries another scent: bitter herbs, a healer's hands. Her uncle's hands. The reeve knows it too, and is begging you with his eyes to say the word over Hask anyway. The rope is greased. The choice is yours.",
         "objectives": {
           "0": {
-            "label": "The girl's shawl examined"
+            "label": "Walk the gallows-yard (Witcher Senses)"
           },
           "1": {
             "label": "Bog Ghoul slain"
+          },
+          "2": {
+            "label": "The girl's shawl recovered"
+          },
+          "3": {
+            "label": "Examine the shawl (Witcher Senses)"
           }
         },
         "choices": {
@@ -5903,10 +5915,16 @@ export const en: EnTranslations = {
         "completion": "The draught is brewed and the guards are down. The margrave loves Ines ruinously, the way men love a thing they are certain feels the same. He is not cruel. He is lonely, and patient, and he holds the only key. How Ines walks free, and what it costs, is yours to decide.",
         "objectives": {
           "0": {
-            "label": "Wolfsbane gathered"
+            "label": "Read the margrave's solar (Witcher Senses)"
           },
           "1": {
+            "label": "Wolfsbane gathered"
+          },
+          "2": {
             "label": "Margrave's Guard slain"
+          },
+          "3": {
+            "label": "Read the unsent letters (Witcher Senses)"
           }
         },
         "choices": {
@@ -5948,10 +5966,16 @@ export const en: EnTranslations = {
         "completion": "You stand in the winner's circle with the crown in your hands and the crowd drunk on a victory you won. Ortega wants you to throw the laurel down and name the governor's crimes until the city rises. The governor's man wants you to kneel quietly for a captaincy and a keep. Both want the same hour of your life. Only one of them is dying for it.",
         "objectives": {
           "0": {
-            "label": "Tournament Brawler defeated"
+            "label": "Read the marshals' ledger (Witcher Senses)"
           },
           "1": {
+            "label": "Tournament Brawler defeated"
+          },
+          "2": {
             "label": "Governor's Champion defeated"
+          },
+          "3": {
+            "label": "Read the governor's writ (Witcher Senses)"
           }
         },
         "choices": {
@@ -5994,10 +6018,16 @@ export const en: EnTranslations = {
         "completion": "The mercenaries are routed and the hag is dead in the reeds. The paper says the mill is yours, stone and stream and all. The bread says it is theirs. The river, which would drown three villages if it were dammed, doesn't care either way. So, Sera asks: what does the witcher say?",
         "objectives": {
           "0": {
-            "label": "Reclamation Mercenary driven off"
+            "label": "Read the reclamation survey (Witcher Senses)"
           },
           "1": {
+            "label": "Reclamation Mercenary driven off"
+          },
+          "2": {
             "label": "Greywater Water Hag slain"
+          },
+          "3": {
+            "label": "Examine the contested deed (Witcher Senses)"
           }
         },
         "choices": {

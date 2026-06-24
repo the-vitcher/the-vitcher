@@ -212,8 +212,10 @@ export const GREYWATER_QUESTS: Record<string, QuestDef> = {
     text: "The river took the caravan at the ford, $N, and my master's strongbox with it. The current dragged it into the drowned cave to the west, and the drowners nest there now. Clear them, bring me the box, and his widow will have what she is owed.",
     completionText: "You went down where Calla could not and found no ledgers in the box: cut gems, and a manifest. Not goods. People, tallied by the head. Her gentle dead master was a slaver, and halfway down the list, in a child's hand, is Calla's own name. The box is in your hands now. What you do with it is yours to choose.",
     objectives: [
-      { type: 'kill', targetMobId: 'greywater_drowner', count: 6, label: 'Drowner slain' },
+      { type: 'interact', targetObjectItemId: 'caravan_wreck', count: 1, label: 'Read the wrecked wagon (Witcher Senses)' },
+      { type: 'kill', targetMobId: 'greywater_drowner', count: 5, label: 'Drowner slain' },
       { type: 'collect', itemId: 'slaver_strongbox', count: 1, label: "Slaver's Strongbox recovered" },
+      { type: 'interact', targetObjectItemId: 'slaver_manifest', count: 1, label: 'Read the manifest (Witcher Senses)' },
     ],
     xpReward: 420, copperReward: 60, itemRewards: {},
     minLevel: 1, // entry quest: available from level 1 so Calla's map marker shows immediately
@@ -253,8 +255,10 @@ export const GREYWATER_QUESTS: Record<string, QuestDef> = {
     text: "A child is dead and a drifter named Hask was found by the body with her ribbon in his fist. The crowd wants a neck. Before you say a word over the rope, walk the gallows-yard, $N: take the girl's shawl from my table, and put down the bog ghouls that have crept up from the fen to the corpse.",
     completionText: "Hask reeks of river-mud and terror and nothing else. But the dead girl's shawl carries another scent: bitter herbs, a healer's hands. Her uncle's hands. The reeve knows it too, and is begging you with his eyes to say the word over Hask anyway. The rope is greased. The choice is yours.",
     objectives: [
-      { type: 'collect', itemId: 'girls_shawl', count: 1, label: "The girl's shawl examined" },
+      { type: 'interact', targetObjectItemId: 'gallows_yard', count: 1, label: 'Walk the gallows-yard (Witcher Senses)' },
       { type: 'kill', targetMobId: 'bog_ghoul', count: 5, label: 'Bog Ghoul slain' },
+      { type: 'collect', itemId: 'girls_shawl', count: 1, label: "The girl's shawl recovered" },
+      { type: 'interact', targetObjectItemId: 'healers_herbs', count: 1, label: 'Examine the shawl (Witcher Senses)' },
     ],
     xpReward: 620, copperReward: 45, itemRewards: { warrior: 'witchers_oilcloak', mage: 'witchers_oilcloak', rogue: 'witchers_oilcloak' },
     requiresQuest: 'gw_caravan', minLevel: 3,
@@ -291,8 +295,10 @@ export const GREYWATER_QUESTS: Record<string, QuestDef> = {
     text: "The margrave keeps me in a gilded cage at the only pass north, $N, and he holds the road you need open this season. Get me out. I don't care how, that's a lie, I care a great deal how. Brew me a sleeping-draught from wolfsbane the nekkers guard in the wood, and cut a path through his guards.",
     completionText: "The draught is brewed and the guards are down. The margrave loves Ines ruinously, the way men love a thing they are certain feels the same. He is not cruel. He is lonely, and patient, and he holds the only key. How Ines walks free, and what it costs, is yours to decide.",
     objectives: [
+      { type: 'interact', targetObjectItemId: 'margrave_solar', count: 1, label: "Read the margrave's solar (Witcher Senses)" },
       { type: 'collect', itemId: 'wolfsbane_sprig', count: 3, label: 'Wolfsbane gathered' },
       { type: 'kill', targetMobId: 'margrave_guard', count: 6, label: "Margrave's Guard slain" },
+      { type: 'interact', targetObjectItemId: 'love_letters', count: 1, label: 'Read the unsent letters (Witcher Senses)' },
     ],
     xpReward: 880, copperReward: 70, itemRewards: { warrior: 'pass_warden_blade', mage: 'pass_warden_wand', rogue: 'pass_warden_dirk' },
     requiresQuest: 'gw_aldermere', minLevel: 5,
@@ -334,8 +340,10 @@ export const GREYWATER_QUESTS: Record<string, QuestDef> = {
     text: "The tournament is the governor's pageant, $N, and I have spent my life rigging this one match. Win it clean: cut down the brawlers in the lists, then put down the Governor's Champion in the winner's bout. What you do from the winner's circle after that will decide whether this city rises or kneels.",
     completionText: "You stand in the winner's circle with the crown in your hands and the crowd drunk on a victory you won. Ortega wants you to throw the laurel down and name the governor's crimes until the city rises. The governor's man wants you to kneel quietly for a captaincy and a keep. Both want the same hour of your life. Only one of them is dying for it.",
     objectives: [
+      { type: 'interact', targetObjectItemId: 'betting_ledger', count: 1, label: "Read the marshals' ledger (Witcher Senses)" },
       { type: 'kill', targetMobId: 'tournament_brawler', count: 6, label: 'Tournament Brawler defeated' },
       { type: 'kill', targetMobId: 'tournament_champion', count: 1, label: "Governor's Champion defeated" },
+      { type: 'interact', targetObjectItemId: 'governors_writ', count: 1, label: "Read the governor's writ (Witcher Senses)" },
     ],
     xpReward: 1180, copperReward: 80, itemRewards: { warrior: 'champions_warhammer', mage: 'champions_focus', rogue: 'champions_rondel' },
     requiresQuest: 'gw_velvet', minLevel: 7,
@@ -378,8 +386,10 @@ export const GREYWATER_QUESTS: Record<string, QuestDef> = {
     text: "The deed in your pack calls Greywater Mill derelict. The deed is a liar, $N. We are war-folk; we found this place dead and made it breathe, and it feeds the valley now. But a reclamation company wants to buy your deed, turn us out, and dam the river, drowning three villages downstream. Drive their mercenaries off, and put down the water hag their digging has stirred from the mud.",
     completionText: "The mercenaries are routed and the hag is dead in the reeds. The paper says the mill is yours, stone and stream and all. The bread says it is theirs. The river, which would drown three villages if it were dammed, doesn't care either way. So, Sera asks: what does the witcher say?",
     objectives: [
+      { type: 'interact', targetObjectItemId: 'water_survey', count: 1, label: 'Read the reclamation survey (Witcher Senses)' },
       { type: 'kill', targetMobId: 'reclamation_mercenary', count: 6, label: 'Reclamation Mercenary driven off' },
       { type: 'kill', targetMobId: 'greywater_hag', count: 1, label: 'Greywater Water Hag slain' },
+      { type: 'interact', targetObjectItemId: 'contested_deed', count: 1, label: 'Examine the contested deed (Witcher Senses)' },
     ],
     xpReward: 1500, copperReward: 120, itemRewards: { warrior: 'millwardens_plate', mage: 'millwardens_drape', rogue: 'millwardens_jerkin' },
     requiresQuest: 'gw_champion', minLevel: 9,
@@ -575,6 +585,7 @@ export const GREYWATER_PROPS: ZonePropsDef = {
 };
 
 export const GREYWATER_OBJECTS: GroundObjectDef[] = [
+  // --- collect objects (recovered into the pack) ---
   {
     itemId: 'slaver_strongbox',
     name: "Slaver's Strongbox",
@@ -585,12 +596,102 @@ export const GREYWATER_OBJECTS: GroundObjectDef[] = [
   {
     itemId: 'girls_shawl',
     name: "The Girl's Shawl",
-    positions: [{ x: 138, z: -58 }, { x: 142, z: -62 }],
+    positions: [{ x: 139, z: -57 }, { x: 137, z: -56 }],
   },
   {
     itemId: 'jail_chest',
     name: 'Jailhouse Chest',
     positions: [{ x: 17, z: 9 }, { x: 16, z: 11 }], // in the Eastbrook jail yard by Magistrate Holt
+  },
+
+  // --- witcher-senses clue objects (examined in place; each speaks a monologue) ---
+  {
+    itemId: 'caravan_wreck', name: 'The Wrecked Wagon',
+    positions: [{ x: 141, z: -141 }, { x: 143, z: -144 }],
+    examine: [
+      'Hm. The wagon went off the ford sideways, not forward.',
+      "It didn't lose the road in the current. The wheels were turned.",
+      'Someone drove it under on purpose.',
+    ],
+  },
+  {
+    itemId: 'slaver_manifest', name: "The Slaver's Manifest",
+    positions: [{ x: 146, z: -145 }, { x: 148, z: -147 }],
+    examine: [
+      'Not a ledger of goods. A tally of people, counted by the head.',
+      "And halfway down, in a child's hand...",
+      "Calla's own name.",
+    ],
+  },
+  {
+    itemId: 'gallows_yard', name: 'The Gallows-Yard',
+    positions: [{ x: 139, z: -59 }, { x: 141, z: -61 }],
+    examine: [
+      'The drifter reeks of river-mud and fear. Nothing else.',
+      "A child-killer's hands carry more than that. Blood. Lye. Something.",
+      "Whoever did this, it wasn't the man they've built the rope for.",
+    ],
+  },
+  {
+    itemId: 'healers_herbs', name: 'The Shawl Examined',
+    positions: [{ x: 137, z: -57 }, { x: 138, z: -55 }],
+    examine: [
+      'Under the mud the shawl carries another scent. Bitter. Crushed.',
+      'Wolfsbane and feverfew, ground fine. A healer keeps these.',
+      'Her uncle keeps these.',
+    ],
+  },
+  {
+    itemId: 'margrave_solar', name: "The Margrave's Solar",
+    positions: [{ x: 150, z: 7 }, { x: 152, z: 6 }],
+    examine: [
+      'Her portrait hangs on three walls of this one room.',
+      'This is not a jailer. This is a man who mistook a cage for an embrace.',
+    ],
+  },
+  {
+    itemId: 'love_letters', name: 'The Unsent Letters',
+    positions: [{ x: 152, z: 5 }, { x: 149, z: 6 }],
+    examine: [
+      'Letters. Dozens. All written, none sent.',
+      'He is not cruel. He is lonely, and patient, and he holds the only key.',
+      'That is the harder kind of man to fight.',
+    ],
+  },
+  {
+    itemId: 'betting_ledger', name: "The Marshals' Ledger",
+    positions: [{ x: 142, z: 101 }, { x: 144, z: 103 }],
+    examine: [
+      'The brackets are inked before a single blow is struck.',
+      'Every bout bought, every fall priced.',
+      'The crowd will cheer a thing they have already paid to lose.',
+    ],
+  },
+  {
+    itemId: 'governors_writ', name: "The Governor's Writ",
+    positions: [{ x: 146, z: 103 }, { x: 145, z: 106 }],
+    examine: [
+      'A captaincy. A keep. A pension.',
+      'A leash, dressed up as an honor.',
+      'The governor does not want a champion. He wants a quiet one.',
+    ],
+  },
+  {
+    itemId: 'water_survey', name: 'The Reclamation Survey',
+    positions: [{ x: 141, z: 147 }, { x: 143, z: 149 }],
+    examine: [
+      'Survey stakes. Sight-lines. A dam-wall drawn across the race in red.',
+      'Dam it here and three villages downstream drown in their sleep.',
+      "They know. It's written in the margins, and they staked it anyway.",
+    ],
+  },
+  {
+    itemId: 'contested_deed', name: 'The Contested Deed',
+    positions: [{ x: 143, z: 145 }, { x: 145, z: 147 }],
+    examine: [
+      'The deed calls this mill derelict. The turning wheel says otherwise.',
+      'Paper and bread, telling two different truths over the same stones.',
+    ],
   },
 ];
 

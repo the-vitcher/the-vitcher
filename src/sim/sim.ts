@@ -1,6 +1,6 @@
 import {
   ABILITIES, ARENA_SLOT_COUNT, CAMPS, CLASSES, DUNGEONS, DUNGEON_LIST, DungeonDef, arenaOrigin, dungeonAt,
-  DUNGEON_X_THRESHOLD, GROUND_OBJECTS, GROUP_XP_BONUS, INSTANCE_SLOT_COUNT, isArenaPos,
+  DUNGEON_X_THRESHOLD, GROUND_OBJECTS, GROUND_OBJECT_EXAMINE, GROUP_XP_BONUS, INSTANCE_SLOT_COUNT, isArenaPos,
   ITEMS, MOBS, NPCS, PLAYER_START, PROPS, QUESTS, ROADS, questRewardItemId, abilitiesKnownAt, instanceOrigin,
   DEEPFEN_SHALLOWS_LAKE, WORLD_MIN_X, WORLD_MAX_X,
   zoneAt, ZONES, FISHING_TABLES, FISHING_RARE_ID,
@@ -7906,6 +7906,8 @@ export class Sim {
         if (objective.type !== 'interact' || objective.targetObjectItemId !== obj.objectItemId) return;
         handled = true;
         if (qp.counts[objectiveIndex] >= objective.count) return;
+        // Witcher self-talk: mutter the deductions aloud as the clue is read.
+        this.emitWitcherMonologue(obj.objectItemId, meta.entityId);
         if (obj.objectItemId === 'crypt_ritual_circle' && !this.countItem('crypt_keystone', meta.entityId)) {
           this.error(meta.entityId, 'The ritual circle is silent without the Crypt Keystone.');
           return;
@@ -7955,6 +7957,20 @@ export class Sim {
       eligible.push(member);
     }
     return eligible.some((member) => member.entityId === actor.entityId) ? eligible : [actor];
+  }
+
+  // Geralt-style investigation monologue: the witcher reads a clue and speaks his
+  // deductions aloud, one short line at a time. Lines are authored on the ground
+  // object (GroundObjectDef.examine) and ship English (re-localized like the other
+  // variable-routed flavor emits). Personal to the examining player.
+  private emitWitcherMonologue(itemId: string, pid: number): void {
+    const lines = GROUND_OBJECT_EXAMINE[itemId];
+    if (!lines || lines.length === 0) return;
+    for (let i = 0; i < lines.length; i++) {
+      const event: SimEvent = { type: 'log', text: lines[i], color: '#9fe6b0', pid };
+      if (i === 0) this.emit(event);
+      else this.delayedEvents.push({ at: this.time + i * NYTHRAXIS_VISION_LINE_DELAY, event });
+    }
   }
 
   private emitQuestObjectVision(itemId: string, pids: number[], entityId?: number | null): void {

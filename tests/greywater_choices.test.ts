@@ -48,15 +48,26 @@ function npcEntity(sim: Sim, templateId: string): Entity {
   return e;
 }
 
-// Place the player on the quest giver and bring the gw_caravan quest to `ready`.
+// Drive an `interact` quest objective by faking the ground-object interaction the
+// way readyCaravan fakes mob kills.
+function examine(sim: Sim, meta: unknown, objectItemId: string): void {
+  const obj = { objectItemId, pos: { x: 0, y: 0, z: 0 } } as unknown as Entity;
+  (sim as unknown as { interactObjectForQuests(o: Entity, m: unknown): boolean }).interactObjectForQuests(obj, meta);
+}
+
+// Place the player on the quest giver and bring the gw_caravan quest to `ready`
+// through its full multi-stage flow (examine the wreck, slay drowners, recover the
+// box, read the manifest).
 function readyCaravan(sim: Sim, pid: number): void {
   const calla = npcEntity(sim, 'calla');
   teleport(sim, pid, calla.pos.x, calla.pos.z);
   sim.acceptQuest('gw_caravan', pid);
   const meta = sim.meta(pid)!;
-  sim.addItem('slaver_strongbox', 1, pid); // collect objective
+  examine(sim, meta, 'caravan_wreck'); // interact: Witcher Senses
   const fakeDrowner = { templateId: 'greywater_drowner' } as Entity;
   for (let i = 0; i < 6; i++) (sim as unknown as { onMobKilledForQuests(m: Entity, meta: unknown): void }).onMobKilledForQuests(fakeDrowner, meta);
+  sim.addItem('slaver_strongbox', 1, pid); // collect objective
+  examine(sim, meta, 'slaver_manifest'); // interact: the reveal
 }
 
 describe('Greywater moral-choice quest engine', () => {
