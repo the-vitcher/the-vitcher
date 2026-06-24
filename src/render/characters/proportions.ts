@@ -53,44 +53,53 @@ function sanitize(name: string): string {
 
 let enabledCache: boolean | null = null;
 
-/** Prototype gate: on by default, `?proportions=stylized` returns the original look. */
+/** Prototype gate: OFF by default (the stylized rig ships as-is); opt in to the human
+ *  retarget with `?proportions=human` (alias `on`). Defaulted off after the
+ *  per-frame-compounding regression so a bug here can never break the shipped look. */
 export function humanProportionsEnabled(): boolean {
   if (enabledCache !== null) return enabledCache;
-  let mode = 'human';
+  let mode = 'stylized';
   if (typeof window !== 'undefined' && window.location?.search) {
     const v = new URLSearchParams(window.location.search).get('proportions');
     if (v) mode = v;
   }
-  enabledCache = mode !== 'stylized' && mode !== 'off';
+  enabledCache = mode === 'human' || mode === 'on';
   return enabledCache;
 }
 
-/** A bone reference paired with the rule that drives it (resolved once per clone). */
+/** A bone reference paired with its rule AND the bone's captured REST scale/position.
+ *  We re-derive from this baseline every frame (set, never multiply the live value),
+ *  so the retarget can never compound. The earlier multiply-the-live-value version was
+ *  the "stretch to the sky" bug: the KayKit clips key only ROTATION on the limb bones,
+ *  so the mixer never reset the position we kept multiplying, and it grew unbounded. */
 export interface ProportionTarget {
   bone: THREE.Object3D;
   mode: 'scale' | 'position';
   factor: number;
+  baseScale: THREE.Vector3;
+  basePos: THREE.Vector3;
 }
 
-/** Resolve the plan against a clone's skeleton. Returns [] when the rig is not the
- *  KayKit humanoid (no matching bones) or the feature is off, so every other rig and
- *  the stylized mode are exact no-ops. */
+/** Resolve the plan against a clone's skeleton, capturing each bone's rest pose.
+ *  Returns [] when the rig is not the KayKit humanoid (no matching bones) or the
+ *  feature is off, so every other rig and the stylized mode are exact no-ops. */
 export function collectProportionTargets(root: THREE.Object3D): ProportionTarget[] {
   if (!humanProportionsEnabled()) return [];
   const targets: ProportionTarget[] = [];
   for (const rule of PROPORTION_PLAN) {
     const bone = root.getObjectByName(rule.bone) ?? root.getObjectByName(sanitize(rule.bone));
-    if (bone) targets.push({ bone, mode: rule.mode, factor: rule.factor });
+    if (bone) targets.push({ bone, mode: rule.mode, factor: rule.factor, baseScale: bone.scale.clone(), basePos: bone.position.clone() });
   }
   return targets;
 }
 
-/** Re-apply the proportion factors on top of the current (clip-driven) bone state.
- *  Call once immediately after each mixer.update() — it multiplies the fresh clip
- *  value, so it never compounds across frames. */
+/** Re-derive each retargeted bone from its captured REST value times the factor.
+ *  Idempotent: because it SETS from the baseline (never multiplies the current value),
+ *  calling it every frame after mixer.update() can never compound, whether or not the
+ *  clip keys that bone. Safe for the targeted joints, which only rotate in the clips. */
 export function applyProportionTargets(targets: readonly ProportionTarget[]): void {
   for (const t of targets) {
-    if (t.mode === 'scale') t.bone.scale.multiplyScalar(t.factor);
-    else t.bone.position.multiplyScalar(t.factor);
+    if (t.mode === 'scale') t.bone.scale.copy(t.baseScale).multiplyScalar(t.factor);
+    else t.bone.position.copy(t.basePos).multiplyScalar(t.factor);
   }
 }
