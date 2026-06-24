@@ -262,6 +262,108 @@ export const VOICE_PROMPTS = [
       'You are the witcher who brought me the slaver\'s manifest. The cells are full because of it. The law pays its debts; there is a chest in the jailhouse with your fee inside it.',
   },
 
+  // -- Greywater Fallout-edit deed destinations (the played-out amoral branches) ---
+  {
+    npcId: 'fen_fence',
+    name: 'The Fen Fence',
+    voiceDescription:
+      'A slave-ring fence who prices people like cargo, bored and unbothered. A flat, smoky baritone, '
+      + 'soft and patient, with a smile you can hear and no warmth behind it. Unhurried, transactional, '
+      + 'faintly amused at your discomfort. Age 40s. Male.',
+    sampleText:
+      'You found the camp, then. Smart boots. Show me the manifest, and we will see whose names are worth what. No refunds, no witnesses, no hard feelings.',
+  },
+  {
+    npcId: 'court_clerk',
+    name: 'Clerk Whitlow',
+    voiceDescription:
+      'A dry Eastbrook court clerk who has seen every kind of liar but never a dead one. A precise, '
+      + 'clipped, faintly weary tenor, procedural to the bone, with a thin thread of gallows wit. '
+      + 'Measured, exact, unimpressed. Age 40s. Male.',
+    sampleText:
+      'You want to enter a witness. The court does not usually seat the drowned. But the court has also never had a witness so unlikely to perjure itself. Bring it to the dock.',
+  },
+  {
+    npcId: 'healer_uncle',
+    name: 'Uncle Fadrey',
+    voiceDescription:
+      'A genial poisoner who tends his garden and his alibis with the same soft hands. A warm, '
+      + 'unhurried, grandfatherly tenor, cozy and inviting, with something cold and patient settled '
+      + 'underneath. Pleasant, reasonable, quietly monstrous. Age 50s to 60s. Male.',
+    sampleText:
+      'A witcher at my door. I keep a tidy garden and a tidier story. If you have come to sell me the second kind, come in. The kettle is on and the relatives are away.',
+  },
+  {
+    npcId: 'gallows_crier',
+    name: 'Crier Bevan',
+    voiceDescription:
+      'A gallows-yard crier who treats a hanging as a show and a crowd as an instrument. A big, '
+      + 'carrying, theatrical baritone, brassy and callous, every line pitched to the back row. Loud, '
+      + 'gleeful, indifferent to whose neck it is. Age 40s. Male.',
+    sampleText:
+      'The crowd is hot and the rope is greased. Give me a name to shout and they will hang whoever I point at. Funny thing about a mob: it does not much care which neck.',
+  },
+  {
+    npcId: 'margrave_rival',
+    name: 'Lord Vasc',
+    voiceDescription:
+      'A cruel, idle aristocrat who collects other people\'s ruin for sport. A polished, languid, '
+      + 'well-fed baritone, silk over contempt, savoring every word. Amused, unhurried, casually '
+      + 'vicious. Age 40s to 50s. Male.',
+    sampleText:
+      'I hear you have inventory. A caged woman and the fool who caged her, both for sale, separately. I will take both. Do not tell me they know each other. Actually, do.',
+  },
+  {
+    npcId: 'pass_gatekeeper',
+    name: 'Gatekeeper Oltan',
+    voiceDescription:
+      'A blunt pass-warden who asks no questions he is not paid to ask. A gruff, gravelled, incurious '
+      + 'bass, flat and practical, allergic to ceremony. Short sentences, no curiosity, deeply tired. '
+      + 'Age 50s. Male.',
+    sampleText:
+      'The road opens when the margrave\'s own hand signs the seal-stone. His hand. I do not ask whether the rest of him came along. Bring me a signature and we are square.',
+  },
+  {
+    npcId: 'still_alchemist',
+    name: 'Old Brymm',
+    voiceDescription:
+      'A bog hedge-alchemist who is his own best customer, wheezy and delighted. A cracked, sing-song, '
+      + 'slightly slurred old tenor, conspiratorial and giggling, words swimming pleasantly. Chemically '
+      + 'cheerful, harmless-seeming, faintly unhinged. Age 60s. Male.',
+    sampleText:
+      'Bog-Breath, truth-serum, or the special? The special makes a man briefly and ruinously honest. The Bog-Breath makes him briefly and ruinously sick. For the lists, you want the second one.',
+  },
+  {
+    npcId: 'bookmaker_creed',
+    name: 'Creed',
+    voiceDescription:
+      'A tournament bookmaker who runs every number and trusts no one, least of all the favorite. A '
+      + 'fast, sharp, clipped tenor, all angles and arithmetic, friendly the way a trap is friendly. '
+      + 'Quick, transactional, perpetually calculating. Age 30s to 40s. Male.',
+    sampleText:
+      'You are the favorite, which makes you my problem and my opportunity. Lose convincingly in the winner\'s bout and the purse is yours. Win, and I am a poor man with poor manners.',
+  },
+  {
+    npcId: 'downstream_registrar',
+    name: 'Registrar Pell',
+    voiceDescription:
+      'A downstream registrar who stamps whatever pays and reads none of it, comfortably complicit. A '
+      + 'flat, nasal, bureaucratic baritone, bored past caring, with a shrug built into every sentence. '
+      + 'Indifferent, transactional, faintly oily. Age 40s to 50s. Male.',
+    sampleText:
+      'Three villages, three ledgers, one dry mill. File the same deed in each before the water comes and every signature is valid. The lawyers will sort the drowning out afterward.',
+  },
+  {
+    npcId: 'fen_hag',
+    name: 'The Millpond Hag',
+    voiceDescription:
+      'An ancient water hag who was here before the mill and means to be here after, speaking from '
+      + 'under the pond. A low, wet, doubled register, slow and patient and inhuman, the cadence of '
+      + 'something that does not need to breathe. Cold, amused, geological. Ageless. Female.',
+    sampleText:
+      'You did not come to kill me, witcher. Curious. Then we can trade. Point me at the men with the stakes and the red lines, and the river will remember whose home it was.',
+  },
+
   // -- The witcher's inner voice (clue self-talk; one masculine, one feminine) ---
   {
     npcId: 'witcher_inner_male',
