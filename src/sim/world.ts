@@ -209,14 +209,17 @@ export function terrainHeight(x: number, z: number, seed: number): number {
     const into = smoothstep(108, 122, x) * gwZ;
     if (into > 0) {
       const onRoad = 1 - smoothstep(3, 14, roadDistance(x, z));        // a narrow dry causeway
-      const rise01 = smoothstep(150, 174, x);                          // 0 floor .. 1 back-wall shelf
-      const flood = smoothstep(20, -30, z) * (1 - rise01);             // the southern Marsh Flat
-      const village = smoothstep(20, 46, z) * (1 - smoothstep(118, 144, z)) * (1 - rise01);
+      const rise01 = smoothstep(305, 332, x);                          // far-eastern back-wall shelf
+      const eastFlats = smoothstep(160, 200, x) * (1 - rise01);        // broad dry plain east of the village
+      const west = 1 - smoothstep(160, 200, x);                        // the original entrance half (marsh+village)
+      const flood = smoothstep(20, -30, z) * west;                     // the southern Marsh Flat (entrance only)
+      const village = smoothstep(20, 46, z) * (1 - smoothstep(118, 144, z)) * west;
       let target = -2.0;                       // damp marsh floor, just above the waterline
       target = lerp(target, -6.0, flood);      // the drowned south sits below water
       target = lerp(target, 1.5, village);     // the central Village Floor crowns dry
+      target = lerp(target, 1.2, eastFlats);   // the eastern plain: dry, gently rolling, room to build
       target = lerp(target, 1.5, onRoad);      // the spine road is a dry causeway
-      target = lerp(target, 6.0, rise01);      // the eastern Rise terraces up to the wall
+      target = lerp(target, 7.0, rise01);      // the far eastern Rise terraces up to the back wall
       const roll = (fbm2(x * 0.045, z * 0.045, seed + 71, 3) - 0.5) * 2.5;
       h = lerp(h, target + roll, into);
       // Carved water: the millpond (north floor, the hag's pool) and the ford pool (the
@@ -233,7 +236,7 @@ export function terrainHeight(x: number, z: number, seed: number): number {
   // (x~110) and its back wall. West, north, and south stay rim-bounded at the new edges, so
   // the far west gains open vale to roam.
   const gwWallBand = (1 - smoothstep(160, 185, z)) * smoothstep(-180, -158, z);
-  const eastWallInner = lerp(150, 170, gwWallBand);
+  const eastWallInner = lerp(150, 330, gwWallBand); // Greywater opens all the way east to its far back wall
   const eastWall = x > 0 ? smoothstep(eastWallInner, eastWallInner + 30, x) : 0;
   const rimW = x < 0 ? smoothstep(WORLD_MIN_X + 30, WORLD_MIN_X, x) : 0;
   const rimS = smoothstep(WORLD_MIN_Z + 30, WORLD_MIN_Z, z);

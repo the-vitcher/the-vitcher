@@ -153,9 +153,12 @@ export const GROUP_XP_BONUS = [1, 1, 1.166, 1.3, 1.43];
 
 export const ZONES: ZoneDef[] = [ZONE1_ZONE, ZONE2_ZONE, ZONE3_ZONE];
 
-export const WORLD_SIZE = 440; // world width: x spans [-220, 220] (widened east for the
-// Greywater Valley back wall and west for open vale; the eastern mountain wall that
-// contains play is authored in world.ts at its original line, not at this bound).
+export const WORLD_SIZE = 720; // world width: x spans [-360, 360] = double the original
+// WoCC (360). The extra width is the Greywater region's eastern expanse: a broad plain east
+// of the village (x ~190-305) with the back wall at x ~305-360, with room for the slaver
+// camp, comfort-house, the still, downstream villages, and the rest of the questline's
+// environments. The eastern mountain wall that contains play is authored in world.ts at its
+// original line (not at this bound), so the Mirefen crater and zones 2-3 stay byte-identical.
 export const WORLD_MIN_X = -WORLD_SIZE / 2;
 export const WORLD_MAX_X = WORLD_SIZE / 2;
 export const WORLD_MIN_Z = ZONES[0].zMin;

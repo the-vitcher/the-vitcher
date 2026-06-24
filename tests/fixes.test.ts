@@ -119,13 +119,13 @@ describe('collision & terrain', () => {
   it('steep rims are walls, not ramps', () => {
     const sim = makeSim();
     const p = sim.player;
-    teleportTo(sim, 150, 0);
-    p.facing = Math.PI / 2; // +x, toward the Greywater back wall
+    teleportTo(sim, 318, 0); // near the far-eastern Greywater back wall
+    p.facing = Math.PI / 2; // +x, toward the wall
     sim.moveInput.forward = true;
     for (let i = 0; i < 400; i++) sim.tick();
-    // z=0 sits inside the opened Greywater valley, so the player climbs the eastern rise
-    // until the back wall (authored at x~170-200) stops them well short of the x220 bound.
-    expect(p.pos.x).toBeLessThan(182);
+    // The back wall (authored at x~305-360) stops the player well short of the x360 bound.
+    expect(p.pos.x).toBeLessThan(352);
+    expect(p.pos.x).toBeGreaterThan(310); // and they reached the wall from the open plain
   });
 
   it('the generic eastern wall (outside Greywater) still stops players', () => {
