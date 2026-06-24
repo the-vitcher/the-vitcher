@@ -50,16 +50,16 @@ export const MIREFEN_IMPACT_CRATER = {
 // are carved like lakes (a radial dip pulled below WATER_LEVEL), placed clear of the
 // spine road so the causeway stays dry. Gated to the Greywater band in terrainHeight.
 export const GREYWATER_PONDS = [
-  { x: 123, z: 150, radius: 12, depth: 5.5 }, // the millpond (north, by Greywater Mill)
-  { x: 156, z: -138, radius: 11, depth: 5.0 }, // the ford pool (south, the drowned caravan)
+  { x: 150, z: 136, radius: 9, depth: 6.0 }, // the millpond (north floor, the hag's pool)
+  { x: 138, z: -143, radius: 10, depth: 7.0 }, // the ford pool (south marsh, the drowned caravan)
 ] as const;
 
 export function greywaterPondOffset(x: number, z: number): number {
   let off = 0;
   for (const p of GREYWATER_PONDS) {
     const d = Math.sqrt((x - p.x) ** 2 + (z - p.z) ** 2);
-    if (d < p.radius * 1.6) {
-      const blend = smoothstep(p.radius * 0.5, p.radius * 1.6, d);
+    if (d < p.radius * 1.8) {
+      const blend = smoothstep(p.radius * 0.4, p.radius * 1.8, d);
       off += -p.depth * (1 - blend);
     }
   }
@@ -201,25 +201,27 @@ export function terrainHeight(x: number, z: number, seed: number): number {
       const crest = 1 + (fbm2(110 * 0.03, z * 0.03, seed + 23, 2) - 0.5) * 0.7;
       h += RIDGE_HEIGHT * crest * profile * pass * wallGate * gwZ;
     }
-    // Bands 2-5 east of the wall. `into` ramps in across the Lip; the spine road stays a
-    // dry causeway throughout. A north-south split sinks the southern Marsh Flat below
-    // water while crowning the central Village Floor, so the village reads as the one dry
-    // place and the marsh as drowned trade road.
-    const into = smoothstep(112, 134, x) * gwZ;
+    // Bands 2-5 east of the wall, sculpted to an explicit TARGET floor elevation so the
+    // valley reads as a sunken bowl rather than the high vale it is carved from. `into`
+    // ramps the vale down into the bowl just past the pass; from there a south-marsh flood,
+    // a crowned central village, a dry road causeway, and an eastern rise are blended onto
+    // one target height, then the millpond and ford pool are carved in as hard local basins.
+    const into = smoothstep(108, 122, x) * gwZ;
     if (into > 0) {
-      const onRoad = 1 - smoothstep(3, 22, roadDistance(x, z));
-      const marshBand = smoothstep(40, -24, z);   // 1 in the southern marsh, 0 on the floor
-      const floorBand = smoothstep(18, 56, z) * (1 - smoothstep(132, 158, z)); // dry village window
-      const roll = (fbm2(x * 0.045, z * 0.045, seed + 71, 3) - 0.5) * 5 * into * (1 - onRoad * 0.85);
-      const valleyDip = into * marshBand * -3.5 * (1 - onRoad);
-      const floorCrown = into * floorBand * 2.4 * (1 - onRoad * 0.3);
-      const causeway = onRoad * into * 2.6;
-      // Carved water: the millpond and the ford pool (kept off the road by onRoad).
-      const ponds = greywaterPondOffset(x, z) * into * (1 - onRoad);
-      // Band 5 - The Rise: terrain terraces up toward the eastern back wall, lifting the
-      // margrave's manor and the leshen grove onto a shelf above the floor.
-      const rise = smoothstep(150, 172, x) * gwZ * (1 - onRoad * 0.4) * 7;
-      h += roll + valleyDip + floorCrown + causeway + ponds + rise;
+      const onRoad = 1 - smoothstep(3, 14, roadDistance(x, z));        // a narrow dry causeway
+      const rise01 = smoothstep(150, 174, x);                          // 0 floor .. 1 back-wall shelf
+      const flood = smoothstep(20, -30, z) * (1 - rise01);             // the southern Marsh Flat
+      const village = smoothstep(20, 46, z) * (1 - smoothstep(118, 144, z)) * (1 - rise01);
+      let target = -2.0;                       // damp marsh floor, just above the waterline
+      target = lerp(target, -6.0, flood);      // the drowned south sits below water
+      target = lerp(target, 1.5, village);     // the central Village Floor crowns dry
+      target = lerp(target, 1.5, onRoad);      // the spine road is a dry causeway
+      target = lerp(target, 6.0, rise01);      // the eastern Rise terraces up to the wall
+      const roll = (fbm2(x * 0.045, z * 0.045, seed + 71, 3) - 0.5) * 2.5;
+      h = lerp(h, target + roll, into);
+      // Carved water: the millpond (north floor, the hag's pool) and the ford pool (the
+      // drowned caravan). Hard local basins, kept clear of the road causeway.
+      h += greywaterPondOffset(x, z) * (1 - onRoad * 0.5);
     }
   }
 

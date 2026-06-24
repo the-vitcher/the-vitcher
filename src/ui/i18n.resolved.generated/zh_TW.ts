@@ -4670,6 +4670,9 @@ export const zh_TW: EnTranslations = {
       "greywater_drowner": {
         "name": "Drowner"
       },
+      "river_mudlark": {
+        "name": "River Mudlark"
+      },
       "bog_ghoul": {
         "name": "Bog Ghoul"
       },
@@ -6161,13 +6164,31 @@ export const zh_TW: EnTranslations = {
             "label": "明木林地"
           },
           "9": {
-            "label": "Greywater Ford"
+            "label": "Greywater Pass"
           },
           "10": {
-            "label": "Greywater Valley"
+            "label": "Greywater Ford"
           },
           "11": {
+            "label": "The Drowned Fen"
+          },
+          "12": {
+            "label": "Greywater Village"
+          },
+          "13": {
+            "label": "The Leshen Grove"
+          },
+          "14": {
+            "label": "Margrave's Manor"
+          },
+          "15": {
+            "label": "The Tournament Ground"
+          },
+          "16": {
             "label": "Greywater Mill"
+          },
+          "17": {
+            "label": "The Hag's Pool"
           }
         }
       },

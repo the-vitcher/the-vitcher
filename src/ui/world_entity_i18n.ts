@@ -36,8 +36,8 @@ const MOB_IDS = [
   'dawnmane_doe', 'bramble_lynx', 'brightwood_stag', 'grovetusk_boar', 'sunhide_bear',
   'brightwood_monarch',
   // Greywater Valley witcher bestiary
-  'greywater_drowner', 'bog_ghoul', 'valley_nekker', 'margrave_guard', 'tournament_brawler',
-  'tournament_champion', 'reclamation_mercenary', 'greywater_hag', 'valley_leshen',
+  'greywater_drowner', 'river_mudlark', 'bog_ghoul', 'valley_nekker', 'margrave_guard',
+  'tournament_brawler', 'tournament_champion', 'reclamation_mercenary', 'greywater_hag', 'valley_leshen',
 ] as const;
 
 const NPC_IDS = [

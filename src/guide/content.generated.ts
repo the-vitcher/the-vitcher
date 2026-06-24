@@ -185,7 +185,8 @@ export const GUIDE_CLASSES: GuideClassInfo[] = [
         "name": "Taunt"
       }
     ],
-    "model": "player_warrior"
+    "model": "player_warrior",
+    "tint": "#4b4a52"
   },
   {
     "id": "paladin",
@@ -296,7 +297,8 @@ export const GUIDE_CLASSES: GuideClassInfo[] = [
         "name": "Retribution Aura"
       }
     ],
-    "model": "player_paladin"
+    "model": "player_paladin",
+    "tint": "#6a5450"
   },
   {
     "id": "hunter",
@@ -409,7 +411,8 @@ export const GUIDE_CLASSES: GuideClassInfo[] = [
         "name": "Rapid Fire"
       }
     ],
-    "model": "player_hunter"
+    "model": "player_hunter",
+    "tint": "#6f6a4c"
   },
   {
     "id": "rogue",
@@ -550,7 +553,8 @@ export const GUIDE_CLASSES: GuideClassInfo[] = [
         "name": "Stealth"
       }
     ],
-    "model": "player_rogue"
+    "model": "player_rogue",
+    "tint": "#3c3b45"
   },
   {
     "id": "priest",
@@ -649,7 +653,7 @@ export const GUIDE_CLASSES: GuideClassInfo[] = [
       }
     ],
     "model": "player_priest",
-    "tint": "#f0e9d6"
+    "tint": "#e6ddc6"
   },
   {
     "id": "shaman",
@@ -752,7 +756,7 @@ export const GUIDE_CLASSES: GuideClassInfo[] = [
       }
     ],
     "model": "player_shaman",
-    "tint": "#6f8fc9"
+    "tint": "#7a7048"
   },
   {
     "id": "mage",
@@ -865,7 +869,8 @@ export const GUIDE_CLASSES: GuideClassInfo[] = [
         "name": "Pyroblast"
       }
     ],
-    "model": "player_mage"
+    "model": "player_mage",
+    "tint": "#4d5582"
   },
   {
     "id": "warlock",
@@ -991,7 +996,7 @@ export const GUIDE_CLASSES: GuideClassInfo[] = [
       }
     ],
     "model": "player_warlock",
-    "tint": "#8d5fd3"
+    "tint": "#4c553f"
   },
   {
     "id": "druid",
@@ -1174,7 +1179,8 @@ export const GUIDE_CLASSES: GuideClassInfo[] = [
         "name": "Rip"
       }
     ],
-    "model": "player_druid"
+    "model": "player_druid",
+    "tint": "#57693f"
   }
 ];
 
@@ -1196,9 +1202,15 @@ export const GUIDE_ZONES: GuideZoneInfo[] = [
       "Bandit Camp",
       "Fallen Chapel",
       "Brightwood Glade",
+      "Greywater Pass",
       "Greywater Ford",
-      "Greywater Valley",
-      "Greywater Mill"
+      "The Drowned Fen",
+      "Greywater Village",
+      "The Leshen Grove",
+      "Margrave's Manor",
+      "The Tournament Ground",
+      "Greywater Mill",
+      "The Hag's Pool"
     ],
     "welcome": "Find Marshal Redbrook in town — he has work for you."
   },
@@ -1771,7 +1783,8 @@ export const GUIDE_MODELS: Record<string, GuideModelSpec> = {
         "url": "models/weapons/sword_1handed.glb",
         "bone": "handslot.r"
       }
-    ]
+    ],
+    "tintStrength": 0.32
   },
   "player_paladin": {
     "url": "models/chars/players/paladin.glb",
@@ -1782,7 +1795,8 @@ export const GUIDE_MODELS: Record<string, GuideModelSpec> = {
         "url": "models/weapons/axe_1handed.glb",
         "bone": "handslot.r"
       }
-    ]
+    ],
+    "tintStrength": 0.3
   },
   "player_hunter": {
     "url": "models/chars/players/ranger.glb",
@@ -1793,7 +1807,8 @@ export const GUIDE_MODELS: Record<string, GuideModelSpec> = {
         "url": "models/weapons/crossbow_1handed.glb",
         "bone": "handslot.r"
       }
-    ]
+    ],
+    "tintStrength": 0.28
   },
   "player_rogue": {
     "url": "models/chars/players/rogue.glb",
@@ -1804,14 +1819,15 @@ export const GUIDE_MODELS: Record<string, GuideModelSpec> = {
     ],
     "attach": [
       {
-        "url": "models/weapons/dagger.glb",
+        "url": "models/weapons/sword_1handed.glb",
         "bone": "handslot.r"
       },
       {
-        "url": "models/weapons/dagger.glb",
+        "url": "models/weapons/sword_1handed.glb",
         "bone": "handslot.l"
       }
-    ]
+    ],
+    "tintStrength": 0.36
   },
   "player_priest": {
     "url": "models/chars/players/mage.glb",
@@ -1853,7 +1869,8 @@ export const GUIDE_MODELS: Record<string, GuideModelSpec> = {
         "url": "models/weapons/staff.glb",
         "bone": "handslot.r"
       }
-    ]
+    ],
+    "tintStrength": 0.32
   },
   "player_warlock": {
     "url": "models/chars/players/mage.glb",
@@ -1882,7 +1899,8 @@ export const GUIDE_MODELS: Record<string, GuideModelSpec> = {
         "url": "models/weapons/staff.glb",
         "bone": "handslot.r"
       }
-    ]
+    ],
+    "tintStrength": 0.3
   },
   "mob_demon": {
     "url": "models/creatures/demonalt.glb",

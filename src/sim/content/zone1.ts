@@ -30,10 +30,17 @@ export const ZONE1_ZONE: ZoneDef = {
     { x: 76, z: -76, label: 'Bandit Camp' },
     { x: 80, z: 80, label: 'Fallen Chapel' },
     { x: 40, z: 140, label: 'Brightwood Glade' },
-    // Greywater Valley (eastern edge): the witcher questline, south-to-north
+    // Greywater Valley (eastern edge): the witcher questline. Read south-to-north
+    // along the spine, with the optional dread (grove, hag's pool) named off it.
+    { x: 108, z: 2, label: 'Greywater Pass' },
     { x: 146, z: -148, label: 'Greywater Ford' },
-    { x: 142, z: 20, label: 'Greywater Valley' },
-    { x: 134, z: 158, label: 'Greywater Mill' },
+    { x: 128, z: -58, label: 'The Drowned Fen' },
+    { x: 140, z: 40, label: 'Greywater Village' },
+    { x: 170, z: -30, label: 'The Leshen Grove' },
+    { x: 163, z: 60, label: "Margrave's Manor" },
+    { x: 148, z: 105, label: 'The Tournament Ground' },
+    { x: 140, z: 148, label: 'Greywater Mill' },
+    { x: 150, z: 136, label: "The Hag's Pool" },
   ],
   welcome: 'Find Marshal Redbrook in town — he has work for you.',
   welcomeQuestId: 'q_wolves',

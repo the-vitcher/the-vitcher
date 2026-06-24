@@ -188,7 +188,7 @@ export const GREYWATER_NPCS: Record<string, NpcDef> = {
   },
   goodwife_sera: {
     id: 'goodwife_sera', name: 'Goodwife Sera', title: 'Miller of Greywater',
-    pos: { x: 134, z: 158 }, facing: -1.6, color: 0x5f8fae,
+    pos: { x: 140, z: 148 }, facing: -1.6, color: 0x5f8fae,
     questIds: ['gw_mill'],
     greeting: "So you're the heir, $C. We wondered when paper would come walking. We made this dead mill breathe again; it feeds half the valley now.",
   },
@@ -446,49 +446,132 @@ export const GREYWATER_QUEST_ORDER = [
 // clear of it (see spawnCamp's road-avoidance), so the player can walk the road in
 // peace and choose when to wade into the monsters off to either side.
 export const GREYWATER_ROADS: { x: number; z: number }[][] = [
-  // Connector: from Eastbrook out east to the valley road, so the map shows a path in.
-  [{ x: 10, z: 0 }, { x: 55, z: 2 }, { x: 100, z: 2 }, { x: 140, z: 4 }],
+  // Connector: from Eastbrook out east, through the pass notch (z~2.5), into the valley.
+  [{ x: 10, z: 0 }, { x: 55, z: 2 }, { x: 100, z: 2 }, { x: 110, z: 2.5 }, { x: 124, z: 3 }, { x: 140, z: 4 }],
+  // The spine: south ford up to the northern mill, threading every quest giver.
   [
     { x: 148, z: -150 }, // the ford (Calla)
     { x: 144, z: -100 },
-    { x: 140, z: -60 },  // Aldermere (Reeve Ondrin)
+    { x: 140, z: -60 },  // the Drowned Fen / Aldermere (Reeve Ondrin)
     { x: 146, z: -28 },
-    { x: 150, z: 4 },    // the pass (Ines)
+    { x: 150, z: 4 },    // the pass / Ines's cage
     { x: 144, z: 50 },
-    { x: 138, z: 92 },   // the tournament city (Ortega)
-    { x: 135, z: 128 },
+    { x: 140, z: 92 },   // the village / tournament approach (Ortega)
+    { x: 136, z: 128 },
     { x: 134, z: 158 },  // Greywater Mill (Goodwife Sera)
   ],
+  // Switchback spur up the eastern Rise to the margrave's manor (the Velvet Debt seat).
+  [{ x: 146, z: 50 }, { x: 154, z: 55 }, { x: 160, z: 60 }, { x: 163, z: 62 }],
+  // Short spur off the spine to the tournament ground below the manor.
+  [{ x: 140, z: 96 }, { x: 145, z: 102 }, { x: 148, z: 105 }],
 ];
 
-// All lazy: the valley spawns only when a player walks into it, so adding this
-// region never perturbs the shared world-gen / AI RNG stream elsewhere.
+// All lazy: the valley spawns only when a player walks into it, so adding this region
+// never perturbs the shared world-gen / AI RNG stream elsewhere. Camps are placed by
+// ECOLOGY: a witcher reads the fight off the land. Drowners and the hag own the carved
+// water; bog ghouls the deep fen; nekkers the scree shoulders at the wall feet; the
+// margrave's guard the manor rise; the leshen its grove off the spine. Difficulty climbs
+// south-to-north and with distance from the road.
 export const GREYWATER_CAMPS: CampDef[] = [
-  { mobId: 'greywater_drowner', center: { x: 150, z: -130 }, radius: 16, count: 7, lazy: true },
-  { mobId: 'greywater_drowner', center: { x: 160, z: -118 }, radius: 12, count: 5, lazy: true },
-  { mobId: 'bog_ghoul', center: { x: 142, z: -64 }, radius: 16, count: 7, lazy: true },
-  { mobId: 'valley_nekker', center: { x: 158, z: -20 }, radius: 16, count: 8, lazy: true },
-  { mobId: 'margrave_guard', center: { x: 150, z: 8 }, radius: 14, count: 7, lazy: true },
-  { mobId: 'tournament_brawler', center: { x: 140, z: 92 }, radius: 16, count: 7, lazy: true },
-  { mobId: 'tournament_champion', center: { x: 132, z: 100 }, radius: 4, count: 1, lazy: true },
-  { mobId: 'reclamation_mercenary', center: { x: 138, z: 150 }, radius: 16, count: 7, lazy: true },
-  { mobId: 'greywater_hag', center: { x: 120, z: 168 }, radius: 5, count: 1, lazy: true },
-  { mobId: 'valley_leshen', center: { x: 168, z: 40 }, radius: 5, count: 1, lazy: true },
+  // The Ford & drowned caravan: mudlarks picking the wreck, drowners in the pool/shallows.
+  { mobId: 'river_mudlark', center: { x: 146, z: -146 }, radius: 8, count: 5, lazy: true },
+  { mobId: 'greywater_drowner', center: { x: 143, z: -140 }, radius: 12, count: 7, lazy: true }, // the ford pool
+  { mobId: 'greywater_drowner', center: { x: 138, z: -108 }, radius: 14, count: 6, lazy: true }, // marsh shallows
+  // The Drowned Fen: bog ghouls crept up from the deep water.
+  { mobId: 'bog_ghoul', center: { x: 128, z: -64 }, radius: 15, count: 7, lazy: true },
+  { mobId: 'bog_ghoul', center: { x: 134, z: -28 }, radius: 12, count: 5, lazy: true },
+  // Nekker warrens on the scree shoulders: the western wall foot and the eastern rise.
+  { mobId: 'valley_nekker', center: { x: 120, z: 74 }, radius: 14, count: 8, lazy: true },
+  { mobId: 'valley_nekker', center: { x: 160, z: 2 }, radius: 13, count: 7, lazy: true },
+  // The pass: the margrave's guard keeping Ines caged; more on the manor rise above.
+  { mobId: 'margrave_guard', center: { x: 152, z: 10 }, radius: 10, count: 5, lazy: true },
+  { mobId: 'margrave_guard', center: { x: 159, z: 54 }, radius: 13, count: 7, lazy: true },
+  // The Tournament Ground: brawlers in the lists, the champion in the winner's bout.
+  { mobId: 'tournament_brawler', center: { x: 148, z: 104 }, radius: 13, count: 7, lazy: true },
+  { mobId: 'tournament_champion', center: { x: 151, z: 112 }, radius: 4, count: 1, lazy: true },
+  // The Mill: reclamation mercenaries, and the water hag stirred from the millpond.
+  { mobId: 'reclamation_mercenary', center: { x: 138, z: 150 }, radius: 13, count: 7, lazy: true },
+  { mobId: 'greywater_hag', center: { x: 150, z: 136 }, radius: 5, count: 1, lazy: true }, // the millpond / hag's pool
+  // The Leshen Grove: the valley's apex predator, off the spine on the southern rise.
+  { mobId: 'valley_leshen', center: { x: 168, z: -30 }, radius: 5, count: 1, lazy: true },
 ];
 
 // ---------------------------------------------------------------------------
 // Ground objects - the strongbox in the drowned cave, and the girl's shawl
 // ---------------------------------------------------------------------------
 
-// The drowned caravan: a wrecked wagon, spilled crates and Calla's little camp at the
-// ford beside her (x146,-148), on the dry road causeway.
+// Greywater dressing, district by district. Each quest giver stands on a self-describing
+// micro-set (Calla's wrecked wagon, Ondrin's inspection table, Ortega's tournament ring,
+// Sera's mill, the manor over the rise) so a player reads the fiction before a word. Solid
+// props (buildings/fences/wells/stalls/mines/docks/ruinRings/carts) are kept off the spine
+// road and clear of the NPCs; tents/crates/campfires/graveyards are soft dressing.
 export const GREYWATER_PROPS: ZonePropsDef = {
-  buildings: [], wells: [], stalls: [], mines: [], docks: [],
-  tents: [{ x: 143, z: -151, rot: 0.7, scale: 1.0 }],
-  crates: [[150, -147], [148, -151], [151, -150]],
-  campfires: [[145, -150]],
-  mudHuts: [], ruinRings: [], fences: [], graveyards: [],
-  carts: [{ x: 149, z: -149, rot: 1.2, scale: 1.4 }],
+  buildings: [
+    // Greywater Village (the floor): mean houses flanking the muddy lane.
+    { kind: 'house', x: 150, z: 46, w: 6, d: 5, rot: -0.3 },
+    { kind: 'house', x: 130, z: 54, w: 6, d: 5, rot: 0.4 },
+    { kind: 'house', x: 150, z: 74, w: 5, d: 5, rot: 0.8 },
+    { kind: 'house', x: 129, z: 82, w: 6, d: 5, rot: -0.5 },
+    // The margrave's manor on the eastern Rise (the Velvet Debt seat), over the valley.
+    { kind: 'inn', x: 165, z: 62, w: 7, d: 6, rot: 0.3 },
+    { kind: 'chapel', x: 159, z: 68, w: 5, d: 6, rot: -0.6 },
+    // Greywater Mill (the wheel-house over the millpond).
+    { kind: 'house', x: 136, z: 150, w: 5, d: 5, rot: 0.5 },
+  ],
+  wells: [{ x: 139, z: 60, r: 1.5 }],
+  stalls: [
+    { x: 136, z: 64, rot: -2.7, r: 1.7 }, // village market
+    { x: 144, z: 56, rot: 1.5, r: 1.7 },
+    { x: 136, z: -57, rot: 1.0, r: 1.7 }, // Reeve Ondrin's inspection table (the shawl)
+    { x: 142, z: 102, rot: 0.6, r: 1.7 }, // tournament betting stall
+  ],
+  mines: [
+    { x: 120, z: 80, rot: 0.8 }, // nekker warren mouth, western scree
+    { x: 162, z: 2, rot: 2.2 },  // nekker warren mouth, eastern rise
+  ],
+  docks: [
+    { x: 147, z: 140, rot: -1.2, hutLocal: { x: 2.5, z: 2.2, hw: 1.6, hd: 1.4 } }, // millpond waterside
+  ],
+  tents: [
+    { x: 143, z: -151, rot: 0.7, scale: 1.0 }, // Calla's camp at the ford
+    { x: 102, z: -7, rot: 0.5, scale: 1.0 },   // pass guardpost
+    { x: 143, z: -63, rot: 2.0, scale: 1.0 },  // Reeve Ondrin's tent
+    { x: 153, z: 107, rot: -0.8, scale: 1.2 }, // tournament pavilion
+  ],
+  crates: [
+    [150, -147], [148, -151], [142, -145], // ford cargo
+    [135, 153], [139, 147],                // mill grain sacks
+    [141, 108],                            // tournament
+  ],
+  campfires: [
+    [145, -150], [104, -5], [141, -62], [139, 50], [161, 58], [138, 152],
+  ],
+  mudHuts: [[131, 44], [148, 66]],
+  ruinRings: [
+    { x: 106, z: 2, ringR: 5, columns: 6 },  // the ruined pass gate-arch
+    { x: 130, z: -42, ringR: 3, columns: 4 }, // a sunken fen shrine
+    { x: 167, z: -30, ringR: 6, columns: 7 }, // the leshen grove's standing stones
+  ],
+  fences: [
+    { x1: 106, z1: 7, x2: 106, z2: 12 },   // pass gate flank (north of the notch)
+    { x1: 106, z1: -3, x2: 106, z2: -8 },  // pass gate flank (south of the notch)
+    { x1: 156, z1: 56, x2: 168, z2: 56 },  // manor wall
+    { x1: 168, z1: 56, x2: 168, z2: 70 },  // manor wall
+    { x1: 144, z1: 100, x2: 152, z2: 100 }, // tournament ring
+    { x1: 152, z1: 100, x2: 152, z2: 110 },
+    { x1: 152, z1: 110, x2: 144, z2: 110 },
+    { x1: 144, z1: 110, x2: 144, z2: 100 },
+  ],
+  graveyards: [
+    { x: 103, z: 9 },   // the gibbet at the gate
+    { x: 126, z: -50 }, // fen offerings to the drowned
+    { x: 170, z: -27 }, // animal skulls in the leshen grove
+    { x: 167, z: 66 },  // the manor's private plot
+  ],
+  carts: [
+    { x: 149, z: -149, rot: 1.2, scale: 1.4 }, // Calla's wagon on the verge
+    { x: 141, z: -141, rot: 2.4, scale: 1.3 }, // the drowned caravan half-sunk in the ford pool
+  ],
 };
 
 export const GREYWATER_OBJECTS: GroundObjectDef[] = [
