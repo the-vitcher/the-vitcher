@@ -1567,24 +1567,24 @@ export const en_CA: EnTranslations = {
     "statusShareUnsupported": "Sharing is not supported on this device."
   },
   "classes": {
-    "warrior": "Warrior",
-    "paladin": "Paladin",
-    "hunter": "Hunter",
-    "rogue": "Rogue",
-    "priest": "Priest",
-    "shaman": "Shaman",
-    "mage": "Mage",
-    "warlock": "Warlock",
-    "druid": "Druid",
-    "warriorAria": "Warrior class",
-    "paladinAria": "Paladin class",
-    "hunterAria": "Hunter class",
-    "rogueAria": "Rogue class",
-    "priestAria": "Priest class",
-    "shamanAria": "Shaman class",
-    "mageAria": "Mage class",
-    "warlockAria": "Warlock class",
-    "druidAria": "Druid class"
+    "warrior": "School of the Bear",
+    "paladin": "School of the Manticore",
+    "hunter": "School of the Griffin",
+    "rogue": "School of the Cat",
+    "priest": "Temple Healer",
+    "shaman": "Hedge-Witcher",
+    "mage": "Sorcerer",
+    "warlock": "Necromancer",
+    "druid": "Druid of the Oak",
+    "warriorAria": "School of the Bear class",
+    "paladinAria": "School of the Manticore class",
+    "hunterAria": "School of the Griffin class",
+    "rogueAria": "School of the Cat class",
+    "priestAria": "Temple Healer class",
+    "shamanAria": "Hedge-Witcher class",
+    "mageAria": "Sorcerer class",
+    "warlockAria": "Necromancer class",
+    "druidAria": "Druid of the Oak class"
   },
   "controls": {
     "title": "Controls Guide",
@@ -2868,23 +2868,23 @@ export const en_CA: EnTranslations = {
   "entities": {
     "abilities": {
       "heroic_strike": {
-        "name": "Heroic Strike",
+        "name": "Heavy Blow",
         "description": "A strong attack that increases melee damage by {damage}. Activates on your next swing."
       },
       "battle_shout": {
-        "name": "Battle Shout",
+        "name": "Bear's Roar",
         "description": "Increases your attack power by 20 for 2 min."
       },
       "commanding_shout": {
-        "name": "Commanding Shout",
+        "name": "War Cry",
         "description": "Increases your Stamina by 6 for 2 min."
       },
       "demoralizing_shout": {
-        "name": "Demoralizing Shout",
+        "name": "Intimidating Roar",
         "description": "Lets out a fearsome shout, reducing the attack power of all nearby enemies by 30 for 30 sec."
       },
       "charge": {
-        "name": "Charge",
+        "name": "Aard Rush",
         "description": "Charges an enemy, generating 9 rage and stunning it for 1 sec. 8-25 yd range."
       },
       "rend": {
@@ -2892,43 +2892,43 @@ export const en_CA: EnTranslations = {
         "description": "Wounds the target, causing them to bleed for {damage} damage over 9 sec."
       },
       "thunder_clap": {
-        "name": "Thunder Clap",
+        "name": "Aard Wave",
         "description": "Blasts nearby enemies for {damage} damage and slows their attacks by 10% for 10 sec."
       },
       "hamstring": {
-        "name": "Hamstring",
+        "name": "Yrden Snare",
         "description": "Maims the enemy for 5 damage, slowing its movement by 50% for 15 sec."
       },
       "bloodrage": {
-        "name": "Bloodrage",
+        "name": "Berserk",
         "description": "Generates 10 rage at the cost of health."
       },
       "overpower": {
-        "name": "Overpower",
+        "name": "Riposte",
         "description": "Instant attack for weapon damage +5. Only usable after the target dodges. Cannot be dodged."
       },
       "execute": {
-        "name": "Execute",
+        "name": "Execution",
         "description": "Attempt to finish off a wounded foe, causing {damage} damage. Only usable on enemies below 20% health."
       },
       "slam": {
-        "name": "Slam",
+        "name": "Crushing Blow",
         "description": "Slams the opponent for weapon damage plus {damage}."
       },
       "cleave": {
-        "name": "Cleave",
+        "name": "Whirl",
         "description": "A sweeping strike that hits all enemies in front of you for {damage} damage."
       },
       "defensive_stance": {
-        "name": "Defensive Stance",
+        "name": "Quen Stance",
         "description": "A defensive combat stance: you generate 30% more threat but deal and take 10% less damage. Cast again to leave the stance."
       },
       "sunder_armor": {
-        "name": "Sunder Armor",
+        "name": "Armor Breach",
         "description": "Sunders the target's armor, reducing it by {damage} per application. Stacks up to 5 times. Generates a high amount of threat."
       },
       "taunt": {
-        "name": "Taunt",
+        "name": "Provoke",
         "description": "Taunts the target: your threat rises to match its most hated enemy and it is compelled to attack you for 3 sec."
       },
       "fireball": {
