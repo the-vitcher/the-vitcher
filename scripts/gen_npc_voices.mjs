@@ -25,6 +25,34 @@ const previewDir = path.join(root, 'tmp/voice_previews');
 
 const force = process.argv.includes('--force');
 
+// Subset selection for limited plans (e.g. a free tier with few custom-voice
+// slots): design only a chosen handful, not all of VOICE_PROMPTS.
+//   --only a,b,c   design ONLY these npcIds (comma-separated)
+//   --limit N      design at most the first N (after any --only filter)
+// Pair with --force so the resulting voice_ids.json contains EXACTLY the subset
+// (a clean slate), so gen_npc_lines.mjs synthesizes only those and skips the
+// rest instead of 404-ing on voices you never created.
+function argValue(flag) {
+  const i = process.argv.indexOf(flag);
+  return i >= 0 ? process.argv[i + 1] : null;
+}
+const onlyArg = argValue('--only');
+const onlyIds = onlyArg ? new Set(onlyArg.split(',').map((s) => s.trim()).filter(Boolean)) : null;
+const limitArg = argValue('--limit');
+const limit = limitArg !== null ? Number(limitArg) : null;
+
+let WORK = VOICE_PROMPTS;
+if (onlyIds) {
+  WORK = WORK.filter((p) => onlyIds.has(p.npcId));
+  const missing = [...onlyIds].filter((id) => !VOICE_PROMPTS.some((p) => p.npcId === id));
+  if (missing.length) console.warn(`warning: --only names with no prompt (ignored): ${missing.join(', ')}`);
+}
+if (limit !== null && Number.isFinite(limit)) WORK = WORK.slice(0, limit);
+if (WORK.length === 0) {
+  console.error('No voices selected (check --only / --limit). Aborting.');
+  process.exit(1);
+}
+
 try { process.loadEnvFile(); } catch { /* no .env — rely on the ambient env */ }
 const KEY = process.env.ELEVENLABS_API_KEY;
 if (!KEY) {
@@ -105,7 +133,7 @@ const ids = force ? {} : loadIds();
 let made = 0;
 let skipped = 0;
 
-for (const p of VOICE_PROMPTS) {
+for (const p of WORK) {
   if (ids[p.npcId] && !force) {
     console.log(`skip   ${p.npcId} (already ${ids[p.npcId]})`);
     skipped++;
@@ -128,5 +156,5 @@ for (const p of VOICE_PROMPTS) {
   }
 }
 
-console.log(`\nDone: ${made} created, ${skipped} skipped, ${Object.keys(ids).length}/${VOICE_PROMPTS.length} voices in ${path.relative(root, idsPath)}`);
+console.log(`\nDone: ${made} created, ${skipped} skipped, ${Object.keys(ids).length} voices in ${path.relative(root, idsPath)} (selected ${WORK.length}/${VOICE_PROMPTS.length})`);
 if (made > 0) console.log(`Auditions saved to ${path.relative(root, previewDir)}/`);
