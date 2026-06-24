@@ -7065,9 +7065,240 @@
     .se-wheel-result { animation: none; opacity: 1; transform: scale(1); }
     .se-wheel-result::before, .se-wheel-result i { animation: none; display: none; }
   }
+
+  /* ============================================================
+     WITCHER THEME — scoped to the login panel + loading screen.
+     Forged iron, a wolf-school medallion, blood and silver instead
+     of the HUD's gold. Local custom props so nothing leaks into the
+     rest of the classic gold theme.
+     ============================================================ */
+  #login-panel,
+  #loading-screen {
+    --w-iron: #24262d;
+    --w-iron-dark: #101116;
+    --w-silver: #c7cad4;
+    --w-silver-dim: #8b8e99;
+    --w-blood: #7c1713;
+    --w-blood-bright: #b22a20;
+    --w-amber: #e0a23a;
+  }
+  .witcher-medallion {
+    display: block;
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.7));
+  }
+
+  /* ---------- Login panel: a forged-iron seal ---------- */
+  #login-panel.auth-panel-premium {
+    position: relative;
+    margin-top: 42px;            /* room for the medallion to straddle the top edge */
+    padding-top: 50px;
+    background:
+      radial-gradient(125% 80% at 50% 0%, rgba(124, 23, 19, 0.20) 0%, rgba(124, 23, 19, 0) 56%),
+      linear-gradient(180deg, rgba(26, 27, 33, 0.97) 0%, rgba(12, 12, 16, 0.99) 100%);
+    border: 2px solid #3a3c45;
+    border-radius: 10px;
+    box-shadow:
+      0 14px 40px rgba(0, 0, 0, 0.85),
+      inset 0 0 0 1px rgba(199, 202, 212, 0.06),
+      inset 0 0 26px rgba(0, 0, 0, 0.7);
+  }
+  #login-panel.auth-panel-premium:has(input:focus) { border-color: #56585f; }
+  /* engraved corner brackets */
+  #login-panel.auth-panel-premium::before,
+  #login-panel.auth-panel-premium::after {
+    content: "";
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    pointer-events: none;
+    border: 2px solid var(--w-silver-dim);
+    opacity: 0.45;
+  }
+  #login-panel.auth-panel-premium::before { top: 9px; left: 9px; border-right: 0; border-bottom: 0; }
+  #login-panel.auth-panel-premium::after { bottom: 9px; right: 9px; border-left: 0; border-top: 0; }
+
+  /* the wolf crest, struck like a seal over the top edge */
+  .witcher-crest {
+    position: absolute;
+    top: -42px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 80px;
+    padding: 6px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 38%, #2a2c33 0%, #0d0e12 100%);
+    box-shadow:
+      0 6px 16px rgba(0, 0, 0, 0.8),
+      0 0 0 2px #3a3c45,
+      0 0 22px rgba(224, 162, 58, 0.14);
+  }
+
+  /* title: silver engraving with a tapered blood-and-amber rule */
+  #login-panel .auth-title {
+    position: relative;
+    color: var(--w-silver);
+    letter-spacing: 3px;
+    padding-bottom: 16px;
+    margin-bottom: 18px;
+    text-shadow: 0 0 12px rgba(199, 202, 212, 0.18), 1px 2px 4px #000;
+  }
+  #login-panel .auth-title::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    width: 190px;
+    max-width: 80%;
+    height: 2px;
+    background: linear-gradient(90deg,
+      transparent 0%, var(--w-blood-bright) 22%, var(--w-amber) 50%, var(--w-blood-bright) 78%, transparent 100%);
+  }
+
+  /* iron-well inputs, silver focus instead of gold */
+  #login-panel input {
+    background: linear-gradient(180deg, #0c0d11 0%, #131419 100%);
+    border: 1px solid #3a3c45;
+    border-radius: 4px;
+  }
+  #login-panel input:focus-visible {
+    border-color: var(--w-silver-dim);
+    background-color: #15161c;
+    box-shadow: 0 0 0 1px rgba(199, 202, 212, 0.25), 0 0 12px rgba(199, 202, 212, 0.15);
+  }
+  #login-panel .auth-label { color: var(--w-silver-dim); }
+  #login-panel .auth-field:has(input:focus) .auth-label { color: var(--w-silver); }
+  #login-panel .password-toggle:hover,
+  #login-panel .password-toggle:focus-visible { color: var(--w-amber); }
+  #login-panel .auth-link { color: var(--w-amber); }
+  #login-panel .auth-link:hover,
+  #login-panel .auth-link:focus-visible { color: #f1c97a; }
+
+  /* primary action: blood steel, amber on hover */
+  #login-panel .btn-primary {
+    background: linear-gradient(180deg, #7c1713 0%, #3a0a08 100%);
+    color: #f3e4c8;
+    border: 1px solid #a8392c;
+    letter-spacing: 1px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+  }
+  #login-panel .btn-primary:hover,
+  #login-panel .btn-primary:focus-visible {
+    background: linear-gradient(180deg, #9b2018 0%, #4a0d0a 100%);
+    border-color: var(--w-amber);
+    box-shadow: 0 0 14px rgba(178, 42, 32, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  }
+
+  /* ---------- Loading screen: medallion + blood progress ---------- */
+  #loading-screen { background-color: #07080b; }
+  #loading-screen::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(125% 90% at 50% 36%, rgba(0, 0, 0, 0) 30%, rgba(5, 6, 9, 0.86) 100%),
+      linear-gradient(180deg, rgba(56, 14, 12, 0.22) 0%, rgba(5, 7, 12, 0.36) 100%);
+  }
+  #loading-screen > * { position: relative; z-index: 1; }
+  #loading-screen .ls-logo {
+    filter: drop-shadow(0 0 18px rgba(0, 0, 0, 0.8)) drop-shadow(0 2px 4px #000);
+  }
+  .ls-medallion {
+    position: relative;
+    width: clamp(92px, 15vh, 130px);
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+  }
+  .ls-medallion .witcher-medallion {
+    width: 78%;
+    height: 78%;
+    animation: ls-medallion-pulse 2.4s ease-in-out infinite;
+  }
+  .ls-medallion::before {     /* a slow rotating rune ring around the still wolf */
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 2px dashed rgba(199, 202, 212, 0.4);
+    border-top-color: var(--w-amber);
+    border-bottom-color: var(--w-blood-bright);
+    animation: ls-medallion-spin 6s linear infinite;
+  }
+  @keyframes ls-medallion-spin { to { transform: rotate(360deg); } }
+  @keyframes ls-medallion-pulse {
+    0%, 100% { filter: drop-shadow(0 0 4px rgba(224, 162, 58, 0.25)); }
+    50% { filter: drop-shadow(0 0 14px rgba(224, 162, 58, 0.55)); }
+  }
+  #loading-screen .ls-bar {
+    border-color: #3a3c45;
+    background: #0a0b0f;
+    border-radius: 3px;
+  }
+  #loading-screen #ls-fill {
+    background: linear-gradient(90deg, #7c1713 0%, #b22a20 55%, var(--w-amber) 100%);
+    box-shadow: 0 0 10px rgba(178, 42, 32, 0.5);
+  }
+  #loading-screen #ls-status {
+    color: var(--w-silver);
+    font-family: var(--font-display);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-size: 12px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ls-medallion::before,
+    .ls-medallion .witcher-medallion { animation: none; }
+  }
 </style>
 </head>
 <body data-start-panel="mode-select">
+  <!-- Wolf-school medallion: one shared SVG sprite, <use>'d by the login crest and
+       the loading spinner. Purely decorative (aria-hidden on every consumer). -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <radialGradient id="wm-disc" cx="50%" cy="40%" r="62%">
+        <stop offset="0%" stop-color="#3a3d44"/>
+        <stop offset="58%" stop-color="#23252b"/>
+        <stop offset="100%" stop-color="#0b0c10"/>
+      </radialGradient>
+      <linearGradient id="wm-ring" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#d2d5de"/>
+        <stop offset="45%" stop-color="#888b96"/>
+        <stop offset="100%" stop-color="#43464f"/>
+      </linearGradient>
+      <linearGradient id="wm-wolf" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#eceef5"/>
+        <stop offset="100%" stop-color="#8f939f"/>
+      </linearGradient>
+      <radialGradient id="wm-eye" cx="50%" cy="50%" r="60%">
+        <stop offset="0%" stop-color="#ffd98a"/>
+        <stop offset="100%" stop-color="#d68a26"/>
+      </radialGradient>
+    </defs>
+    <symbol id="witcher-wolf" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="47" fill="url(#wm-disc)"/>
+      <circle cx="50" cy="50" r="47" fill="none" stroke="url(#wm-ring)" stroke-width="5"/>
+      <circle cx="50" cy="50" r="40.5" fill="none" stroke="#0b0c10" stroke-width="1.6"/>
+      <circle cx="50" cy="50" r="38" fill="none" stroke="url(#wm-ring)" stroke-width="0.8" opacity="0.5"/>
+      <g fill="url(#wm-wolf)" stroke="#0d0e13" stroke-width="0.8" stroke-linejoin="round">
+        <path d="M31 33 L34.5 14.5 L46 31 Z"/>
+        <path d="M69 33 L65.5 14.5 L54 31 Z"/>
+        <path d="M50 25.5 C39.3 25.5 32.8 31.6 31.9 43.4 C31.3 50.6 34.5 56.2 39 61.8 L44.6 57.7 L50 65.3 L55.4 57.7 L61 61.8 C65.5 56.2 68.7 50.6 68.1 43.4 C67.2 31.6 60.7 25.5 50 25.5 Z"/>
+        <path d="M43.4 56 L50 78.5 L56.6 56 L50 60.6 Z"/>
+      </g>
+      <path d="M35.5 39.5 C41.5 35.5 45.7 35.7 49 39 L47 44 C44 41 40 41 36.7 44 Z" fill="#0d0e13" opacity="0.5"/>
+      <path d="M64.5 39.5 C58.5 35.5 54.3 35.7 51 39 L53 44 C56 41 60 41 63.3 44 Z" fill="#0d0e13" opacity="0.5"/>
+      <path d="M36.5 42.8 L46 46.4 L43.4 51 L37 48.4 Z" fill="url(#wm-eye)"/>
+      <path d="M63.5 42.8 L54 46.4 L56.6 51 L63 48.4 Z" fill="url(#wm-eye)"/>
+      <path d="M50 60.6 L46.4 56.4 L53.6 56.4 Z" fill="#0d0e13"/>
+    </symbol>
+  </svg>
   <canvas id="game-canvas"></canvas>
   <div id="nameplates"></div>
 
@@ -7379,6 +7610,9 @@
         </div>
 
         <form id="login-panel" class="panel auth-panel auth-panel-premium" data-auth-mode="login" hidden novalidate>
+          <div class="witcher-crest" aria-hidden="true">
+            <svg class="witcher-medallion" viewBox="0 0 100 100"><use href="#witcher-wolf"/></svg>
+          </div>
           <h2 class="auth-title" id="auth-title" data-i18n="auth.enterRealm">Enter the Realm</h2>
           
           <div class="auth-field">
@@ -7751,6 +7985,9 @@
 
   <div id="loading-screen">
     <img class="ls-logo" src="/worldofclaudecraft-logo.png" data-i18n-alt="serverUnavailable.logoAlt" alt="World of ClaudeCraft" />
+    <div class="ls-medallion" aria-hidden="true">
+      <svg class="witcher-medallion" viewBox="0 0 100 100"><use href="#witcher-wolf"/></svg>
+    </div>
     <div class="ls-progress">
       <div class="ls-bar"><div id="ls-fill"></div></div>
       <div id="ls-status" data-i18n="loading.enteringWorld">Entering the world...</div>
