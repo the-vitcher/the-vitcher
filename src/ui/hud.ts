@@ -4426,6 +4426,8 @@ export class Hud {
         case 'log': {
           const text = this.localizeSystemText(ev.text);
           this.log(text, ev.color ?? '#ccc');
+          // Witcher clue self-talk: speak the line in the chosen inner voice.
+          if (ev.voiceKey) voice.playMonologue(ev.voiceKey);
           const isNythraxisVisionLine = [
             'My king was a good man.',
             'I swore my blade to him.',
@@ -9627,6 +9629,7 @@ export class Hud {
     row.append(name, toggle);
     body.appendChild(row);
     this.settingBoolToggle(body, t('hud.options.npcVoices'), 'voiceEnabled');
+    this.settingBoolToggle(body, t('hudChrome.options.innerVoiceFeminine'), 'innerVoiceFemale');
     this.settingBoolToggle(body, t('hudChrome.options.footstepSounds'), 'footstepSfx');
     this.settingBoolToggle(body, t('hudChrome.options.clickFeedback'), 'clickFeedback');
     this.settingsViewFooter();

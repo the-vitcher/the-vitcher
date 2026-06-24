@@ -188,6 +188,25 @@ describe('Greywater moral-choice quest engine', () => {
     expect(sim.meta(b)!.reputation.size).toBe(0);
   });
 
+  it('the witcher mutters his deductions when a clue is examined (voiced monologue)', () => {
+    const sim = makeWorld();
+    const pid = sim.addPlayer('warrior', 'Geralt');
+    sim.setPlayerLevel(10);
+    const calla = npcEntity(sim, 'calla');
+    teleport(sim, pid, calla.pos.x, calla.pos.z);
+    sim.acceptQuest('gw_caravan', pid);
+    examine(sim, sim.meta(pid)!, 'caravan_wreck');
+
+    const events = sim.tick();
+    const monologue = events.filter(
+      (e) => e.type === 'log' && (e as { voiceKey?: string }).voiceKey?.startsWith('monologue__caravan_wreck'),
+    );
+    expect(monologue.length).toBeGreaterThan(0);
+    // First line carries the stable, gender-free voice key the client plays.
+    expect((monologue[0] as { voiceKey?: string }).voiceKey).toBe('monologue__caravan_wreck__0');
+    expect((monologue[0] as { pid?: number }).pid).toBe(pid); // personal to the examining player
+  });
+
   it('exposes the choice list to the HUD view helpers', () => {
     expect(questHasChoices('gw_caravan')).toBe(true);
     const buttons = questChoiceButtons('gw_caravan');

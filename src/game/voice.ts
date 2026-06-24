@@ -17,6 +17,7 @@ class GameVoice {
   private el: HTMLAudioElement | null = null;
   private vol = 0.9; // 0..1, from the settings slider
   private enabled = true;
+  private innerFemale = false; // masculine/feminine witcher inner voice (clue self-talk)
 
   /** Set voice volume (0..1). Safe any time. */
   setVolume(v: number): void {
@@ -50,6 +51,18 @@ class GameVoice {
     // Autoplay restrictions / a missing file reject the promise — ignore, the
     // dialogue text is the source of truth and audio is an enhancement.
     void this.el.play().catch(() => { /* no-op */ });
+  }
+
+  /** Pick the masculine/feminine inner voice for the witcher's clue self-talk. */
+  setInnerVoiceFemale(on: boolean): void {
+    this.innerFemale = on;
+  }
+
+  /** Play a witcher clue-monologue clip in the chosen inner voice. The base key
+   *  comes from the sim event (`monologue__<clue>__<i>`); the gender suffix is
+   *  appended here so one event serves both voices. */
+  playMonologue(baseKey: string): void {
+    this.play(`${baseKey}__${this.innerFemale ? 'f' : 'm'}`);
   }
 }
 

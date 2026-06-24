@@ -252,6 +252,7 @@ export const zh_CN: EnTranslations = {
       "interfaceModeTouch": "触控",
       "interfaceModeNote": "自动会根据你的设备选择桌面或触控操作。选择桌面可强制使用键盘和鼠标（适合带键盘的平板），选择触控则使用屏幕上的操作控件。",
       "footstepSounds": "脚步声",
+      "innerVoiceFeminine": "Feminine Inner Voice",
       "clickFeedback": "点击标记",
       "showWalletOnCharacterScreen": "在角色界面显示钱包",
       "showWalletOnPlayerCard": "在玩家卡片显示钱包",

@@ -252,6 +252,7 @@ export const ja_JP: EnTranslations = {
       "interfaceModeTouch": "タッチ",
       "interfaceModeNote": "自動では、デバイスに応じてデスクトップ操作かタッチ操作を選びます。デスクトップを選ぶとキーボードとマウスに固定され（キーボード付きタブレットなどに便利）、タッチを選ぶと画面上の操作になります。",
       "footstepSounds": "足音",
+      "innerVoiceFeminine": "Feminine Inner Voice",
       "clickFeedback": "クリックマーカー",
       "showWalletOnCharacterScreen": "キャラクター画面にウォレットを表示",
       "showWalletOnPlayerCard": "プレイヤーカードにウォレットを表示",

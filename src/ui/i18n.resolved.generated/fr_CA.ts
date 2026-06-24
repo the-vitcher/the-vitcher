@@ -252,6 +252,7 @@ export const fr_CA: EnTranslations = {
       "interfaceModeTouch": "Touch",
       "interfaceModeNote": "Auto choisit les commandes Desktop ou Touch selon votre appareil. Choisissez Desktop pour forcer le clavier et la souris (utile sur une tablette avec clavier), ou Touch pour les commandes à l'écran.",
       "footstepSounds": "Sons de pas",
+      "innerVoiceFeminine": "Feminine Inner Voice",
       "clickFeedback": "Repère de clic",
       "showWalletOnCharacterScreen": "Afficher le portefeuille sur l’écran des personnages",
       "showWalletOnPlayerCard": "Afficher le portefeuille sur la carte de joueur",

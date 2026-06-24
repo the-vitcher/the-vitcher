@@ -957,6 +957,10 @@ async function startGame(world: IWorld, offlineSim: Sim | null, online: ClientWo
       voice.setEnabled(settings.set('voiceEnabled', !!value));
       return;
     }
+    if (key === 'innerVoiceFemale') {
+      voice.setInnerVoiceFemale(settings.set('innerVoiceFemale', !!value));
+      return;
+    }
     if (key === 'footstepSfx') {
       sfx.setFootstepsEnabled(settings.set('footstepSfx', !!value));
       return;

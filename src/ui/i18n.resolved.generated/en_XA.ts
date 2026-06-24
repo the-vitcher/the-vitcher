@@ -252,6 +252,7 @@ export const en_XA: EnTranslations = {
       "interfaceModeTouch": "[Ţóúçĥ]",
       "interfaceModeNote": "[Áúţó þíçķš ðéšķţóþ óŕ ţóúçĥ çóñţŕóļš ƒŕóɱ ýóúŕ ðéʋíçé. Çĥóóšé Ðéšķţóþ ţó ƒóŕçé ķéýƀóáŕð áñð ɱóúšé (úšéƒúļ óñ á ţáƀļéţ ŵíţĥ á ķéýƀóáŕð), óŕ Ţóúçĥ ƒóŕ ţĥé óñ-šçŕééñ çóñţŕóļš.]",
       "footstepSounds": "[Ƒóóţšţéþ Šóúñðš]",
+      "innerVoiceFeminine": "[Ƒéɱíñíñé Íññéŕ Ʋóíçé]",
       "clickFeedback": "[Çļíçķ Ɱáŕķéŕ]",
       "showWalletOnCharacterScreen": "[Šĥóŵ Ŵáļļéţ óñ Çĥáŕáçţéŕ Šçŕééñ]",
       "showWalletOnPlayerCard": "[Šĥóŵ Ŵáļļéţ óñ Þļáýéŕ Çáŕð]",

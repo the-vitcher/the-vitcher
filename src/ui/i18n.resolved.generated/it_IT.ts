@@ -252,6 +252,7 @@ export const it_IT: EnTranslations = {
       "interfaceModeTouch": "Touch",
       "interfaceModeNote": "Auto sceglie i controlli Desktop o Touch in base al tuo dispositivo. Scegli Desktop per forzare tastiera e mouse (utile su un tablet con tastiera), oppure Touch per i controlli a schermo.",
       "footstepSounds": "Suoni dei passi",
+      "innerVoiceFeminine": "Feminine Inner Voice",
       "clickFeedback": "Indicatore di clic",
       "showWalletOnCharacterScreen": "Mostra portafoglio nella schermata personaggi",
       "showWalletOnPlayerCard": "Mostra portafoglio nella scheda giocatore",

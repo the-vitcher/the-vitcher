@@ -7967,7 +7967,9 @@ export class Sim {
     const lines = GROUND_OBJECT_EXAMINE[itemId];
     if (!lines || lines.length === 0) return;
     for (let i = 0; i < lines.length; i++) {
-      const event: SimEvent = { type: 'log', text: lines[i], color: '#9fe6b0', pid };
+      // voiceKey lets the client play the matching pre-rendered inner-voice clip
+      // (gendered suffix appended client-side); the line key is stable per clue+index.
+      const event: SimEvent = { type: 'log', text: lines[i], color: '#9fe6b0', pid, voiceKey: `monologue__${itemId}__${i}` };
       if (i === 0) this.emit(event);
       else this.delayedEvents.push({ at: this.time + i * NYTHRAXIS_VISION_LINE_DELAY, event });
     }

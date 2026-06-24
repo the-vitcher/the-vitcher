@@ -1114,7 +1114,7 @@ export type SimEvent = { pid?: number } & (
   | { type: 'spellfx'; sourceId: number; targetId: number; school: string; fx: 'projectile' | 'beam' | 'tick' | 'nova' }
   // entityId (when set) anchors the log to that entity so the server only
   // delivers it to nearby players; anchorless logs broadcast server-wide
-  | { type: 'log'; text: string; color?: string; entityId?: number }
+  | { type: 'log'; text: string; color?: string; entityId?: number; voiceKey?: string }
   // personal cue (carries `pid`) to open the cosmetic skin-select overlay with
   // the server-rolled rank. Text-free on purpose — the client renders its own
   // localized copy, so no sim/server i18n matcher rule is needed.

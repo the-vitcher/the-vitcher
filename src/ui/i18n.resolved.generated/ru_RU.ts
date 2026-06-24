@@ -252,6 +252,7 @@ export const ru_RU: EnTranslations = {
       "interfaceModeTouch": "Сенсорный",
       "interfaceModeNote": "В режиме «Авто» управление для компьютера или сенсорное выбирается по вашему устройству. Выберите «Компьютер», чтобы включить клавиатуру и мышь (удобно на планшете с клавиатурой), или «Сенсорный» для экранного управления.",
       "footstepSounds": "Звуки шагов",
+      "innerVoiceFeminine": "Feminine Inner Voice",
       "clickFeedback": "Метка клика",
       "showWalletOnCharacterScreen": "Показывать кошелек на экране персонажей",
       "showWalletOnPlayerCard": "Показывать кошелек на карточке игрока",

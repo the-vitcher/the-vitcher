@@ -261,6 +261,28 @@ export const VOICE_PROMPTS = [
     sampleText:
       'You are the witcher who brought me the slaver\'s manifest. The cells are full because of it. The law pays its debts; there is a chest in the jailhouse with your fee inside it.',
   },
+
+  // -- The witcher's inner voice (clue self-talk; one masculine, one feminine) ---
+  {
+    npcId: 'witcher_inner_male',
+    name: 'Witcher (inner voice, masculine)',
+    voiceDescription:
+      'A witcher thinking aloud over a clue: a low, dry, gravelled masculine monotone, half-muttered '
+      + 'to himself. Controlled, weary, observant; the unhurried cadence of a tracker reading sign, '
+      + 'each deduction landing flat and certain. Close-mic, intimate, no theatrics. Age 40s. Male.',
+    sampleText:
+      'Hm. The wagon went off the ford sideways, not forward. It did not lose the road in the current. The wheels were turned. Someone drove it under on purpose.',
+  },
+  {
+    npcId: 'witcher_inner_female',
+    name: 'Witcher (inner voice, feminine)',
+    voiceDescription:
+      'A witcheress thinking aloud over a clue: a low, cool, smoky feminine register, half-murmured '
+      + 'to herself. Controlled, dry, observant; the unhurried cadence of a tracker reading sign, each '
+      + 'deduction landing flat and certain. Close-mic, intimate, no theatrics. Age 30s. Female.',
+    sampleText:
+      'Hm. The wagon went off the ford sideways, not forward. It did not lose the road in the current. The wheels were turned. Someone drove it under on purpose.',
+  },
 ];
 
 // Recurring NPC records → the base voice that speaks for them. gen_npc_lines.mjs

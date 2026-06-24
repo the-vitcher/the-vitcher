@@ -152,7 +152,8 @@ export const pending: Record<string, readonly string[]> = {
     "entities.zones.eastbrook_vale.pois.15.label",
     "entities.zones.eastbrook_vale.pois.16.label",
     "entities.zones.eastbrook_vale.pois.17.label",
-    "entities.zones.eastbrook_vale.pois.9.label"
+    "entities.zones.eastbrook_vale.pois.9.label",
+    "hudChrome.options.innerVoiceFeminine"
   ],
   "es_ES": [
     "entities.mobs.bog_ghoul.name",
@@ -297,7 +298,8 @@ export const pending: Record<string, readonly string[]> = {
     "entities.zones.eastbrook_vale.pois.15.label",
     "entities.zones.eastbrook_vale.pois.16.label",
     "entities.zones.eastbrook_vale.pois.17.label",
-    "entities.zones.eastbrook_vale.pois.9.label"
+    "entities.zones.eastbrook_vale.pois.9.label",
+    "hudChrome.options.innerVoiceFeminine"
   ],
   "fr_FR": [
     "entities.mobs.bog_ghoul.name",
@@ -442,7 +444,8 @@ export const pending: Record<string, readonly string[]> = {
     "entities.zones.eastbrook_vale.pois.15.label",
     "entities.zones.eastbrook_vale.pois.16.label",
     "entities.zones.eastbrook_vale.pois.17.label",
-    "entities.zones.eastbrook_vale.pois.9.label"
+    "entities.zones.eastbrook_vale.pois.9.label",
+    "hudChrome.options.innerVoiceFeminine"
   ],
   "fr_CA": [
     "entities.mobs.bog_ghoul.name",
@@ -587,7 +590,8 @@ export const pending: Record<string, readonly string[]> = {
     "entities.zones.eastbrook_vale.pois.15.label",
     "entities.zones.eastbrook_vale.pois.16.label",
     "entities.zones.eastbrook_vale.pois.17.label",
-    "entities.zones.eastbrook_vale.pois.9.label"
+    "entities.zones.eastbrook_vale.pois.9.label",
+    "hudChrome.options.innerVoiceFeminine"
   ],
   "en_CA": [],
   "it_IT": [
@@ -733,7 +737,8 @@ export const pending: Record<string, readonly string[]> = {
     "entities.zones.eastbrook_vale.pois.15.label",
     "entities.zones.eastbrook_vale.pois.16.label",
     "entities.zones.eastbrook_vale.pois.17.label",
-    "entities.zones.eastbrook_vale.pois.9.label"
+    "entities.zones.eastbrook_vale.pois.9.label",
+    "hudChrome.options.innerVoiceFeminine"
   ],
   "de_DE": [
     "entities.mobs.bog_ghoul.name",
@@ -878,7 +883,8 @@ export const pending: Record<string, readonly string[]> = {
     "entities.zones.eastbrook_vale.pois.15.label",
     "entities.zones.eastbrook_vale.pois.16.label",
     "entities.zones.eastbrook_vale.pois.17.label",
-    "entities.zones.eastbrook_vale.pois.9.label"
+    "entities.zones.eastbrook_vale.pois.9.label",
+    "hudChrome.options.innerVoiceFeminine"
   ],
   "zh_CN": [
     "entities.mobs.bog_ghoul.name",
@@ -1023,7 +1029,8 @@ export const pending: Record<string, readonly string[]> = {
     "entities.zones.eastbrook_vale.pois.15.label",
     "entities.zones.eastbrook_vale.pois.16.label",
     "entities.zones.eastbrook_vale.pois.17.label",
-    "entities.zones.eastbrook_vale.pois.9.label"
+    "entities.zones.eastbrook_vale.pois.9.label",
+    "hudChrome.options.innerVoiceFeminine"
   ],
   "zh_TW": [
     "entities.mobs.bog_ghoul.name",
@@ -1168,7 +1175,8 @@ export const pending: Record<string, readonly string[]> = {
     "entities.zones.eastbrook_vale.pois.15.label",
     "entities.zones.eastbrook_vale.pois.16.label",
     "entities.zones.eastbrook_vale.pois.17.label",
-    "entities.zones.eastbrook_vale.pois.9.label"
+    "entities.zones.eastbrook_vale.pois.9.label",
+    "hudChrome.options.innerVoiceFeminine"
   ],
   "ko_KR": [
     "entities.mobs.bog_ghoul.name",
@@ -1313,7 +1321,8 @@ export const pending: Record<string, readonly string[]> = {
     "entities.zones.eastbrook_vale.pois.15.label",
     "entities.zones.eastbrook_vale.pois.16.label",
     "entities.zones.eastbrook_vale.pois.17.label",
-    "entities.zones.eastbrook_vale.pois.9.label"
+    "entities.zones.eastbrook_vale.pois.9.label",
+    "hudChrome.options.innerVoiceFeminine"
   ],
   "ja_JP": [
     "entities.mobs.bog_ghoul.name",
@@ -1458,7 +1467,8 @@ export const pending: Record<string, readonly string[]> = {
     "entities.zones.eastbrook_vale.pois.15.label",
     "entities.zones.eastbrook_vale.pois.16.label",
     "entities.zones.eastbrook_vale.pois.17.label",
-    "entities.zones.eastbrook_vale.pois.9.label"
+    "entities.zones.eastbrook_vale.pois.9.label",
+    "hudChrome.options.innerVoiceFeminine"
   ],
   "pt_BR": [
     "entities.mobs.bog_ghoul.name",
@@ -1603,7 +1613,8 @@ export const pending: Record<string, readonly string[]> = {
     "entities.zones.eastbrook_vale.pois.15.label",
     "entities.zones.eastbrook_vale.pois.16.label",
     "entities.zones.eastbrook_vale.pois.17.label",
-    "entities.zones.eastbrook_vale.pois.9.label"
+    "entities.zones.eastbrook_vale.pois.9.label",
+    "hudChrome.options.innerVoiceFeminine"
   ],
   "ru_RU": [
     "entities.mobs.bog_ghoul.name",
@@ -1748,6 +1759,7 @@ export const pending: Record<string, readonly string[]> = {
     "entities.zones.eastbrook_vale.pois.15.label",
     "entities.zones.eastbrook_vale.pois.16.label",
     "entities.zones.eastbrook_vale.pois.17.label",
-    "entities.zones.eastbrook_vale.pois.9.label"
+    "entities.zones.eastbrook_vale.pois.9.label",
+    "hudChrome.options.innerVoiceFeminine"
   ]
 };

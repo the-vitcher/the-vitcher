@@ -133,6 +133,9 @@ export const hudChromeStrings = {
     interfaceModeNote: "Auto picks desktop or touch controls from your device. Choose Desktop to force keyboard and mouse (useful on a tablet with a keyboard), or Touch for the on-screen controls.",
     // Audio panel toggle for the per-footfall step clips (off by default).
     footstepSounds: "Footstep Sounds",
+    // Audio panel toggle: the witcher's clue self-talk plays in a feminine inner
+    // voice when on, masculine when off (there is no character-gender model).
+    innerVoiceFeminine: "Feminine Inner Voice",
     // Toggle for the OSRS-style click-feedback marker: entity targets and
     // click-to-move destinations (on by default).
     clickFeedback: "Click Marker",

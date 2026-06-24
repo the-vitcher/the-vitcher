@@ -161,6 +161,11 @@ export const BOOL_SETTINGS = {
   // on by default: play an NPC's voiced line when its dialogue / quest detail
   // opens. Off mutes voice-over entirely (independent of the SFX/music toggles).
   voiceEnabled: { def: true },
+  // off (masculine) by default: the witcher's own clue self-talk plays in a
+  // masculine or feminine inner voice. There is no character-gender model, so the
+  // player picks the voice that fits their character here. Only affects the
+  // monologue clips, not NPC dialogue.
+  innerVoiceFemale: { def: false },
   // off by default: the per-footfall step clips (self + other entities) tend to
   // read as repetitive over a long session, so they're silenced out of the box;
   // players who want them back can re-enable. Independent of the SFX volume

@@ -55,7 +55,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 async function loadContent() {
   const build = await esbuild.build({
     stdin: {
-      contents: "export { NPCS, QUESTS } from './src/sim/data.ts';",
+      contents: "export { NPCS, QUESTS, GROUND_OBJECTS } from './src/sim/data.ts';",
       resolveDir: root,
       sourcefile: 'voice-lines-entry.ts',
       loader: 'ts',
@@ -102,7 +102,7 @@ async function tts(voiceId, text, { retries = 4 } = {}) {
   }
 }
 
-const { NPCS, QUESTS } = await loadContent();
+const { NPCS, QUESTS, GROUND_OBJECTS } = await loadContent();
 
 // Build the full line list. Each line carries the speaking NPC's voice (giver
 // speaks quest offers, turn-in speaks completions); recurring Aldric/Maren records
@@ -117,6 +117,16 @@ for (const q of Object.values(QUESTS)) {
 }
 // Encounter dialogue (yells/bubbles) that isn't on an NpcDef/QuestDef.
 for (const e of EXTRA_LINES) lines.push({ key: e.key, text: e.text, voiceNpc: e.voiceNpc });
+// Witcher clue self-talk: each examinable ground object's monologue, rendered in
+// BOTH inner voices. Keys mirror the sim's voiceKey (`monologue__<clue>__<i>`) plus
+// a gender suffix the client appends at playback (see voice.playMonologue).
+for (const obj of Object.values(GROUND_OBJECTS)) {
+  if (!obj.examine) continue;
+  obj.examine.forEach((line, i) => {
+    lines.push({ key: `monologue__${obj.itemId}__${i}__m`, text: line, voiceNpc: 'witcher_inner_male' });
+    lines.push({ key: `monologue__${obj.itemId}__${i}__f`, text: line, voiceNpc: 'witcher_inner_female' });
+  });
+}
 
 const publicPathFor = (line) => `/audio/voice/${line.voiceNpc}/${line.key}.mp3`;
 const diskPathFor = (line) => path.join(voiceDir, line.voiceNpc, `${line.key}.mp3`);
