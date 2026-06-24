@@ -257,59 +257,78 @@ export function skinThumbUrl(key: string, index: number): string | null {
 
 export const VISUALS: Record<string, VisualDef> = {
   // -- player classes ------------------------------------------------------
+  // Witcher reskin: the 9 classes are Schools of the Witcher. We have no
+  // bespoke GLBs, so each School reads as a witcher through a muted
+  // leather/steel tint pass over the KayKit base (away from the bright-fantasy
+  // palette) plus a witcher-appropriate weapon silhouette. Tints stay modest
+  // (strength <= 0.45) so the base texture detail survives the lerp.
   player_warrior: {
+    // School of the Bear: heavy plate witcher, dark steel-and-leather.
     url: `${PLAYERS}/knight.glb`, height: HUMANOID_H,
     clips: kaykit(['1H_Melee_Attack_Chop', '1H_Melee_Attack_Slice_Diagonal']),
     show: ['Knight_Helmet', 'Knight_Cape'], // v2 knight dropped the built-in Badge_Shield mesh
     attach: [{ url: `${WEAPONS}/sword_1handed.glb`, bone: 'handslot.r' }],
+    tint: 0x4b4a52, tintStrength: 0.32,
   },
   player_paladin: {
+    // School of the Manticore: dark crimson-steel, grim and martial.
     url: `${PLAYERS}/paladin.glb`, height: HUMANOID_H,
     clips: kaykit(['1H_Melee_Attack_Chop', '1H_Melee_Attack_Slice_Diagonal']),
-    // dedicated paladin model (helmeted variant) — ships its own Cape + Helmet
-    // meshes and texture, so no show-list/tint. Shield + paladin hammer arrive
-    // in the weapons pass; the gripped axe holds the slot until then.
+    // dedicated paladin model (helmeted variant) ships its own Cape + Helmet
+    // meshes and texture. Shield + hammer arrive in the weapons pass; the
+    // gripped axe holds the slot until then.
     attach: [{ url: `${WEAPONS}/axe_1handed.glb`, bone: 'handslot.r' }],
+    tint: 0x6a5450, tintStrength: 0.3,
   },
   player_hunter: {
+    // School of the Griffin: woodland witcher, muted olive-brown leathers.
     url: `${PLAYERS}/ranger.glb`, height: HUMANOID_H,
     clips: kaykit(['2H_Ranged_Shoot']),
     // dedicated ranger model — the quiver is a built-in mesh, so it's no longer
     // a separate chest attachment
     attach: [{ url: `${WEAPONS}/crossbow_1handed.glb`, bone: 'handslot.r' }],
+    tint: 0x6f6a4c, tintStrength: 0.28,
   },
   player_rogue: {
+    // School of the Cat: the twin-blade witcher silhouette (steel + silver),
+    // black leather. Swords replace the KayKit daggers for the iconic look.
     url: `${PLAYERS}/rogue.glb`, height: HUMANOID_H,
     clips: kaykit(['Dualwield_Melee_Attack_Chop']),
     show: ['Rogue_Cape'],
     attach: [
-      { url: `${WEAPONS}/dagger.glb`, bone: 'handslot.r' },
-      { url: `${WEAPONS}/dagger.glb`, bone: 'handslot.l' },
+      { url: `${WEAPONS}/sword_1handed.glb`, bone: 'handslot.r' },
+      { url: `${WEAPONS}/sword_1handed.glb`, bone: 'handslot.l' },
     ],
+    tint: 0x3c3b45, tintStrength: 0.36,
   },
   player_priest: {
+    // Temple Healer: pale temple vestments, kept light.
     url: `${PLAYERS}/mage.glb`, height: HUMANOID_H,
     clips: kaykit(['2H_Melee_Attack_Chop']),
     show: [],
     attach: [{ url: `${WEAPONS}/staff.glb`, bone: 'handslot.r' }],
-    tint: 0xf0e9d6, tintStrength: 0.5,
+    tint: 0xe6ddc6, tintStrength: 0.5,
   },
   player_shaman: {
+    // Hedge-Witcher: earthen wanderer, weathered tan-and-moss leathers.
     url: `${PLAYERS}/barbarian.glb`, height: HUMANOID_H,
     clips: kaykit(['1H_Melee_Attack_Chop', '1H_Melee_Attack_Slice_Diagonal']),
     show: ['Barbarian_BearHat'], // v2 barbarian renamed Hat→BearHat and dropped the round shield mesh
     attach: [{ url: `${WEAPONS}/axe_1handed.glb`, bone: 'handslot.r' }],
-    tint: 0x6f8fc9, tintStrength: 0.4,
+    tint: 0x7a7048, tintStrength: 0.4,
   },
   player_mage: {
+    // Sorcerer: deep arcane blue robes.
     url: `${PLAYERS}/mage.glb`, height: HUMANOID_H,
     clips: kaykit(['2H_Melee_Attack_Chop']),
     // no Mage_Hat on players: the brim hides the whole body from the default
     // chase-camera pitch (NPC mages keep theirs — they're seen from the side)
     show: ['Mage_Cape'],
     attach: [{ url: `${WEAPONS}/staff.glb`, bone: 'handslot.r' }],
+    tint: 0x4d5582, tintStrength: 0.32,
   },
   player_warlock: {
+    // Necromancer: grave-touched, sickly green-black robes.
     url: `${PLAYERS}/mage.glb`, height: HUMANOID_H,
     clips: kaykit(['Spellcast_Shoot']), // wand zap reads better than a staff bonk
     show: [],
@@ -317,13 +336,15 @@ export const VISUALS: Record<string, VisualDef> = {
       { url: `${WEAPONS}/wand.glb`, bone: 'handslot.r' },
       { url: `${WEAPONS}/spellbook_open.glb`, bone: 'handslot.l', gripRef: 'Spellbook_open' },
     ],
-    tint: 0x8d5fd3, tintStrength: 0.45,
+    tint: 0x4c553f, tintStrength: 0.45,
   },
   player_druid: {
+    // Druid of the Oak: deep forest green.
     url: `${PLAYERS}/druid.glb`, height: HUMANOID_H,
     clips: kaykit(['2H_Melee_Attack_Chop']),
     // dedicated druid model (own texture, ships a Backpack mesh)
     attach: [{ url: `${WEAPONS}/staff.glb`, bone: 'handslot.r' }],
+    tint: 0x57693f, tintStrength: 0.3,
   },
 
   // -- cosmetic body skin (class-agnostic; both the skin preview and a live

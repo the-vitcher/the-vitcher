@@ -49,7 +49,8 @@ describe('character visual manifest', () => {
     expect(manifestUrlsForGraphics(false)).toEqual(expect.arrayContaining(allWeaponUrls));
     expect(visibleAttachmentsForGraphics(VISUALS.player_warrior).map((a) => a.url))
       .toContain('models/weapons/sword_1handed.glb');
+    // School of the Cat: twin-sword witcher silhouette (steel + silver).
     expect(visibleAttachmentsForGraphics(VISUALS.player_rogue).map((a) => a.url))
-      .toEqual(['models/weapons/dagger.glb', 'models/weapons/dagger.glb']);
+      .toEqual(['models/weapons/sword_1handed.glb', 'models/weapons/sword_1handed.glb']);
   });
 });
