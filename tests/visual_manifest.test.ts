@@ -6,6 +6,7 @@ import {
   manifestUrls,
   manifestUrlsForGraphics,
   visibleAttachmentsForGraphics,
+  visualKeyFor,
   VISUALS,
   type ClipMap,
 } from '../src/render/characters/manifest';
@@ -41,6 +42,32 @@ describe('character visual manifest', () => {
 
     expect(animationNames.size).toBeGreaterThan(0);
     expect([...new Set(expectedClipNames(visual.clips))].filter((name) => !animationNames.has(name))).toEqual([]);
+  });
+
+  it('binds the new Greywater creatures to real clips in their GLBs (no T-pose)', async () => {
+    for (const key of ['mob_nekker', 'mob_ghoul', 'mob_leshen']) {
+      const visual = VISUALS[key];
+      const animationNames = await glbAnimationNames(`public/${visual.url}`);
+      expect(animationNames.size, `${key} GLB has no clips`).toBeGreaterThan(0);
+      const missing = [...new Set(expectedClipNames(visual.clips))].filter((n) => !animationNames.has(n));
+      expect(missing, `${key} declares clips absent from ${visual.url}`).toEqual([]);
+    }
+  });
+
+  it('gives every Greywater mob a distinct, non-skeleton model', () => {
+    const keyFor = (templateId: string) => visualKeyFor({ kind: 'mob', templateId } as unknown as Parameters<typeof visualKeyFor>[0]);
+    const greywaterMobs = [
+      'greywater_drowner', 'river_mudlark', 'bog_ghoul', 'valley_nekker', 'margrave_guard',
+      'tournament_brawler', 'tournament_champion', 'reclamation_mercenary', 'greywater_hag', 'valley_leshen',
+    ];
+    for (const id of greywaterMobs) {
+      const key = keyFor(id);
+      expect(key, `${id} still maps to a skeleton`).not.toMatch(/^skel_/);
+      expect(VISUALS[key], `${id} -> ${key} is not a real visual`).toBeTruthy();
+    }
+    // The four monster types are all visually distinct from one another.
+    const monsters = ['greywater_drowner', 'bog_ghoul', 'valley_nekker', 'valley_leshen'].map(keyFor);
+    expect(new Set(monsters).size).toBe(4);
   });
 
   it('keeps held weapons and props available on low graphics', () => {

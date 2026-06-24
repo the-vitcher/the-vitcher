@@ -152,6 +152,20 @@ const BIPED14: ClipMap = {
   hit: ['HitReact'], death: 'Death',
 };
 
+// Velociraptor rig (velociraptor.glb) — its own prefixed clip set. Used for the
+// Greywater nekkers: fast, low, clawed pack hunters.
+const RAPTOR: ClipMap = {
+  idle: 'Velociraptor_Idle', walk: 'Velociraptor_Walk', run: 'Velociraptor_Run',
+  attack: ['Velociraptor_Attack'], death: 'Velociraptor_Death', jump: 'Velociraptor_Jump',
+};
+
+// "Biter" enemy rig (orcenemy/crabenemy/yeti.glb) — Bite_Front attack, no Run clip.
+// Used for the bog ghoul (a biting brute) and the valley leshen (a hulking wood-spirit).
+const BITER: ClipMap = {
+  idle: 'Idle', walk: 'Walk', run: 'Walk', attack: ['Bite_Front'],
+  hit: ['HitRecieve'], death: 'Death', jump: 'Jump',
+};
+
 // 2023 enemy rig (goblin/giant)
 const ENEMY7: ClipMap = {
   idle: 'Idle', walk: 'Walk', run: 'Run', attack: ['Attack'],
@@ -455,6 +469,22 @@ export const VISUALS: Record<string, VisualDef> = {
     clips: BIPED14, tint: 'entity', tintStrength: 0.35,
   },
 
+  // -- Greywater witcher bestiary (distinct CC0 Quaternius creatures) --------
+  // The drowned, the fen ghoul, the nekker pack hunter, and the leshen each get
+  // their own model so the valley never reads as a wall of skeletons.
+  mob_nekker: {
+    url: `${CREATURES}/velociraptor.glb`, height: 1.3,
+    clips: RAPTOR, tint: 'entity', tintStrength: 0.3,
+  },
+  mob_ghoul: {
+    url: `${CREATURES}/orcenemy.glb`, height: 2.1,
+    clips: BITER, tint: 'entity', tintStrength: 0.3,
+  },
+  mob_leshen: {
+    url: `${CREATURES}/yeti.glb`, height: 2.7,
+    clips: BITER, tint: 0x4a5a40, tintStrength: 0.55, // bark-and-moss wash
+  },
+
   // -- undead (KayKit skeletons, shared 41-joint rig) ------------------------
   skel_minion: {
     url: `${ENEMIES}/skeleton_minion.glb`, height: 2.5,
@@ -629,6 +659,17 @@ const MOB_KEYS: Record<string, string> = {
   vision_aldren_warrior: 'player_warrior',
   vision_malric_mage: 'player_mage',
   vision_deathstalker_voss: 'player_rogue',
+  // Greywater Valley witcher bestiary: each a distinct model, none a skeleton.
+  greywater_drowner: 'mob_murloc',       // amphibious bog-dweller (frog rig)
+  river_mudlark: 'mob_bandit',           // ragged human river-thief
+  bog_ghoul: 'mob_ghoul',                // biting fen brute (orcenemy)
+  valley_nekker: 'mob_nekker',           // fast clawed pack hunter (velociraptor)
+  margrave_guard: 'npc_knight',          // armored guardsman
+  tournament_brawler: 'mob_bruiser',     // bare-knuckle barbarian
+  tournament_champion: 'mob_ogre',       // a towering elite (giant)
+  reclamation_mercenary: 'player_warrior', // armored company sword-for-hire
+  greywater_hag: 'mob_dark_caster',      // robed water-witch
+  valley_leshen: 'mob_leshen',           // hulking antlered wood-spirit (yeti, bark-tinted)
 };
 
 const FAMILY_KEYS: Record<string, string> = {
