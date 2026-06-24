@@ -18,7 +18,6 @@ import { FrameMeter, buildPerfOverlayView } from './ui/perf_overlay_model';
 import { createMetricsSampler } from './ui/perf_metrics_sampler';
 import { audio } from './game/audio';
 import { music } from './game/music';
-import { voice } from './game/voice';
 import { sfx } from './game/sfx';
 import { activePvpOpponentIds, handlePickedEntity, hoverCursorKind, isAttackableEntity } from './game/interactions';
 import { clickMoveShouldWalk, clickMoveStep, distance2d, latencyAdjustedStopDistance, resolveClickMoveAction, stepAngleToward } from './game/click_move';
@@ -953,14 +952,6 @@ async function startGame(world: IWorld, offlineSim: Sim | null, online: ClientWo
       gamepad.setInvertY(settings.set('gamepadInvertY', !!value));
       return;
     }
-    if (key === 'voiceEnabled') {
-      voice.setEnabled(settings.set('voiceEnabled', !!value));
-      return;
-    }
-    if (key === 'innerVoiceFemale') {
-      voice.setInnerVoiceFemale(settings.set('innerVoiceFemale', !!value));
-      return;
-    }
     if (key === 'footstepSfx') {
       sfx.setFootstepsEnabled(settings.set('footstepSfx', !!value));
       return;
@@ -978,7 +969,6 @@ async function startGame(world: IWorld, offlineSim: Sim | null, online: ClientWo
       case 'touchLookSpeed': input.setTouchLookSpeed(v); break;
       case 'sfxVolume': audio.setVolume(v); sfx.setVolume(v); break;
       case 'musicVolume': music.setVolume(v); break;
-      case 'voiceVolume': voice.setVolume(v); break;
       case 'brightness': renderer.setBrightness(v); break;
       case 'cameraFov': renderer.setCameraFov(v); break;
       case 'renderScale': renderer.setRenderScale(v); break;

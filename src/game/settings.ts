@@ -9,9 +9,6 @@ export const SETTING_RANGES = {
   cameraSpeed: { min: 0.25, max: 1.25, def: 0.7 },
   sfxVolume: { min: 0, max: 1, def: 0.8 },
   musicVolume: { min: 0, max: 1, def: 0.8 },
-  // Pre-rendered NPC voice-line clips (public/audio/voice). Slightly louder than
-  // SFX by default so dialogue reads over ambient combat noise.
-  voiceVolume: { min: 0, max: 1, def: 0.9 },
   brightness: { min: 0.6, max: 1.5, def: 1 },
   // 1 low, 2 medium, 3 high, 4 ultra, 5 advanced. The renderer reads this
   // from localStorage during startup because tier choice controls preload.
@@ -158,14 +155,6 @@ export const BOOL_SETTINGS = {
   // off by default: invert the vertical axis of mouselook (push mouse forward
   // to look down), the classic flight-sim preference.
   invertLookY: { def: false },
-  // on by default: play an NPC's voiced line when its dialogue / quest detail
-  // opens. Off mutes voice-over entirely (independent of the SFX/music toggles).
-  voiceEnabled: { def: true },
-  // off (masculine) by default: the witcher's own clue self-talk plays in a
-  // masculine or feminine inner voice. There is no character-gender model, so the
-  // player picks the voice that fits their character here. Only affects the
-  // monologue clips, not NPC dialogue.
-  innerVoiceFemale: { def: false },
   // off by default: the per-footfall step clips (self + other entities) tend to
   // read as repetitive over a long session, so they're silenced out of the box;
   // players who want them back can re-enable. Independent of the SFX volume
