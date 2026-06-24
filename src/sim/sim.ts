@@ -1,7 +1,7 @@
 import {
   ABILITIES, ARENA_SLOT_COUNT, CAMPS, CLASSES, DUNGEONS, DUNGEON_LIST, DungeonDef, arenaOrigin, dungeonAt,
   DUNGEON_X_THRESHOLD, GROUND_OBJECTS, GROUND_OBJECT_EXAMINE, GROUP_XP_BONUS, INSTANCE_SLOT_COUNT, isArenaPos,
-  ITEMS, MOBS, NPCS, PLAYER_START, PROPS, QUESTS, ROADS, questRewardItemId, abilitiesKnownAt, instanceOrigin,
+  ITEMS, MOBS, NPCS, PLAYER_START, PROPS, QUESTS, ROADS, questRewardItemId, niceDevWeaponFor, abilitiesKnownAt, instanceOrigin,
   DEEPFEN_SHALLOWS_LAKE, WORLD_MIN_X, WORLD_MAX_X,
   zoneAt, ZONES, FISHING_TABLES, FISHING_RARE_ID,
 } from './data';
@@ -1510,6 +1510,16 @@ export class Sim {
     const r = this.resolve(pid);
     if (!r) return;
     this.setPlayerLevel(Math.min(MAX_LEVEL, r.e.level + 1), r.meta.entityId);
+  }
+
+  // IWorld dev convenience: grant the local player a class-appropriate level-20 epic
+  // weapon. Same devCommands gate as devLevelUp; online routes through the server's
+  // gated `dev_give` instead, so this can never spawn loot in a normal session.
+  devGiveWeapon(pid?: number): void {
+    if (!this.devCommands) return;
+    const r = this.resolve(pid);
+    if (!r) return;
+    this.addItem(niceDevWeaponFor(r.meta.cls), 1, r.meta.entityId);
   }
 
   // -------------------------------------------------------------------------

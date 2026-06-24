@@ -284,6 +284,8 @@ export interface IWorld {
   // Dev convenience (offline dev builds / a server with ALLOW_DEV_COMMANDS): raise the
   // local player one level. A no-op where dev commands are disabled.
   devLevelUp(): void;
+  // Dev convenience (same gating): grant a class-appropriate level-20 epic weapon.
+  devGiveWeapon(): void;
   lootCorpse(id: number): void;
   submitLootRoll(rollId: number, choice: LootRollChoice): void;
   pickUpObject(id: number): void;

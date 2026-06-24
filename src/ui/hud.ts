@@ -882,19 +882,31 @@ export class Hud {
   // Dev-only on-screen controls (Vite dev builds only, via import.meta.env.DEV).
   // English labels are fine here: this never ships in a production build.
   private initDevControls(): void {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.textContent = 'Level Up (dev)';
-    btn.setAttribute('aria-label', 'Developer: raise your level by one');
-    btn.style.cssText = [
-      'position:fixed', 'left:14px', 'top:50%', 'transform:translateY(-50%)', 'z-index:100000',
+    // Shared style for the stacked left-edge dev buttons. English labels are fine
+    // here: this whole control set is dev-build-only and never ships to production.
+    const devBtnStyle = (topPct: string) => [
+      'position:fixed', 'left:14px', `top:${topPct}`, 'transform:translateY(-50%)', 'z-index:100000',
       'min-height:48px', 'padding:12px 18px', 'cursor:pointer',
       'font:700 15px/1.2 system-ui,sans-serif', 'color:#1a1206',
       'background:#ffcc33', 'border:2px solid #7a5a10', 'border-radius:10px',
       'box-shadow:0 2px 10px rgba(0,0,0,0.5)',
     ].join(';');
-    btn.addEventListener('click', () => this.sim.devLevelUp());
-    document.body.appendChild(btn);
+
+    const levelBtn = document.createElement('button');
+    levelBtn.type = 'button';
+    levelBtn.textContent = 'Level Up (dev)';
+    levelBtn.setAttribute('aria-label', 'Developer: raise your level by one');
+    levelBtn.style.cssText = devBtnStyle('50%');
+    levelBtn.addEventListener('click', () => this.sim.devLevelUp());
+    document.body.appendChild(levelBtn);
+
+    const weaponBtn = document.createElement('button');
+    weaponBtn.type = 'button';
+    weaponBtn.textContent = 'Give Weapon (dev)';
+    weaponBtn.setAttribute('aria-label', 'Developer: grant a class-appropriate level 20 epic weapon');
+    weaponBtn.style.cssText = devBtnStyle('calc(50% + 60px)');
+    weaponBtn.addEventListener('click', () => this.sim.devGiveWeapon());
+    document.body.appendChild(weaponBtn);
   }
 
   private setText(el: HTMLElement, text: string): void {

@@ -1,6 +1,6 @@
 // Online play: REST auth client + WebSocket world mirror.
 
-import { NPCS, QUESTS, abilitiesKnownAt } from '../sim/data';
+import { NPCS, QUESTS, abilitiesKnownAt, niceDevWeaponFor } from '../sim/data';
 import { computeQuestState, ResolvedAbility } from '../sim/sim';
 import {
   cloneAllocation, computeTalentModifiers, emptyAllocation, talentPointsAtLevel, pointsSpent,
@@ -1122,6 +1122,12 @@ export class ClientWorld implements IWorld {
     // Server gates `dev_level` behind ALLOW_DEV_COMMANDS, so this is a no-op online
     // unless the realm explicitly runs in dev mode.
     this.cmd({ cmd: 'dev_level', level: Math.min(20, (this.player?.level ?? 1) + 1) });
+  }
+  devGiveWeapon(): void {
+    if (!this.canSendCommand()) return;
+    // Server gates `dev_give` behind ALLOW_DEV_COMMANDS (no-op online otherwise). The
+    // client picks the class-appropriate epic; the server validates and grants it.
+    this.cmd({ cmd: 'dev_give', item: niceDevWeaponFor(this.cfg.playerClass), count: 1 });
   }
   abandonQuest(questId: string): void {
     if (!this.canSendCommand()) return;

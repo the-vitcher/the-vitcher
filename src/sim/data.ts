@@ -129,6 +129,19 @@ export const REWARD_ARCHETYPE: Record<PlayerClass, PlayerClass> = {
   mage: 'mage', priest: 'mage', warlock: 'mage', druid: 'mage',
 };
 
+// Dev convenience: a class-appropriate endgame epic mainhand for the "give weapon"
+// dev button (offline dev play / a server with ALLOW_DEV_COMMANDS). One of the three
+// Korzul epics, each already class-locked to the matching archetype, so the receiving
+// class can always equip what it is handed.
+const DEV_WEAPON_BY_CLASS: Record<PlayerClass, string> = {
+  warrior: 'wyrmfang_greatblade', paladin: 'wyrmfang_greatblade', shaman: 'wyrmfang_greatblade',
+  mage: 'staff_of_the_gravewyrm', priest: 'staff_of_the_gravewyrm', warlock: 'staff_of_the_gravewyrm', druid: 'staff_of_the_gravewyrm',
+  rogue: 'fang_of_korzul', hunter: 'fang_of_korzul',
+};
+export function niceDevWeaponFor(cls: PlayerClass): string {
+  return DEV_WEAPON_BY_CLASS[cls] ?? 'wyrmfang_greatblade';
+}
+
 // Resolve the item a quest awards a given class: a class-specific reward if the
 // quest lists one, else the reward for the class's archetype (rewards are
 // authored per archetype — warrior/rogue/mage). The dialog preview and the
