@@ -819,6 +819,25 @@ export interface QuestChoice {
   result: string; // English post-choice narration shown in the log/journal
   looming?: string; // English delayed-consequence line for the journal
   effect: QuestChoiceEffect;
+  // Past-deed unlocks (NO class gate). A choice only offers itself once the player has
+  // earned the standing the deed assumes: a flag set by an earlier choice ("<questId>__
+  // <choiceId>"), and/or a minimum personal reputation with a faction. Validated server-
+  // side in turnInQuest; the HUD hides ineligible options. Absent => always available.
+  requiresFlag?: string;
+  requiresRep?: { faction: string; min: number };
+}
+
+// Can this player pick this choice? Past-deed gates only (flag earned + reputation
+// reached); never a class gate. Shared by the authoritative turn-in (sim.ts) and the
+// HUD's option list so both agree on what is offered.
+export function questChoiceEligible(
+  choice: QuestChoice,
+  flags: ReadonlySet<string>,
+  reputation: ReadonlyMap<string, number>,
+): boolean {
+  if (choice.requiresFlag && !flags.has(choice.requiresFlag)) return false;
+  if (choice.requiresRep && (reputation.get(choice.requiresRep.faction) ?? 0) < choice.requiresRep.min) return false;
+  return true;
 }
 
 export interface QuestCallback {

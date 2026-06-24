@@ -38,6 +38,7 @@ const MOB_IDS = [
   // Greywater Valley witcher bestiary
   'greywater_drowner', 'river_mudlark', 'bog_ghoul', 'valley_nekker', 'margrave_guard',
   'tournament_brawler', 'tournament_champion', 'reclamation_mercenary', 'greywater_hag', 'valley_leshen',
+  'slaver_knife',
 ] as const;
 
 const NPC_IDS = [
@@ -49,6 +50,9 @@ const NPC_IDS = [
   'brother_aldric_raid', // dynamically-spawned raid turn-in NPC (Crypt of Nythraxis)
   // Greywater Valley quest givers
   'calla', 'reeve_ondrin', 'ines', 'ortega', 'goodwife_sera', 'magistrate_holt',
+  // Greywater Fallout-edit deed destinations
+  'fen_fence', 'court_clerk', 'healer_uncle', 'gallows_crier', 'margrave_rival',
+  'pass_gatekeeper', 'still_alchemist', 'bookmaker_creed', 'downstream_registrar', 'fen_hag',
 ] as const;
 
 const QUEST_IDS = [
@@ -72,6 +76,10 @@ const QUEST_IDS = [
   'q_ledger_great_boar', 'q_ledger_outlaw_captain',
   // Greywater Valley witcher questline
   'gw_caravan', 'gw_aldermere', 'gw_velvet', 'gw_champion', 'gw_mill', 'gw_jail_chest',
+  // Greywater Fallout-edit played-out deed follow-ups
+  'gw_caravan_fence', 'gw_caravan_witness', 'gw_aldermere_alibi', 'gw_aldermere_mob',
+  'gw_velvet_sign', 'gw_velvet_double', 'gw_champion_poison', 'gw_champion_throw',
+  'gw_mill_triple', 'gw_mill_hag',
 ] as const;
 
 const ZONE_IDS = ['eastbrook_vale', 'mirefen_marsh', 'thornpeak_heights'] as const;

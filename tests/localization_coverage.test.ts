@@ -468,6 +468,18 @@ describe("i18n Localization Key Coverage", () => {
       const { ownerId, index } = parseIndexedEntry(entry.id, "objectives");
       return { kind: "questObjective", questId: ownerId, objectiveIndex: index, field: "label" };
     }
+    if (entry.kind === "questChoice") {
+      const marker = ".choices.";
+      const at = entry.id.lastIndexOf(marker);
+      if (at < 0) throw new Error(`Malformed quest-choice id: ${entry.id}`);
+      const questId = entry.id.slice(0, at);
+      const choiceId = entry.id.slice(at + marker.length);
+      return { kind: "questChoice", questId, choiceId, field: entry.field as "label" | "result" | "looming", values: { playerName: "Mira" } };
+    }
+    if (entry.kind === "questCallback") {
+      const { ownerId, index } = parseIndexedEntry(entry.id, "callbacks");
+      return { kind: "questCallback", questId: ownerId, callbackIndex: index, field: "text", values: { playerName: "Mira" } };
+    }
     if (entry.kind === "zone") {
       return { kind: "zone", id: entry.id, field: entry.field as "name" | "welcome" };
     }
@@ -779,6 +791,13 @@ describe("i18n Localization Key Coverage", () => {
       + (Object.keys(NPCS).length * 3)
       + (Object.keys(QUESTS).length * 3)
       + Object.values(QUESTS).reduce((sum, quest) => sum + quest.objectives.length, 0)
+      // Moral-choice quests contribute label+result (+looming when present) per choice,
+      // plus one entry per cross-quest callback line; all live in the `world` group.
+      + Object.values(QUESTS).reduce(
+        (sum, quest) => sum + (quest.choices ?? []).reduce((s, c) => s + (c.looming ? 3 : 2), 0),
+        0,
+      )
+      + Object.values(QUESTS).reduce((sum, quest) => sum + (quest.callbacks ?? []).length, 0)
       + (ZONES.length * 2)
       + ZONES.reduce((sum, zone) => sum + zone.pois.length, 0)
       + (Object.keys(DUNGEONS).length * 3);

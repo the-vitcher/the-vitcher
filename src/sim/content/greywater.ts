@@ -141,6 +141,18 @@ export const GREYWATER_MOBS: Record<string, MobTemplate> = {
     ],
     scale: 1.25, color: 0x4f6b5a,
   },
+  // The fence's knives: slaver-ring enforcers who come to silence a loose end. They
+  // spawn at the Slaver Camp and ambush the witness-escort road (the played-out deeds
+  // of the Drowned Caravan's amoral branches).
+  slaver_knife: {
+    id: 'slaver_knife', name: "Slaver's Knife", minLevel: 3, maxLevel: 5, family: 'humanoid',
+    hpBase: 34, hpPerLevel: 9, dmgBase: 6, dmgPerLevel: 1.5, attackSpeed: 1.8,
+    armorPerLevel: 6, moveSpeed: 8, aggroRadius: 11,
+    loot: [
+      { copper: 22, chance: 1 },
+    ],
+    scale: 0.95, color: 0x6a5a6a,
+  },
   // Ambient rare elite (no quest tie): a forest spirit haunting the valley's woods.
   valley_leshen: {
     id: 'valley_leshen', name: 'Valley Leshen', minLevel: 9, maxLevel: 9, family: 'beast',
@@ -199,6 +211,78 @@ export const GREYWATER_NPCS: Record<string, NpcDef> = {
     questIds: ['gw_jail_chest'],
     greeting: "You're the witcher who brought me the slaver's manifest, $C. The cells are full because of it. There's a chest in the jailhouse with your fee in it.",
   },
+
+  // --- Fallout-edit destinations: each is where one amoral choice is PLAYED OUT ---
+  // The fence at the Slaver Camp out in the far eastern fen (the Caravan's "fence it" deed).
+  fen_fence: {
+    id: 'fen_fence', name: 'The Fen Fence', title: 'Buyer of Inconvenient Paper',
+    pos: { x: 235, z: -120 }, facing: -1.4, color: 0x6a5a6a,
+    questIds: ['gw_caravan_fence'],
+    greeting: "You found the camp, then. Smart boots. Show me the manifest, $C, and we'll see whose names are worth what. No refunds, no witnesses, no hard feelings.",
+  },
+  // The Eastbrook court clerk (the Caravan's "star witness" deed: a corpse takes the stand).
+  court_clerk: {
+    id: 'court_clerk', name: 'Clerk Whitlow', title: 'Clerk of the Eastbrook Court',
+    pos: { x: 20, z: 12 }, facing: 2.4, color: 0x8f8a76,
+    questIds: ['gw_caravan_witness'],
+    greeting: "You want to enter a... witness, $C. The court does not usually seat the drowned. But the court has also never had a witness so unlikely to perjure itself. Bring it to the dock.",
+  },
+  // The poisoner's uncle in his cottage on the eastern fen (Aldermere's "sell the alibi" deed).
+  healer_uncle: {
+    id: 'healer_uncle', name: 'Uncle Fadrey', title: 'Herbalist, of a Sort',
+    pos: { x: 190, z: -55 }, facing: 0.8, color: 0x7a8a5f,
+    questIds: ['gw_aldermere_alibi'],
+    greeting: "A witcher at my door. I keep a tidy garden and a tidier story, $C. If you've come to sell me the second kind, come in. The kettle's on and the relatives are away.",
+  },
+  // The gallows crier on the eastern rise (Aldermere's "redirect the mob" deed).
+  gallows_crier: {
+    id: 'gallows_crier', name: 'Crier Bevan', title: 'Voice of the Gallows-Yard',
+    pos: { x: 186, z: -62 }, facing: 1.6, color: 0x9a7b4f,
+    questIds: ['gw_aldermere_mob'],
+    greeting: "The crowd's hot and the rope's greased, $C. Give me a name to shout and they'll hang whoever I point at. Funny thing about a mob: it doesn't much care which neck.",
+  },
+  // The margrave's rival on the eastern rise (the Velvet Debt's "double sale" deed).
+  margrave_rival: {
+    id: 'margrave_rival', name: 'Lord Vasc', title: "The Margrave's Rival",
+    pos: { x: 200, z: 66 }, facing: -2.2, color: 0x8a5a7e,
+    questIds: ['gw_velvet_double'],
+    greeting: "I hear you have inventory, $C. A caged woman and the fool who caged her, both for sale, separately. I'll take both. Don't tell me they know each other. Actually, do.",
+  },
+  // The keeper of the pass gatehouse seal (the Velvet Debt's "sign here" necromancy deed).
+  pass_gatekeeper: {
+    id: 'pass_gatekeeper', name: 'Gatekeeper Oltan', title: 'Warden of the Pass Seal',
+    pos: { x: 113, z: 3 }, facing: 1.2, color: 0x7a7a82,
+    questIds: ['gw_velvet_sign'],
+    greeting: "The road opens when the margrave's own hand signs the seal-stone, $C. His hand. I don't ask whether the rest of him came along. Bring me a signature and we're square.",
+  },
+  // The hedge-alchemist at the Still off the eastern marsh (the Champion's "poison the bracket" deed).
+  still_alchemist: {
+    id: 'still_alchemist', name: 'Old Brymm', title: 'Hedge-Alchemist of the Still',
+    pos: { x: 195, z: -88 }, facing: 0.3, color: 0x6f7a55,
+    questIds: ['gw_champion_poison'],
+    greeting: "Bog-Breath, truth-serum, or the special, $C? The special makes a man briefly and ruinously honest. The Bog-Breath makes him briefly and ruinously sick. For the lists, you want the second one.",
+  },
+  // The bookmaker on the row by the tournament ground (the Champion's "throw it" deed).
+  bookmaker_creed: {
+    id: 'bookmaker_creed', name: 'Creed', title: 'Bookmaker of the Row',
+    pos: { x: 190, z: 100 }, facing: -1.0, color: 0xb8923a,
+    questIds: ['gw_champion_throw'],
+    greeting: "You're the favorite, $C, which makes you my problem and my opportunity. Lose convincingly in the winner's bout and the purse is yours. Win and I'm a poor man with poor manners.",
+  },
+  // The downstream-village registrar (the Mill's "triple-sell the deed" forgery deed).
+  downstream_registrar: {
+    id: 'downstream_registrar', name: 'Registrar Pell', title: 'Recorder of Downstream Deeds',
+    pos: { x: 210, z: 130 }, facing: -2.0, color: 0x5f7a8a,
+    questIds: ['gw_mill_triple'],
+    greeting: "Three villages, three ledgers, one dry mill, $C. File the same deed in each before the water comes and every signature is valid. The lawyers will sort the drowning out afterward.",
+  },
+  // The water hag as a parley NPC at the millpond edge (the Mill's "sic the hag" deed).
+  fen_hag: {
+    id: 'fen_hag', name: 'The Millpond Hag', title: 'She Who Was Here First',
+    pos: { x: 175, z: 138 }, facing: 2.8, color: 0x4f6b5a,
+    questIds: ['gw_mill_hag'],
+    greeting: "You did not come to kill me, witcher. Curious. Then we can trade. Point me at the men with the stakes and the red lines, and the river will remember whose home it was.",
+  },
 };
 
 // ---------------------------------------------------------------------------
@@ -246,6 +330,17 @@ export const GREYWATER_QUESTS: Record<string, QuestDef> = {
         looming: 'You burned the ledger, not the men who kept it. Untraceable now, the boss who owned that list simply moves his stock to a quieter road. A season on, you will walk that road and find it thick with the trade you were sure you had ended.',
         effect: { copper: 140, setFlags: ['tradeExpands'], reputation: { justice: -3 } },
       },
+      // --- Fallout-edit played-out branches (each opens a deed you go and do) ---
+      {
+        id: 'fence', label: 'Sell the manifest to the ring. Tip them to Calla as a loose end.',
+        result: "Paper this dirty has a buyer. You pocket the gems and resolve to carry the manifest out to the Slaver Camp in the far fen, where a fence prices names by the head. You will mention Calla. You tell yourself it is only thorough.",
+        effect: { setFlags: ['fenced'], reputation: { underworld: 2, justice: -2, smallfolk: -2 } },
+      },
+      {
+        id: 'witness', label: 'Raise a drowned slave. Walk the corpse to the Eastbrook court to testify.',
+        result: "You kneel in the shallows and call one of the manifest's dead back up out of the mud. It rises dripping and patient, and it will say the names in a courtroom that has never seated the drowned. The ring will try very hard to stop you on the road.",
+        effect: { setFlags: ['witness'], reputation: { justice: 3, underworld: -2 } },
+      },
     ],
   },
 
@@ -285,6 +380,18 @@ export const GREYWATER_QUESTS: Record<string, QuestDef> = {
         result: 'You refuse the word and tell them to wait for the law. They wait. The judge arrives saddle-sore and hangs Hask before his boots are dry: the same rope, three days slower. You kept your hands clean by handing the knife to someone else.',
         looming: 'Afterward the uncle finds you alone and thanks you, softly, smiling, and lets slip that he knows you knew. He has learned that you can be steered by silence. He will use it.',
         effect: { setFlags: ['haskHanged', 'uncleBlackmail'], reputation: { nobility: 3, justice: -1 } },
+      },
+      // --- Fallout-edit played-out branches ---
+      {
+        id: 'alibi', label: 'Sell the real killer a clean story. Find his cottage on the fen.',
+        result: "Why settle for hanging the wrong man for free when you can be paid to spare the right one? You will ride out to the uncle's cottage on the eastern fen and sell him an alibi with your own face attached. He pays in coin and in a relative or three he no longer needs.",
+        looming: 'He poisons three more relatives over the next year, relaxed and well-defended, and sends you a holiday card. The cottage gains three fresh grave-mounds and two new guards at the door. You can go and count them.',
+        effect: { setFlags: ['aldermereAlibi'], reputation: { underworld: 2, justice: -3 } },
+      },
+      {
+        id: 'mobturn', label: "Axii the crowd. Point the gallows at the reeve who built it.",
+        result: "You catch the crowd's hot eye and turn it, gently, the way you'd turn a horse. By the time the crier on the rise is shouting a name, the name is the reeve's, and the reeve does not see the irony coming. That is, after all, the point of irony.",
+        effect: { setFlags: ['mobTurned'], reputation: { smallfolk: 1, nobility: -3, justice: -1 } },
       },
     ],
   },
@@ -331,6 +438,19 @@ export const GREYWATER_QUESTS: Record<string, QuestDef> = {
         looming: 'The steward had a daughter. She will surface an act from now, in a moment when you need a door opened, and she will know your face and remember exactly what it cost her family, and give you nothing.',
         effect: { setFlags: ['inesFreed', 'stewardRuined', 'passOpen'], reputation: { underworld: 2, justice: -2, ines: 1 } },
       },
+      // --- Fallout-edit played-out branches ---
+      {
+        id: 'animate', label: "Kill the margrave. Drag him to the gatehouse and sign the road open with his dead hand.",
+        result: "Love is a key, and a key works the same in a dead hand. You cut him down, carry him to the pass gatehouse, and animate him just long enough to press his signature onto the seal-stone. The road opens. He lies back down. The clerk who notarized a corpse goes to drink.",
+        effect: { setFlags: ['velvetAnimate'], reputation: { underworld: 1, nobility: -2, ines: -1 } },
+      },
+      {
+        id: 'doubleSale', label: 'Sell them both to the rival, separately, at full price. (Underworld standing required.)',
+        result: "A clean two-for-one: Ines and the margrave, sold to his rival at full price and listed separately, so the rival is delighted right up until they meet at his dinner table. Only a fence with standing gets this invitation, and you have spent the season earning it.",
+        looming: "Lord Vasc seats them across the same table on purpose, to watch. Whatever happens there, you sold it. You can ride to the rival's manor and see how the dinner is going.",
+        effect: { setFlags: ['velvetDouble'], reputation: { underworld: 2, ines: -8 } },
+        requiresRep: { faction: 'underworld', min: 1 },
+      },
     ],
   },
 
@@ -376,6 +496,18 @@ export const GREYWATER_QUESTS: Record<string, QuestDef> = {
         result: 'You fight for yourself and no one else, take the crown and the purse, and ride out before the politics can stick to your boots. Clean hands, full purse, no blood you can name. The governor still governs. Nothing, anywhere, has changed by so much as an inch.',
         looming: 'Because nothing changed, the maimed tax-debtor who shared his last cup with you the night before is hanged on the next market day, on schedule, unremarked. You kept your hands clean. The world stayed as dirty as you left it.',
         effect: { copper: 30, setFlags: ['debtorExecuted'], reputation: { fame: 2 } },
+      },
+      // --- Fallout-edit played-out branches ---
+      {
+        id: 'poison', label: 'Win by walkover. Collect doses at the Still and sour every rival in the staging tents.',
+        result: "Why fight a bracket you can simply uninvite? You will buy three doses of Bog-Breath off Old Brymm at the Still, then visit each rival's waterskin in the staging tents. They develop a sudden, comic, and unanimous digestive opinion. You win by walkover, laurel and all.",
+        effect: { setFlags: ['championPoison'], reputation: { underworld: 1, fame: 1, justice: -1 } },
+      },
+      {
+        id: 'throw', label: "Throw the bout for the bookmaker's purse. Lose convincingly.",
+        result: "Creed on the row will pay more for a beautiful loss than the governor pays for a win. You will go down in the winner's bout with such conviction that your death-scene earns a standing ovation. You leave richer, and more famous for losing than most men are for winning.",
+        looming: 'The crowd raises a loser-effigy of you at the tournament ground and gathers around it on market days. You can walk over and watch them mourn a man who is standing right there, counting Creed\'s coin.',
+        effect: { setFlags: ['championThrow'], reputation: { underworld: 1, fame: 2 } },
       },
     ],
   },
@@ -424,6 +556,20 @@ export const GREYWATER_QUESTS: Record<string, QuestDef> = {
         looming: "You kept both the people and the power to protect them, and made yourself the thing the company now has to remove. They won't send lawyers next time. They'll send men in the dark, and you will never quite be finished with this place.",
         effect: { setFlags: ['ownMill', 'protectRefugees'], reputation: { smallfolk: 2 } },
       },
+      // --- Fallout-edit played-out branches ---
+      {
+        id: 'tripleSell', label: 'Forge the deed three times. File it with each downstream registrar before the flood. (Learned the trick on the Velvet job.)',
+        result: "You learned this exact swindle selling two people to one rival. Now you sell one mill to three villages: file the same deed with each downstream registrar before the water arrives, and every signature is valid. Three valid deeds, one dry mill, and a great deal of work for the lawyers.",
+        looming: 'Three villages drown holding three valid deeds to the same dry mill. You can travel the downstream row and read all three, still wet, still legally binding, still pointless.',
+        effect: { setFlags: ['millTripleSell'], reputation: { underworld: 2, justice: -2, smallfolk: -3 } },
+        requiresFlag: 'gw_velvet__velvetDouble',
+      },
+      {
+        id: 'sicHag', label: 'Spare the water hag. Point her at the survey crew instead.',
+        result: "You sheathe steel and parley with the thing in the millpond. She does not want coin; she wants her water back. So you point her at the men with the stakes and the red lines, and you let nature, which has teeth, find its way to the survey camp.",
+        looming: "The survey crew turn up dead and half-submerged at their own camp, neatly, the way the tide returns things. You can walk out to the camp and see the stakes still standing over the men who drove them.",
+        effect: { setFlags: ['millHag'], reputation: { smallfolk: 1, nobility: -2 } },
+      },
     ],
   },
 
@@ -440,10 +586,148 @@ export const GREYWATER_QUESTS: Record<string, QuestDef> = {
     itemRewards: { warrior: 'gallows_iron_blade', mage: 'gallows_iron_rod', rogue: 'gallows_iron_dirk' },
     requiresFlag: 'gw_caravan__callaHanged',
   },
+
+  // ---------------------------------------------------------------------------
+  // Played-out deed follow-ups: every amoral Caravan/Aldermere/Velvet/Champion/Mill
+  // choice that "happens off-page" is instead a small quest you go and do, somewhere
+  // real, against real opposition, ending in the slide it earned. Each is gated on the
+  // parent choice's flag (so it can only open after that choice is made) and routes you
+  // to a new POI in the opened eastern plain. Travel is the giver standing far away.
+  // ---------------------------------------------------------------------------
+
+  gw_caravan_fence: {
+    id: 'gw_caravan_fence', name: 'Everyone\'s Selling Something',
+    giverNpcId: 'fen_fence', turnInNpcId: 'fen_fence',
+    text: "Out to the Slaver Camp in the far fen, then, $N. Put the manifest in the fence's hand and name your price. He may pay. He may decide a witcher is a loose end of his own and set his knives on you instead. Find out which.",
+    completionText: "The ring pays, then reconsiders the matter of witnesses, and you cut your way back out of your own sale. The fruit basket arrives later. The fruit is a metaphor. Calla is the fruit, branded and penned in the camp you just walked out of, should you ever care to look.",
+    objectives: [
+      { type: 'interact', targetObjectItemId: 'manifest_drop', count: 1, label: 'Hand the manifest to the fence (Witcher Senses)' },
+      { type: 'kill', targetMobId: 'slaver_knife', count: 3, label: "Slaver's Knife cut down" },
+    ],
+    xpReward: 460, copperReward: 180, itemRewards: {},
+    requiresFlag: 'gw_caravan__fenced', minLevel: 2,
+  },
+
+  gw_caravan_witness: {
+    id: 'gw_caravan_witness', name: 'The Drowned Take the Stand',
+    giverNpcId: 'court_clerk', turnInNpcId: 'court_clerk',
+    text: "Walk the risen witness the long road back to the Eastbrook court, $N. The fence's knives will come for it the whole way, because a corpse that names names is the one witness coin cannot reach. Get it to the dock and let it speak.",
+    completionText: "The drowned witness says the names in a clear dead voice and the court believes a corpse over a living slaver, which everyone finds more disturbing than the slavery itself. The captain is in the Eastbrook cells now. The witness still drips on the dock. It worked perfectly. That is the unsettling part.",
+    objectives: [
+      { type: 'kill', targetMobId: 'slaver_knife', count: 4, label: "Silence the fence's road-knives" },
+      { type: 'interact', targetObjectItemId: 'court_dock', count: 1, label: 'Seat the witness at the dock (Witcher Senses)' },
+    ],
+    xpReward: 520, copperReward: 90, itemRewards: {},
+    requiresFlag: 'gw_caravan__witness', minLevel: 2,
+  },
+
+  gw_aldermere_alibi: {
+    id: 'gw_aldermere_alibi', name: 'A Clean Story, Sold',
+    giverNpcId: 'healer_uncle', turnInNpcId: 'healer_uncle',
+    text: "Find Uncle Fadrey's cottage on the eastern fen, $N, and sell him the alibi to his face. He keeps a tidy garden and a tidier story, and he pays well to keep both. The price is coin, and the cost is whoever he poisons next with the room you bought him.",
+    completionText: "You sell Fadrey a clean story and ride off with his coin and his gratitude. Behind you the cottage gains three fresh grave-mounds and two hired guards at the door, and he settles into a long, relaxed, well-defended career. He really did send a holiday card. You can go count the mounds yourself.",
+    objectives: [
+      { type: 'interact', targetObjectItemId: 'uncle_cottage', count: 1, label: 'Strike the bargain at the cottage (Witcher Senses)' },
+    ],
+    xpReward: 680, copperReward: 220, itemRewards: {},
+    requiresFlag: 'gw_aldermere__aldermereAlibi', minLevel: 3,
+  },
+
+  gw_aldermere_mob: {
+    id: 'gw_aldermere_mob', name: 'A Mob Does Not Check Necks',
+    giverNpcId: 'gallows_crier', turnInNpcId: 'gallows_crier',
+    text: "Give Crier Bevan on the rise the name to shout, $N, and the crowd will hang whoever you point at. Point it at Reeve Ondrin, who built the gallows and never once imagined standing under them.",
+    completionText: "The crier shouts the reeve's name, the crowd does the rest, and the reeve discovers that the gallows he built were never as particular as he was. He hangs from his own rope on his own schedule. The town is briefly appalled, then asks whether you are free next week, as the budget no longer is.",
+    objectives: [
+      { type: 'interact', targetObjectItemId: 'gallows_turn', count: 1, label: "Name the reeve to the crowd (Witcher Senses)" },
+    ],
+    xpReward: 720, copperReward: 60, itemRewards: {},
+    requiresFlag: 'gw_aldermere__mobTurned', minLevel: 3,
+  },
+
+  gw_velvet_sign: {
+    id: 'gw_velvet_sign', name: 'A Signature in a Dead Hand',
+    giverNpcId: 'pass_gatekeeper', turnInNpcId: 'pass_gatekeeper',
+    text: "Bring the margrave's hand to the gatehouse, $N, with the rest of him optional. His last loyal guards stand between you and the seal-stone. Cut through, press his signature onto the stone, and the road north is yours.",
+    completionText: "The margrave's dead hand signs the seal-stone and the road opens, honored exactly as if he had meant it. He lies back down by the gate, where you step over him on your way through. The clerk who notarized a corpse has retired, permanently, to the bottom of a cup.",
+    objectives: [
+      { type: 'kill', targetMobId: 'margrave_guard', count: 2, label: 'Cut down the last loyal guards' },
+      { type: 'interact', targetObjectItemId: 'seal_stone', count: 1, label: 'Sign the seal-stone (Witcher Senses)' },
+    ],
+    xpReward: 940, copperReward: 110, itemRewards: {},
+    requiresFlag: 'gw_velvet__velvetAnimate', minLevel: 5,
+  },
+
+  gw_velvet_double: {
+    id: 'gw_velvet_double', name: 'A Marriage of Inconvenience',
+    giverNpcId: 'margrave_rival', turnInNpcId: 'margrave_rival',
+    text: "Deliver both halves of the sale to Lord Vasc's manor, $N. His door-guards will object to the merchandise on principle; persuade them. Then close the deal, separately, at full price, and let the dinner table do the rest.",
+    completionText: "Vasc seats Ines and the margrave across the same table and watches, delighted, until they recognize each other. You took full price for both and you are not invited to dinner. You can return to the manor whenever you like and find the standoff frozen exactly where you left it, mid-realization.",
+    objectives: [
+      { type: 'kill', targetMobId: 'margrave_guard', count: 2, label: "Persuade Vasc's door-guards" },
+      { type: 'interact', targetObjectItemId: 'rival_table', count: 1, label: 'Close the double sale (Witcher Senses)' },
+    ],
+    xpReward: 980, copperReward: 260, itemRewards: {},
+    requiresFlag: 'gw_velvet__velvetDouble', minLevel: 5,
+  },
+
+  gw_champion_poison: {
+    id: 'gw_champion_poison', name: 'A Bracket Develops an Opinion',
+    giverNpcId: 'still_alchemist', turnInNpcId: 'still_alchemist',
+    text: "Take three doses of Bog-Breath off my cauldron, $N, and walk the staging tents before the bout. A drop in each rival's waterskin and the whole bracket discovers a sudden, shared, comic objection to standing upright. You win by walkover.",
+    completionText: "Three waterskins, three doses, and a bracket that doubles over as one. The rivals are benched and green at the lists; you stand alone in the winner's circle, laurel in hand, the cleanest dirty win in the valley. Old Brymm waves from the Still. He is, of course, his own best customer.",
+    objectives: [
+      { type: 'interact', targetObjectItemId: 'still_cauldron', count: 1, label: 'Collect three doses of Bog-Breath (Witcher Senses)' },
+      { type: 'interact', targetObjectItemId: 'staging_waterskin', count: 3, label: "Sour a rival's waterskin" },
+    ],
+    xpReward: 1240, copperReward: 120, itemRewards: {},
+    requiresFlag: 'gw_champion__championPoison', minLevel: 7,
+  },
+
+  gw_champion_throw: {
+    id: 'gw_champion_throw', name: 'Famous for Losing',
+    giverNpcId: 'bookmaker_creed', turnInNpcId: 'bookmaker_creed',
+    text: "Take my purse to the winner's bout, $N, and lose like you mean it. Make it beautiful. A favorite who falls on cue is worth more to me than any champion, and worth more to your legend than you would think.",
+    completionText: "You go down in the winner's bout like a felled oak and the crowd loses its mind with grief and love. Creed pays out, beaming. They raise a loser-effigy of you at the ground and mourn it on market days, while you stand beside it, alive, counting coin, more famous than any winner.",
+    objectives: [
+      { type: 'interact', targetObjectItemId: 'bookmakers_row', count: 1, label: "Take Creed's purse and throw the bout (Witcher Senses)" },
+    ],
+    xpReward: 1180, copperReward: 340, itemRewards: {},
+    requiresFlag: 'gw_champion__championThrow', minLevel: 7,
+  },
+
+  gw_mill_triple: {
+    id: 'gw_mill_triple', name: 'One Mill, Three Deeds',
+    giverNpcId: 'downstream_registrar', turnInNpcId: 'downstream_registrar',
+    text: "File the deed with each downstream registrar before the water comes, $N. The same mill, sold three times, every signature valid. Race the flood from village to village; the lawyers will sort the drowning out afterward, at their usual rates.",
+    completionText: "Three registrars, three valid filings, one mill that exists exactly once. When the dam goes in, three villages drown clutching three perfect deeds to the same dry stones. The lawyers, at least, do very well. You can read all three filings later, still legible, gently underwater.",
+    objectives: [
+      { type: 'interact', targetObjectItemId: 'village_registrar', count: 3, label: 'File the forged deed downstream' },
+    ],
+    xpReward: 1560, copperReward: 400, itemRewards: {},
+    requiresFlag: 'gw_mill__millTripleSell', minLevel: 9,
+  },
+
+  gw_mill_hag: {
+    id: 'gw_mill_hag', name: 'Nature Finds a Way, With Teeth',
+    giverNpcId: 'fen_hag', turnInNpcId: 'fen_hag',
+    text: "Point me at the men with the stakes and the red lines, witcher. Walk to their survey camp, mark it for me, and stand clear. The river remembers whose home it was, and the river is not gentle about being reminded.",
+    completionText: "You point the hag at the survey camp and the river takes it back the way a tide takes a sandcastle. The crew turn up dead and half-submerged among their own stakes. The mill is safe, the millpond is still, and you have made a friend you will think about every time you cross deep water.",
+    objectives: [
+      { type: 'interact', targetObjectItemId: 'survey_camp', count: 1, label: 'Mark the survey camp for the hag (Witcher Senses)' },
+      { type: 'kill', targetMobId: 'reclamation_mercenary', count: 3, label: 'Finish what the water started' },
+    ],
+    xpReward: 1620, copperReward: 150, itemRewards: {},
+    requiresFlag: 'gw_mill__millHag', minLevel: 9,
+  },
 };
 
 export const GREYWATER_QUEST_ORDER = [
   'gw_caravan', 'gw_aldermere', 'gw_velvet', 'gw_champion', 'gw_mill', 'gw_jail_chest',
+  // Played-out deed follow-ups (one per amoral choice), gated on the parent choice flag.
+  'gw_caravan_fence', 'gw_caravan_witness', 'gw_aldermere_alibi', 'gw_aldermere_mob',
+  'gw_velvet_sign', 'gw_velvet_double', 'gw_champion_poison', 'gw_champion_throw',
+  'gw_mill_triple', 'gw_mill_hag',
 ];
 
 // ---------------------------------------------------------------------------
@@ -504,6 +788,10 @@ export const GREYWATER_CAMPS: CampDef[] = [
   { mobId: 'greywater_hag', center: { x: 150, z: 136 }, radius: 5, count: 1, lazy: true }, // the millpond / hag's pool
   // The Leshen Grove: the valley's apex predator, off the spine on the southern rise.
   { mobId: 'valley_leshen', center: { x: 168, z: -30 }, radius: 5, count: 1, lazy: true },
+  // The Slaver Camp out in the far eastern fen, and a road-ambush band between the ford
+  // and the camp (the fence's knives, who come for any witness to the trade).
+  { mobId: 'slaver_knife', center: { x: 230, z: -116 }, radius: 9, count: 6, lazy: true },
+  { mobId: 'slaver_knife', center: { x: 180, z: -100 }, radius: 11, count: 5, lazy: true },
 ];
 
 // ---------------------------------------------------------------------------
@@ -691,6 +979,105 @@ export const GREYWATER_OBJECTS: GroundObjectDef[] = [
     examine: [
       'The deed calls this mill derelict. The turning wheel says otherwise.',
       'Paper and bread, telling two different truths over the same stones.',
+    ],
+  },
+
+  // --- Fallout-edit deed clue objects (the played-out branches; each speaks self-talk) ---
+  {
+    itemId: 'manifest_drop', name: 'The Fence\'s Table',
+    positions: [{ x: 234, z: -119 }, { x: 236, z: -121 }],
+    examine: [
+      'He counts the names the way a miller counts sacks. Bored. Practiced.',
+      'He has already decided what a witcher who knows the camp is worth.',
+      'Less than the manifest. That is the math behind his smile.',
+    ],
+  },
+  {
+    itemId: 'court_dock', name: 'The Court Dock',
+    positions: [{ x: 19, z: 13 }, { x: 21, z: 11 }],
+    examine: [
+      'The witness stands dripping where the living usually swear their oaths.',
+      'It does not blink. It does not embellish. It only knows the names.',
+      'A court will forgive a great deal of a witness who cannot lie.',
+    ],
+  },
+  {
+    itemId: 'uncle_cottage', name: "Uncle Fadrey's Cottage",
+    positions: [{ x: 189, z: -54 }, { x: 191, z: -56 }],
+    examine: [
+      'A tidy garden. Wolfsbane and feverfew in neat, deliberate rows.',
+      'The same herbs that were on the girl\'s shawl. He grows his own evidence.',
+      'And he is offering to pay me to misplace it. The kettle really is on.',
+    ],
+  },
+  {
+    itemId: 'gallows_turn', name: 'The Crowd\'s Hot Eye',
+    positions: [{ x: 185, z: -61 }, { x: 187, z: -63 }],
+    examine: [
+      'The crowd does not want justice. It wants a neck and a reason.',
+      'Give it a name with conviction and it will not ask for the second thing.',
+      'The reeve taught them this. He will not enjoy the lesson coming home.',
+    ],
+  },
+  {
+    itemId: 'seal_stone', name: 'The Pass Seal-Stone',
+    positions: [{ x: 112, z: 4 }, { x: 114, z: 2 }],
+    examine: [
+      'The stone wants a living hand. It will settle, it turns out, for a recent one.',
+      'A signature is a shape, not a soul. Hold the wrist steady and it signs.',
+      'The road does not check whether the margrave meant it. Neither will I.',
+    ],
+  },
+  {
+    itemId: 'rival_table', name: "Lord Vasc's Long Table",
+    positions: [{ x: 199, z: 67 }, { x: 201, z: 65 }],
+    examine: [
+      'Two chairs set facing each other, too close, on purpose.',
+      'Vasc bought them separately and seated them together to watch.',
+      'I sold the merchandise. The cruelty is complimentary, and his.',
+    ],
+  },
+  {
+    itemId: 'still_cauldron', name: "Old Brymm's Cauldron",
+    positions: [{ x: 194, z: -89 }, { x: 196, z: -87 }],
+    examine: [
+      'Bog-Breath, bubbling green. Three doses, measured into three small vials.',
+      'A drop turns a strong man into a kneeling apology to his own stomach.',
+      'Harmless, mostly. Comic, mostly. The lists will never know it was here.',
+    ],
+  },
+  {
+    itemId: 'staging_waterskin', name: "A Rival's Waterskin",
+    positions: [{ x: 150, z: 106 }, { x: 153, z: 108 }, { x: 147, z: 109 }],
+    examine: [
+      'Left hanging on the tent-pole, warm, waiting for a thirsty fighter.',
+      'One drop, and his afternoon belongs to the latrine instead of the lists.',
+    ],
+  },
+  {
+    itemId: 'bookmakers_row', name: "The Bookmakers' Row",
+    positions: [{ x: 189, z: 101 }, { x: 191, z: 99 }],
+    examine: [
+      'Creed\'s purse is heavier than the winner\'s. That tells the whole story.',
+      'A beautiful fall pays better than an ugly win. The crowd buys grief gladly.',
+      'I have died for less, and never once been applauded for it. First time for that.',
+    ],
+  },
+  {
+    itemId: 'village_registrar', name: 'A Downstream Registry',
+    positions: [{ x: 209, z: 128 }, { x: 213, z: 132 }, { x: 207, z: 134 }],
+    examine: [
+      'The registrar stamps it without reading it. The same deed, a third time.',
+      'Three valid claims to stones that will be underwater before the ink dries.',
+    ],
+  },
+  {
+    itemId: 'survey_camp', name: 'The Survey Camp',
+    positions: [{ x: 143, z: 151 }, { x: 145, z: 149 }],
+    examine: [
+      'Stakes, sight-lines, a dam-wall drawn across the race in confident red.',
+      'They know three villages drown. It is written in the margin, and staked anyway.',
+      'The hag wants her water back. I am only going to tell her where they keep it.',
     ],
   },
 ];

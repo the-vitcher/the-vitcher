@@ -5254,7 +5254,7 @@ export class Hud {
     } else if (state === 'ready' && questHasChoices(questId)) {
       // A choice-quest: one button per moral option. Picking one completes the quest
       // (server-validated) and shows its result + looming-consequence beat.
-      for (const choice of questChoiceButtons(questId)) {
+      for (const choice of questChoiceButtons(questId, this.sim.questFlags, this.sim.reputation)) {
         const btn = document.createElement('button');
         btn.className = 'btn qd-choice';
         btn.type = 'button';

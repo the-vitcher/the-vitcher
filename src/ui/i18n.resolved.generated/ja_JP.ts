@@ -4698,6 +4698,9 @@ export const ja_JP: EnTranslations = {
       "valley_leshen": {
         "name": "Valley Leshen"
       },
+      "slaver_knife": {
+        "name": "Slaver's Knife"
+      },
       "elder_bristleback": {
         "name": "老ブリストルバック"
       },
@@ -4951,6 +4954,56 @@ export const ja_JP: EnTranslations = {
         "name": "Magistrate Holt",
         "title": "Magistrate of Eastbrook",
         "greeting": "You're the witcher who brought me the slaver's manifest, {className}. The cells are full because of it. There's a chest in the jailhouse with your fee in it."
+      },
+      "fen_fence": {
+        "name": "The Fen Fence",
+        "title": "Buyer of Inconvenient Paper",
+        "greeting": "You found the camp, then. Smart boots. Show me the manifest, {className}, and we'll see whose names are worth what. No refunds, no witnesses, no hard feelings."
+      },
+      "court_clerk": {
+        "name": "Clerk Whitlow",
+        "title": "Clerk of the Eastbrook Court",
+        "greeting": "You want to enter a... witness, {className}. The court does not usually seat the drowned. But the court has also never had a witness so unlikely to perjure itself. Bring it to the dock."
+      },
+      "healer_uncle": {
+        "name": "Uncle Fadrey",
+        "title": "Herbalist, of a Sort",
+        "greeting": "A witcher at my door. I keep a tidy garden and a tidier story, {className}. If you've come to sell me the second kind, come in. The kettle's on and the relatives are away."
+      },
+      "gallows_crier": {
+        "name": "Crier Bevan",
+        "title": "Voice of the Gallows-Yard",
+        "greeting": "The crowd's hot and the rope's greased, {className}. Give me a name to shout and they'll hang whoever I point at. Funny thing about a mob: it doesn't much care which neck."
+      },
+      "margrave_rival": {
+        "name": "Lord Vasc",
+        "title": "The Margrave's Rival",
+        "greeting": "I hear you have inventory, {className}. A caged woman and the fool who caged her, both for sale, separately. I'll take both. Don't tell me they know each other. Actually, do."
+      },
+      "pass_gatekeeper": {
+        "name": "Gatekeeper Oltan",
+        "title": "Warden of the Pass Seal",
+        "greeting": "The road opens when the margrave's own hand signs the seal-stone, {className}. His hand. I don't ask whether the rest of him came along. Bring me a signature and we're square."
+      },
+      "still_alchemist": {
+        "name": "Old Brymm",
+        "title": "Hedge-Alchemist of the Still",
+        "greeting": "Bog-Breath, truth-serum, or the special, {className}? The special makes a man briefly and ruinously honest. The Bog-Breath makes him briefly and ruinously sick. For the lists, you want the second one."
+      },
+      "bookmaker_creed": {
+        "name": "Creed",
+        "title": "Bookmaker of the Row",
+        "greeting": "You're the favorite, {className}, which makes you my problem and my opportunity. Lose convincingly in the winner's bout and the purse is yours. Win and I'm a poor man with poor manners."
+      },
+      "downstream_registrar": {
+        "name": "Registrar Pell",
+        "title": "Recorder of Downstream Deeds",
+        "greeting": "Three villages, three ledgers, one dry mill, {className}. File the same deed in each before the water comes and every signature is valid. The lawyers will sort the drowning out afterward."
+      },
+      "fen_hag": {
+        "name": "The Millpond Hag",
+        "title": "She Who Was Here First",
+        "greeting": "You did not come to kill me, witcher. Curious. Then we can trade. Point me at the men with the stakes and the red lines, and the river will remember whose home it was."
       },
       "tidewatcher_ondrel": {
         "name": "オンドレル・ヴェイン",
@@ -5867,6 +5920,14 @@ export const ja_JP: EnTranslations = {
             "label": "Keep the gems. Burn the manifest. End the trade with the proof.",
             "result": "You hold the manifest to your torch and watch a hundred names curl into ash and lift off the river like grey moths. No evidence, no trade, and the gems are warm and heavy in your palm.",
             "looming": "You burned the ledger, not the men who kept it. Untraceable now, the boss who owned that list simply moves his stock to a quieter road. A season on, you will walk that road and find it thick with the trade you were sure you had ended."
+          },
+          "fence": {
+            "label": "Sell the manifest to the ring. Tip them to Calla as a loose end.",
+            "result": "Paper this dirty has a buyer. You pocket the gems and resolve to carry the manifest out to the Slaver Camp in the far fen, where a fence prices names by the head. You will mention Calla. You tell yourself it is only thorough."
+          },
+          "witness": {
+            "label": "Raise a drowned slave. Walk the corpse to the Eastbrook court to testify.",
+            "result": "You kneel in the shallows and call one of the manifest's dead back up out of the mud. It rises dripping and patient, and it will say the names in a courtroom that has never seated the drowned. The ring will try very hard to stop you on the road."
           }
         }
       },
@@ -5907,6 +5968,15 @@ export const ja_JP: EnTranslations = {
             "label": "Defer to the circuit judge. Let the law run its course.",
             "result": "You refuse the word and tell them to wait for the law. They wait. The judge arrives saddle-sore and hangs Hask before his boots are dry: the same rope, three days slower. You kept your hands clean by handing the knife to someone else.",
             "looming": "Afterward the uncle finds you alone and thanks you, softly, smiling, and lets slip that he knows you knew. He has learned that you can be steered by silence. He will use it."
+          },
+          "alibi": {
+            "label": "Sell the real killer a clean story. Find his cottage on the fen.",
+            "result": "Why settle for hanging the wrong man for free when you can be paid to spare the right one? You will ride out to the uncle's cottage on the eastern fen and sell him an alibi with your own face attached. He pays in coin and in a relative or three he no longer needs.",
+            "looming": "He poisons three more relatives over the next year, relaxed and well-defended, and sends you a holiday card. The cottage gains three fresh grave-mounds and two new guards at the door. You can go and count them."
+          },
+          "mobturn": {
+            "label": "Axii the crowd. Point the gallows at the reeve who built it.",
+            "result": "You catch the crowd's hot eye and turn it, gently, the way you'd turn a horse. By the time the crier on the rise is shouting a name, the name is the reeve's, and the reeve does not see the irony coming. That is, after all, the point of irony."
           }
         }
       },
@@ -5947,6 +6017,15 @@ export const ja_JP: EnTranslations = {
             "label": "Frame the jealous steward. Make the margrave exile her himself.",
             "result": "You plant the letters where they'll be found and let the margrave's own suspicion do the cutting. The steward, sour but innocent this time, is cast out for an affair he never had, and in the noise Ines simply walks free. No one suspects the witcher. No one ever does.",
             "looming": "The steward had a daughter. She will surface an act from now, in a moment when you need a door opened, and she will know your face and remember exactly what it cost her family, and give you nothing."
+          },
+          "animate": {
+            "label": "Kill the margrave. Drag him to the gatehouse and sign the road open with his dead hand.",
+            "result": "Love is a key, and a key works the same in a dead hand. You cut him down, carry him to the pass gatehouse, and animate him just long enough to press his signature onto the seal-stone. The road opens. He lies back down. The clerk who notarized a corpse goes to drink."
+          },
+          "doubleSale": {
+            "label": "Sell them both to the rival, separately, at full price. (Underworld standing required.)",
+            "result": "A clean two-for-one: Ines and the margrave, sold to his rival at full price and listed separately, so the rival is delighted right up until they meet at his dinner table. Only a fence with standing gets this invitation, and you have spent the season earning it.",
+            "looming": "Lord Vasc seats them across the same table on purpose, to watch. Whatever happens there, you sold it. You can ride to the rival's manor and see how the dinner is going."
           }
         },
         "callbacks": {
@@ -5999,6 +6078,15 @@ export const ja_JP: EnTranslations = {
             "label": "Win clean. Keep the laurel. Stay out of all of it.",
             "result": "You fight for yourself and no one else, take the crown and the purse, and ride out before the politics can stick to your boots. Clean hands, full purse, no blood you can name. The governor still governs. Nothing, anywhere, has changed by so much as an inch.",
             "looming": "Because nothing changed, the maimed tax-debtor who shared his last cup with you the night before is hanged on the next market day, on schedule, unremarked. You kept your hands clean. The world stayed as dirty as you left it."
+          },
+          "poison": {
+            "label": "Win by walkover. Collect doses at the Still and sour every rival in the staging tents.",
+            "result": "Why fight a bracket you can simply uninvite? You will buy three doses of Bog-Breath off Old Brymm at the Still, then visit each rival's waterskin in the staging tents. They develop a sudden, comic, and unanimous digestive opinion. You win by walkover, laurel and all."
+          },
+          "throw": {
+            "label": "Throw the bout for the bookmaker's purse. Lose convincingly.",
+            "result": "Creed on the row will pay more for a beautiful loss than the governor pays for a win. You will go down in the winner's bout with such conviction that your death-scene earns a standing ovation. You leave richer, and more famous for losing than most men are for winning.",
+            "looming": "The crowd raises a loser-effigy of you at the tournament ground and gathers around it on market days. You can walk over and watch them mourn a man who is standing right there, counting Creed's coin."
           }
         },
         "callbacks": {
@@ -6051,6 +6139,16 @@ export const ja_JP: EnTranslations = {
             "label": "Keep the deed. Let them stay as tenants, under your roof and law.",
             "result": "You strike the hard middle bargain in front of everyone: the home stays theirs to work, the deed stays yours to defend, the river stays undammed because its owner says so. It is not a cheer and it is not a curse. It is a handshake, and a weight, and the particular loneliness of being the one who decides.",
             "looming": "You kept both the people and the power to protect them, and made yourself the thing the company now has to remove. They won't send lawyers next time. They'll send men in the dark, and you will never quite be finished with this place."
+          },
+          "tripleSell": {
+            "label": "Forge the deed three times. File it with each downstream registrar before the flood. (Learned the trick on the Velvet job.)",
+            "result": "You learned this exact swindle selling two people to one rival. Now you sell one mill to three villages: file the same deed with each downstream registrar before the water arrives, and every signature is valid. Three valid deeds, one dry mill, and a great deal of work for the lawyers.",
+            "looming": "Three villages drown holding three valid deeds to the same dry mill. You can travel the downstream row and read all three, still wet, still legally binding, still pointless."
+          },
+          "sicHag": {
+            "label": "Spare the water hag. Point her at the survey crew instead.",
+            "result": "You sheathe steel and parley with the thing in the millpond. She does not want coin; she wants her water back. So you point her at the men with the stakes and the red lines, and you let nature, which has teeth, find its way to the survey camp.",
+            "looming": "The survey crew turn up dead and half-submerged at their own camp, neatly, the way the tide returns things. You can walk out to the camp and see the stakes still standing over the men who drove them."
           }
         },
         "callbacks": {
@@ -6075,6 +6173,124 @@ export const ja_JP: EnTranslations = {
         "objectives": {
           "0": {
             "label": "Jailhouse chest opened"
+          }
+        }
+      },
+      "gw_caravan_fence": {
+        "title": "Everyone's Selling Something",
+        "text": "Out to the Slaver Camp in the far fen, then, {playerName}. Put the manifest in the fence's hand and name your price. He may pay. He may decide a witcher is a loose end of his own and set his knives on you instead. Find out which.",
+        "completion": "The ring pays, then reconsiders the matter of witnesses, and you cut your way back out of your own sale. The fruit basket arrives later. The fruit is a metaphor. Calla is the fruit, branded and penned in the camp you just walked out of, should you ever care to look.",
+        "objectives": {
+          "0": {
+            "label": "Hand the manifest to the fence (Witcher Senses)"
+          },
+          "1": {
+            "label": "Slaver's Knife cut down"
+          }
+        }
+      },
+      "gw_caravan_witness": {
+        "title": "The Drowned Take the Stand",
+        "text": "Walk the risen witness the long road back to the Eastbrook court, {playerName}. The fence's knives will come for it the whole way, because a corpse that names names is the one witness coin cannot reach. Get it to the dock and let it speak.",
+        "completion": "The drowned witness says the names in a clear dead voice and the court believes a corpse over a living slaver, which everyone finds more disturbing than the slavery itself. The captain is in the Eastbrook cells now. The witness still drips on the dock. It worked perfectly. That is the unsettling part.",
+        "objectives": {
+          "0": {
+            "label": "Silence the fence's road-knives"
+          },
+          "1": {
+            "label": "Seat the witness at the dock (Witcher Senses)"
+          }
+        }
+      },
+      "gw_aldermere_alibi": {
+        "title": "A Clean Story, Sold",
+        "text": "Find Uncle Fadrey's cottage on the eastern fen, {playerName}, and sell him the alibi to his face. He keeps a tidy garden and a tidier story, and he pays well to keep both. The price is coin, and the cost is whoever he poisons next with the room you bought him.",
+        "completion": "You sell Fadrey a clean story and ride off with his coin and his gratitude. Behind you the cottage gains three fresh grave-mounds and two hired guards at the door, and he settles into a long, relaxed, well-defended career. He really did send a holiday card. You can go count the mounds yourself.",
+        "objectives": {
+          "0": {
+            "label": "Strike the bargain at the cottage (Witcher Senses)"
+          }
+        }
+      },
+      "gw_aldermere_mob": {
+        "title": "A Mob Does Not Check Necks",
+        "text": "Give Crier Bevan on the rise the name to shout, {playerName}, and the crowd will hang whoever you point at. Point it at Reeve Ondrin, who built the gallows and never once imagined standing under them.",
+        "completion": "The crier shouts the reeve's name, the crowd does the rest, and the reeve discovers that the gallows he built were never as particular as he was. He hangs from his own rope on his own schedule. The town is briefly appalled, then asks whether you are free next week, as the budget no longer is.",
+        "objectives": {
+          "0": {
+            "label": "Name the reeve to the crowd (Witcher Senses)"
+          }
+        }
+      },
+      "gw_velvet_sign": {
+        "title": "A Signature in a Dead Hand",
+        "text": "Bring the margrave's hand to the gatehouse, {playerName}, with the rest of him optional. His last loyal guards stand between you and the seal-stone. Cut through, press his signature onto the stone, and the road north is yours.",
+        "completion": "The margrave's dead hand signs the seal-stone and the road opens, honored exactly as if he had meant it. He lies back down by the gate, where you step over him on your way through. The clerk who notarized a corpse has retired, permanently, to the bottom of a cup.",
+        "objectives": {
+          "0": {
+            "label": "Cut down the last loyal guards"
+          },
+          "1": {
+            "label": "Sign the seal-stone (Witcher Senses)"
+          }
+        }
+      },
+      "gw_velvet_double": {
+        "title": "A Marriage of Inconvenience",
+        "text": "Deliver both halves of the sale to Lord Vasc's manor, {playerName}. His door-guards will object to the merchandise on principle; persuade them. Then close the deal, separately, at full price, and let the dinner table do the rest.",
+        "completion": "Vasc seats Ines and the margrave across the same table and watches, delighted, until they recognize each other. You took full price for both and you are not invited to dinner. You can return to the manor whenever you like and find the standoff frozen exactly where you left it, mid-realization.",
+        "objectives": {
+          "0": {
+            "label": "Persuade Vasc's door-guards"
+          },
+          "1": {
+            "label": "Close the double sale (Witcher Senses)"
+          }
+        }
+      },
+      "gw_champion_poison": {
+        "title": "A Bracket Develops an Opinion",
+        "text": "Take three doses of Bog-Breath off my cauldron, {playerName}, and walk the staging tents before the bout. A drop in each rival's waterskin and the whole bracket discovers a sudden, shared, comic objection to standing upright. You win by walkover.",
+        "completion": "Three waterskins, three doses, and a bracket that doubles over as one. The rivals are benched and green at the lists; you stand alone in the winner's circle, laurel in hand, the cleanest dirty win in the valley. Old Brymm waves from the Still. He is, of course, his own best customer.",
+        "objectives": {
+          "0": {
+            "label": "Collect three doses of Bog-Breath (Witcher Senses)"
+          },
+          "1": {
+            "label": "Sour a rival's waterskin"
+          }
+        }
+      },
+      "gw_champion_throw": {
+        "title": "Famous for Losing",
+        "text": "Take my purse to the winner's bout, {playerName}, and lose like you mean it. Make it beautiful. A favorite who falls on cue is worth more to me than any champion, and worth more to your legend than you would think.",
+        "completion": "You go down in the winner's bout like a felled oak and the crowd loses its mind with grief and love. Creed pays out, beaming. They raise a loser-effigy of you at the ground and mourn it on market days, while you stand beside it, alive, counting coin, more famous than any winner.",
+        "objectives": {
+          "0": {
+            "label": "Take Creed's purse and throw the bout (Witcher Senses)"
+          }
+        }
+      },
+      "gw_mill_triple": {
+        "title": "One Mill, Three Deeds",
+        "text": "File the deed with each downstream registrar before the water comes, {playerName}. The same mill, sold three times, every signature valid. Race the flood from village to village; the lawyers will sort the drowning out afterward, at their usual rates.",
+        "completion": "Three registrars, three valid filings, one mill that exists exactly once. When the dam goes in, three villages drown clutching three perfect deeds to the same dry stones. The lawyers, at least, do very well. You can read all three filings later, still legible, gently underwater.",
+        "objectives": {
+          "0": {
+            "label": "File the forged deed downstream"
+          }
+        }
+      },
+      "gw_mill_hag": {
+        "title": "Nature Finds a Way, With Teeth",
+        "text": "Point me at the men with the stakes and the red lines, witcher. Walk to their survey camp, mark it for me, and stand clear. The river remembers whose home it was, and the river is not gentle about being reminded.",
+        "completion": "You point the hag at the survey camp and the river takes it back the way a tide takes a sandcastle. The crew turn up dead and half-submerged among their own stakes. The mill is safe, the millpond is still, and you have made a friend you will think about every time you cross deep water.",
+        "objectives": {
+          "0": {
+            "label": "Mark the survey camp for the hag (Witcher Senses)"
+          },
+          "1": {
+            "label": "Finish what the water started"
           }
         }
       },

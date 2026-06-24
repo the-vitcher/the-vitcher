@@ -15,6 +15,7 @@ import {
   GREYWATER_QUESTS, GREYWATER_NPCS, GREYWATER_MOBS, GREYWATER_ITEMS,
 } from '../src/sim/content/greywater';
 import { questHasChoices, questChoiceButtons, questCallbackLines } from '../src/ui/quest_choices';
+import { questChoiceEligible } from '../src/sim/types';
 import type { Entity } from '../src/sim/types';
 
 beforeAll(() => {
@@ -210,10 +211,63 @@ describe('Greywater moral-choice quest engine', () => {
   it('exposes the choice list to the HUD view helpers', () => {
     expect(questHasChoices('gw_caravan')).toBe(true);
     const buttons = questChoiceButtons('gw_caravan');
-    expect(buttons).toHaveLength(4);
-    expect(buttons.map((b) => b.id)).toEqual(['looters', 'giveCalla', 'magistrate', 'burn']);
+    // The Fallout edit fans the spine to six played-out options (all open from the start).
+    expect(buttons).toHaveLength(6);
+    expect(buttons.map((b) => b.id)).toEqual(['looters', 'giveCalla', 'magistrate', 'burn', 'fence', 'witness']);
     // Labels resolve to non-empty English (the dormant content falls back to source).
     for (const b of buttons) expect(b.label.length).toBeGreaterThan(0);
+  });
+
+  it('hides a past-deed-gated choice until its flag/reputation is earned (requiresRep/requiresFlag)', () => {
+    // gw_velvet's double-sale needs underworld standing; gw_mill's triple-sell needs the
+    // velvet double-sale flag. Both are hidden with an empty record and shown once met.
+    const velvetCold = questChoiceButtons('gw_velvet', new Set(), new Map());
+    expect(velvetCold.map((b) => b.id)).not.toContain('doubleSale');
+    const velvetDirty = questChoiceButtons('gw_velvet', new Set(), new Map([['underworld', 1]]));
+    expect(velvetDirty.map((b) => b.id)).toContain('doubleSale');
+
+    const millCold = questChoiceButtons('gw_mill', new Set(), new Map());
+    expect(millCold.map((b) => b.id)).not.toContain('tripleSell');
+    const millReady = questChoiceButtons('gw_mill', new Set(['gw_velvet__velvetDouble']), new Map());
+    expect(millReady.map((b) => b.id)).toContain('tripleSell');
+  });
+
+  it('questChoiceEligible is the shared gate the server and HUD both honor', () => {
+    // The exact predicate turnInQuest uses to filter the offered/accepted options.
+    const flagged = { id: 'x', label: '', result: '', effect: {}, requiresFlag: 'gw_velvet__velvetDouble' };
+    expect(questChoiceEligible(flagged, new Set(), new Map())).toBe(false);
+    expect(questChoiceEligible(flagged, new Set(['gw_velvet__velvetDouble']), new Map())).toBe(true);
+    const repped = { id: 'y', label: '', result: '', effect: {}, requiresRep: { faction: 'underworld', min: 1 } };
+    expect(questChoiceEligible(repped, new Set(), new Map())).toBe(false);
+    expect(questChoiceEligible(repped, new Set(), new Map([['underworld', 0]]))).toBe(false);
+    expect(questChoiceEligible(repped, new Set(), new Map([['underworld', 2]]))).toBe(true);
+    // An ungated option is always eligible.
+    expect(questChoiceEligible({ id: 'z', label: '', result: '', effect: {} }, new Set(), new Map())).toBe(true);
+  });
+
+  it('earning underworld standing through the fence branch is what unlocks later dirty options', () => {
+    const sim = makeWorld();
+    const pid = sim.addPlayer('warrior', 'Geralt');
+    sim.setPlayerLevel(10);
+    readyCaravan(sim, pid);
+    sim.turnInQuest('gw_caravan', 'fence', pid);
+    expect(sim.questFlags.has('gw_caravan__fenced')).toBe(true);
+    // The fence branch pushes underworld to the threshold the Velvet double-sale needs.
+    expect(sim.reputationOf('underworld', pid)).toBeGreaterThanOrEqual(1);
+  });
+
+  it('every played-out deed follow-up is gated by a settable parent choice flag', () => {
+    // Each gw_*_<deed> quest opens only on a flag some main-quest choice can set.
+    const settable = new Set<string>();
+    for (const quest of Object.values(GREYWATER_QUESTS)) {
+      for (const choice of quest.choices ?? []) {
+        for (const flag of choice.effect.setFlags ?? []) settable.add(`${quest.id}__${flag}`);
+      }
+    }
+    for (const quest of Object.values(GREYWATER_QUESTS)) {
+      if (!quest.requiresFlag) continue;
+      expect(settable.has(quest.requiresFlag), `${quest.id} needs unsettable flag ${quest.requiresFlag}`).toBe(true);
+    }
   });
 
   it('every Greywater choice flag referenced by a callback is actually settable', () => {

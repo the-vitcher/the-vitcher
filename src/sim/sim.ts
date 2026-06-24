@@ -35,7 +35,7 @@ import {
   DEFAULT_PARTY_LOOT_STRATEGIES,
   CONSUME_TICKS, CrowdControlDrCategory, DT, Entity, EquipSlot, FISHING_CAST_ID, FISHING_CAST_TIME, GCD,
   CurrencyLootStrategy, INTERACT_RANGE, InvSlot, ItemLootStrategy, LootEntry, LootRollChoice, LootSlot, LootStrategies, MELEE_RANGE, MAX_LEVEL, MobFamily, MobTemplate,
-  MoveInput, OverheadEmoteId, PetMode, PlayerClass, QuestCallback, QuestChoice, QuestProgress, QuestState, RUN_SPEED, SimConfig, SimEvent, TURN_SPEED, Vec3,
+  MoveInput, OverheadEmoteId, PetMode, PlayerClass, QuestCallback, QuestChoice, questChoiceEligible, QuestProgress, QuestState, RUN_SPEED, SimConfig, SimEvent, TURN_SPEED, Vec3,
   angleTo, armorReduction, dist2d, emptyMoveInput, isConsuming, meleeMissChance, mobXpValue, normAngle,
   rageFromDealing, rageFromTaking, spellHitChance, xpForLevel, isQuestTurnInNpc, questTurnInNpcIds,
   MILESTONES, virtualLevel, xpToReachLevel, canPrestige,
@@ -8234,9 +8234,13 @@ export class Sim {
     // the chosen id is re-validated here against the quest's own option list.
     let choice: QuestChoice | undefined;
     if (quest.choices && quest.choices.length > 0) {
-      choice = quest.choices.find((c) => c.id === choiceId);
+      // Only past-deed-eligible options are offered (and accepted). A chosen id that is
+      // unknown OR gated-out re-prompts with the player's currently-eligible set, so the
+      // server never resolves a deed the player has not earned the standing for.
+      const eligible = quest.choices.filter((c) => questChoiceEligible(c, meta.questFlags, meta.reputation));
+      choice = eligible.find((c) => c.id === choiceId);
       if (!choice) {
-        this.emit({ type: 'questChoices', questId, choices: quest.choices.map((c) => ({ id: c.id })), pid: meta.entityId });
+        this.emit({ type: 'questChoices', questId, choices: eligible.map((c) => ({ id: c.id })), pid: meta.entityId });
         return;
       }
     }
