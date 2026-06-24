@@ -13,6 +13,7 @@ import type { GLTF } from 'three/addons/loaders/GLTFLoader.js';
 import { loadGltf, loadTexture } from '../assets/loader';
 import { registerPreload } from '../assets/preload';
 import { GFX, addRimGlow } from '../gfx';
+import { applyProportionTargets, collectProportionTargets } from './proportions';
 import {
   manifestUrlsForGraphics,
   SKINS,
@@ -545,6 +546,20 @@ export function prepareVisual(key: string): PreparedVisual {
     mixer.uncacheRoot(temp);
   } else {
     temp.updateMatrixWorld(true);
+  }
+
+  // Human-proportion retarget on the measured pose: the live model re-applies this
+  // every frame after the mixer (visual.ts), so the height normalization, click
+  // radius, and baked idle far-LOD geometry must measure the SAME proportions or the
+  // model would pop between near and far. No-op for non-KayKit rigs / stylized mode.
+  const proportionTargets = collectProportionTargets(temp);
+  if (proportionTargets.length) {
+    applyProportionTargets(proportionTargets);
+    temp.updateMatrixWorld(true);
+    temp.traverse((o) => {
+      const sm = o as THREE.SkinnedMesh;
+      if (sm.isSkinnedMesh) sm.skeleton.update();
+    });
   }
 
   // body bounds from the skinned meshes only (weapons would skew the height)

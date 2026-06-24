@@ -11,6 +11,7 @@ import {
   applyMaterials, assembleModel, ensureSkinTexture, prepareVisual, skinTexture, skinEmissiveTexture, tintedFarMaterials,
 } from './assets';
 import { desiredBaseState, locomotionTimeScale, type AnimState, type BaseState } from './anim_state';
+import { applyProportionTargets, collectProportionTargets, type ProportionTarget } from './proportions';
 
 export type { AnimState, BaseState } from './anim_state';
 
@@ -65,6 +66,9 @@ export class CharacterVisual {
   private disposed = false;
   private ghosted = false;
   private mixer: THREE.AnimationMixer;
+  // Human-proportion retarget bones (empty for non-KayKit rigs / stylized mode);
+  // re-applied after every mixer step so the clip-driven TRS does not undo it.
+  private proportionTargets: ProportionTarget[] = [];
   private actions = new Map<string, THREE.AnimationAction>();
   private model: THREE.Object3D;
   private modelWrap = new THREE.Group();
@@ -104,6 +108,7 @@ export class CharacterVisual {
 
     // model: yaw/scale/feet normalization wrapper around the skinned clone
     this.model = assembleModel(prep.def);
+    this.proportionTargets = collectProportionTargets(this.model);
     applyMaterials(this.model, prep.def, entityColor, skinTexture(key, skinIndex), skinEmissiveTexture(key, skinIndex));
     this.model.traverse((o) => {
       const mesh = o as THREE.Mesh;
@@ -222,9 +227,17 @@ export class CharacterVisual {
 
     this.pendingDt = Math.min(MIXER_DT_CAP, this.pendingDt + dt);
     if (animate) {
-      this.mixer.update(this.pendingDt);
+      this.tickMixer(this.pendingDt);
       this.pendingDt = 0;
     }
+  }
+
+  /** Advance the mixer, then re-apply the human-proportion retarget on top of the
+   *  clip-driven pose (a no-op when targets is empty). Every mixer step goes through
+   *  here so the proportions never flicker back to the stylized rig for a frame. */
+  private tickMixer(dt: number): void {
+    this.mixer.update(dt);
+    applyProportionTargets(this.proportionTargets);
   }
 
   // -------------------------------------------------------------------------
@@ -290,7 +303,7 @@ export class CharacterVisual {
     this.current = chosen;
     this.currentIsOneShot = true;
     this.currentOneShotIsEmote = false;
-    this.mixer.update(0);
+    this.tickMixer(0);
     return name;
   }
 
@@ -310,7 +323,7 @@ export class CharacterVisual {
     idle.setEffectiveWeight(1);
     idle.play();
     this.current = idle;
-    this.mixer.update(0);
+    this.tickMixer(0);
   }
 
   // -------------------------------------------------------------------------
@@ -547,7 +560,7 @@ export class CharacterVisual {
       death.play();
       death.time = Math.max(0, death.getClip().duration - 1e-3);
       this.current = death;
-      this.mixer.update(0);
+      this.tickMixer(0);
       return;
     }
     if (prev && prev !== death) prev.fadeOut(ONESHOT_FADE);
