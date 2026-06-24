@@ -2932,103 +2932,103 @@ export const en_CA: EnTranslations = {
         "description": "Taunts the target: your threat rises to match its most hated enemy and it is compelled to attack you for 3 sec."
       },
       "fireball": {
-        "name": "Fireball",
+        "name": "Igni Blast",
         "description": "Hurls a fiery ball that causes {damage} Fire damage plus additional damage over time."
       },
       "frost_armor": {
-        "name": "Frost Armor",
+        "name": "Frost Ward",
         "description": "Encases you in frost, increasing armor by 30 for 30 min."
       },
       "arcane_intellect": {
-        "name": "Arcane Intellect",
+        "name": "Arcane Insight",
         "description": "Increases Intellect by 2 for 30 min."
       },
       "frostbolt": {
-        "name": "Frostbolt",
+        "name": "Frost Lance",
         "description": "Launches a bolt of frost, causing {damage} Frost damage and slowing movement by 40%."
       },
       "conjure_water": {
-        "name": "Conjure Water",
+        "name": "Conjure Springwater",
         "description": "Conjures 2 bottles of water, restoring mana when drunk. Higher ranks conjure purer water."
       },
       "conjure_food": {
-        "name": "Conjure Food",
+        "name": "Conjure Provisions",
         "description": "Conjures 2 servings of bread, restoring health when eaten. Higher ranks conjure heartier fare."
       },
       "fire_blast": {
-        "name": "Fire Blast",
+        "name": "Igni Spark",
         "description": "Blasts the enemy for {damage} Fire damage. Instant."
       },
       "arcane_missiles": {
-        "name": "Arcane Missiles",
+        "name": "Arcane Salvo",
         "description": "Launches Arcane Missiles at the enemy, causing 8 Arcane damage each second for 3 sec."
       },
       "polymorph": {
-        "name": "Polymorph",
+        "name": "Axii Bewitchment",
         "description": "Transforms the enemy into a sheep for up to 15 sec. The sheep wanders and heals rapidly. Any damage breaks the effect. Beasts and humanoids only."
       },
       "frost_nova": {
-        "name": "Frost Nova",
+        "name": "Frost Burst",
         "description": "Freezes all nearby enemies in place for up to 8 sec, dealing {damage} Frost damage."
       },
       "arcane_explosion": {
-        "name": "Arcane Explosion",
+        "name": "Arcane Nova",
         "description": "A burst of Arcane energy hits all nearby enemies for {damage} Arcane damage."
       },
       "scorch": {
-        "name": "Scorch",
+        "name": "Igni Sear",
         "description": "Scorches the enemy for {damage} Fire damage. Quick to cast."
       },
       "pyroblast": {
-        "name": "Pyroblast",
+        "name": "Igni Inferno",
         "description": "Hurls an immense fiery boulder that causes {damage} Fire damage plus additional damage over time."
       },
       "ice_barrier": {
-        "name": "Ice Barrier",
+        "name": "Ice Aegis",
         "description": "Shields you in ice, absorbing 130 damage for 60 sec."
       },
       "sinister_strike": {
-        "name": "Sinister Strike",
+        "name": "Quick Slash",
         "description": "An instant strike for weapon damage plus {damage}. Awards 1 combo point."
       },
       "eviscerate": {
-        "name": "Eviscerate",
+        "name": "Disembowel",
         "description": "Finishing move that causes damage per combo point."
       },
       "backstab": {
-        "name": "Backstab",
+        "name": "Spine Strike",
         "description": "Backstab the target for 150% weapon damage plus {damage}. Must be behind the target. Requires a dagger. Awards 1 combo point."
       },
       "gouge": {
-        "name": "Gouge",
+        "name": "Eye Slash",
         "description": "Strikes the target, incapacitating it for 4 sec. Any damage breaks the effect. Awards 1 combo point."
       },
       "evasion": {
-        "name": "Evasion",
+        "name": "Feline Reflexes",
         "description": "Increases your dodge chance by 50% for 15 sec."
       },
       "slice_and_dice": {
-        "name": "Slice and Dice",
+        "name": "Razor Tempo",
         "description": "Finishing move that increases melee attack speed by 30%. Lasts longer per combo point."
       },
       "sprint": {
-        "name": "Sprint",
+        "name": "Cat's Dash",
         "description": "Increases your movement speed by 70% for 15 sec."
       },
       "kidney_shot": {
-        "name": "Kidney Shot",
+        "name": "Throat Slash",
         "description": "Finishing move that stuns the target. Lasts 1 sec longer per combo point."
       },
       "ambush": {
-        "name": "Ambush",
+        "name": "Pounce",
         "description": "Ambush the target for 250% weapon damage plus {damage}. Must be stealthed and behind the target. Requires a dagger. Awards 1 combo point."
       },
       "stealth": {
-        "name": "Stealth",
+        "name": "Prowl",
         "description": "Conceals you in the shadows: enemies barely notice you, but you move 30% slower. Attacking or taking damage breaks Stealth. Cast again to step out."
       },
       "adrenaline_rush": {
-        "name": "Adrenaline Rush",
+        "name": "Battle Trance",
         "description": "Your blood runs hot, instantly restoring 60 energy."
       },
       "garrote": {
@@ -3036,75 +3036,75 @@ export const en_CA: EnTranslations = {
         "description": "Garrote the enemy, causing damage now and bleeding it for {damage} over 18 sec. Must be stealthed. Awards 1 combo point."
       },
       "cheap_shot": {
-        "name": "Cheap Shot",
+        "name": "Sucker Punch",
         "description": "Strike the target, stunning it for 4 sec. Must be stealthed. Awards 2 combo points."
       },
       "sap": {
-        "name": "Sap",
+        "name": "Knockout",
         "description": "Incapacitates the target for 8 sec. Must be stealthed and out of combat. Any damage breaks the effect."
       },
       "crippling_poison": {
-        "name": "Crippling Poison",
+        "name": "Crippling Venom",
         "description": "Strikes the target with a crippling poison, dealing {damage} Nature damage and slowing its movement speed by 50% for 12 sec."
       },
       "expose_armor": {
-        "name": "Expose Armor",
+        "name": "Find Weakness",
         "description": "Finishing move that exposes the target, reducing its armor. More combo points spent build into a deeper cut."
       },
       "rupture": {
-        "name": "Rupture",
+        "name": "Deep Wound",
         "description": "Finishing move that wounds the target, causing it to bleed for {damage} over 16 sec."
       },
       "vanish": {
-        "name": "Vanish",
+        "name": "Fade",
         "description": "Vanish from sight, entering Stealth even in combat. You move 30% slower while hidden. Lasts up to 10 sec."
       },
       "instant_poison": {
-        "name": "Instant Poison",
+        "name": "Quick Venom",
         "description": "Coats your weapon for 30 min, causing each of your melee swings to deal 8 additional Nature damage."
       },
       "deadly_poison": {
-        "name": "Deadly Poison",
+        "name": "Deadly Venom",
         "description": "Coats your weapon for 30 min, causing each of your melee swings to deal 14 additional Nature damage."
       },
       "blind": {
-        "name": "Blind",
+        "name": "Blinding Powder",
         "description": "Blinds the target, causing it to wander disoriented for 8 sec. Any damage breaks the effect."
       },
       "seal_of_righteousness": {
-        "name": "Seal of Righteousness",
+        "name": "Blessed Blade Oil",
         "description": "Fills you with Holy power for 30 sec, causing each of your melee swings to deal 4 additional Holy damage. Unleash with Judgement."
       },
       "holy_light": {
-        "name": "Holy Light",
+        "name": "Healing Salve",
         "description": "Heals a friendly target for {damage}."
       },
       "devotion_aura": {
-        "name": "Devotion Aura",
+        "name": "Manticore Hide",
         "description": "Increases your armor by 40 for 30 min."
       },
       "judgement": {
-        "name": "Judgement",
+        "name": "Sign Discharge",
         "description": "Unleashes your active Seal upon the enemy, consuming it to deal its judgement damage."
       },
       "blessing_of_might": {
-        "name": "Blessing of Might",
+        "name": "Warrior's Blessing",
         "description": "Places a Blessing on a friendly target, increasing attack power by 15 for 5 min."
       },
       "divine_protection": {
-        "name": "Divine Protection",
+        "name": "Quen Shield",
         "description": "A holy shield absorbs 50 damage for 10 sec."
       },
       "hammer_of_justice": {
-        "name": "Hammer of Justice",
+        "name": "Aard Smash",
         "description": "Stuns the target for 3 sec."
       },
       "lay_on_hands": {
-        "name": "Lay on Hands",
+        "name": "Last Rites",
         "description": "A massive surge of healing: restores 250 health. 10 min cooldown."
       },
       "flash_of_light": {
-        "name": "Flash of Light",
+        "name": "Quick Mending",
         "description": "A quick, efficient flash of Light that heals a friendly target for {damage}."
       },
       "exorcism": {
@@ -3112,171 +3112,171 @@ export const en_CA: EnTranslations = {
         "description": "Banishes the wicked with Holy wrath, causing {damage} Holy damage."
       },
       "consecration": {
-        "name": "Consecration",
+        "name": "Hallowed Ground",
         "description": "Consecrates the ground beneath you, searing nearby enemies for {damage} Holy damage."
       },
       "righteous_fury": {
-        "name": "Righteous Fury",
+        "name": "Guardian's Wrath",
         "description": "Increases the threat generated by your Holy damage by 60% for 30 min. The tanking paladin's cornerstone."
       },
       "retribution_aura": {
-        "name": "Retribution Aura",
+        "name": "Quen Thorns",
         "description": "Surrounds you with holy energy for 30 min, dealing 5 Holy damage to any enemy that strikes you in melee."
       },
       "tame_beast": {
-        "name": "Tame Beast",
+        "name": "Beast Bond",
         "description": "Begins taming a beast to be your companion. It must be your level or lower and not an elite. Your pet follows you, attacks your enemies, and holds threat of its own. You may have one pet at a time."
       },
       "dismiss_pet": {
-        "name": "Dismiss Pet",
+        "name": "Release Beast",
         "description": "Releases your pet back to the wild."
       },
       "raptor_strike": {
-        "name": "Raptor Strike",
+        "name": "Griffin Strike",
         "description": "A strong melee attack that increases damage by 5. Activates on your next swing."
       },
       "aspect_of_the_hawk": {
-        "name": "Aspect of the Hawk",
+        "name": "Hawk Decoction",
         "description": "Take on the aspect of the hawk, increasing attack power by 20 for 30 min."
       },
       "serpent_sting": {
-        "name": "Serpent Sting",
+        "name": "Wyvern Venom",
         "description": "Stings the target, dealing {damage} Nature damage over 15 sec."
       },
       "arcane_shot": {
-        "name": "Arcane Shot",
+        "name": "Aard Bolt",
         "description": "An instant shot that deals {damage} Arcane damage."
       },
       "concussive_shot": {
-        "name": "Concussive Shot",
+        "name": "Hobbling Shot",
         "description": "Dazes the target, slowing movement by 50% for 4 sec."
       },
       "mongoose_bite": {
-        "name": "Mongoose Bite",
+        "name": "Talon Counter",
         "description": "Counterattack after the target dodges for weapon damage plus 12. Cannot be dodged."
       },
       "wing_clip": {
-        "name": "Wing Clip",
+        "name": "Crippling Shot",
         "description": "Inflicts a wound that slows the enemy by 40% for 10 sec."
       },
       "aspect_of_the_monkey": {
-        "name": "Aspect of the Monkey",
+        "name": "Reflex Decoction",
         "description": "Take on the aspect of the monkey, increasing your dodge chance by 8% for 30 min."
       },
       "aspect_of_the_cheetah": {
-        "name": "Aspect of the Cheetah",
+        "name": "Cheetah Decoction",
         "description": "Take on the aspect of the cheetah, increasing movement speed by 30% for 30 min."
       },
       "aimed_shot": {
-        "name": "Aimed Shot",
+        "name": "Aimed Bolt",
         "description": "A carefully aimed shot that deals {damage} damage."
       },
       "rapid_fire": {
-        "name": "Rapid Fire",
+        "name": "Rapid Bolts",
         "description": "Increases your attack speed by 40% for 15 sec."
       },
       "smite": {
-        "name": "Smite",
+        "name": "Radiant Bolt",
         "description": "Smites the enemy for {damage} Holy damage."
       },
       "lesser_heal": {
-        "name": "Lesser Heal",
+        "name": "Lesser Mending",
         "description": "Heals a friendly target for {damage}."
       },
       "power_word_fortitude": {
-        "name": "Power Word: Fortitude",
+        "name": "Vitality Ward",
         "description": "Increases the target's Stamina by 3 for 30 min."
       },
       "shadow_word_pain": {
-        "name": "Shadow Word: Pain",
+        "name": "Curse of Pain",
         "description": "A word of darkness causes {damage} Shadow damage over 18 sec."
       },
       "power_word_shield": {
-        "name": "Power Word: Shield",
+        "name": "Warding Sigil",
         "description": "Shields the target, absorbing 48 damage for 30 sec."
       },
       "renew": {
-        "name": "Renew",
+        "name": "Mending Salve",
         "description": "Heals the target for {damage} over 15 sec."
       },
       "mind_blast": {
-        "name": "Mind Blast",
+        "name": "Mind Lash",
         "description": "Blasts the target's mind for {damage} Shadow damage."
       },
       "heal": {
-        "name": "Heal",
+        "name": "Greater Mending",
         "description": "A slow but powerful prayer that heals a friendly target for {damage}."
       },
       "mind_flay": {
-        "name": "Mind Flay",
+        "name": "Mind Wither",
         "description": "Assaults the target's mind with Shadow energy, causing 12 damage each second for 3 sec."
       },
       "flash_heal": {
-        "name": "Flash Heal",
+        "name": "Swift Salve",
         "description": "A fast prayer that heals a friendly target for {damage}."
       },
       "lightning_bolt": {
-        "name": "Lightning Bolt",
+        "name": "Storm Bolt",
         "description": "Hurls a bolt of lightning for {damage} Nature damage."
       },
       "rockbiter_weapon": {
-        "name": "Rockbiter Weapon",
+        "name": "Stone Oil",
         "description": "Imbues your weapon with the fury of stone: each swing deals 5 additional damage for 5 min."
       },
       "healing_wave": {
-        "name": "Healing Wave",
+        "name": "Herbal Mending",
         "description": "Heals a friendly target for {damage}."
       },
       "earth_shock": {
-        "name": "Earth Shock",
+        "name": "Earthen Jolt",
         "description": "Instantly shocks the target with concussive force for {damage} Nature damage."
       },
       "lightning_shield": {
-        "name": "Lightning Shield",
+        "name": "Storm Ward",
         "description": "Surrounds you with crackling lightning: melee attackers take 13 Nature damage."
       },
       "flame_shock": {
-        "name": "Flame Shock",
+        "name": "Igni Brand",
         "description": "Sears the target with fire for 25 damage plus {damage} over 12 sec."
       },
       "flametongue_weapon": {
-        "name": "Flametongue Weapon",
+        "name": "Igni Oil",
         "description": "Imbues your weapon with elemental fire: each swing deals 8 additional Fire damage for 5 min."
       },
       "frost_shock": {
-        "name": "Frost Shock",
+        "name": "Frost Jolt",
         "description": "Instantly shocks the target with frost for {damage} Frost damage and slows its movement by 50% for 8 sec."
       },
       "frostbrand_weapon": {
-        "name": "Frostbrand Weapon",
+        "name": "Frost Oil",
         "description": "Imbues your weapon with biting frost: each swing deals 8 additional damage for 5 min."
       },
       "ghost_wolf": {
-        "name": "Ghost Wolf",
+        "name": "Spectral Wolf",
         "description": "Turns you into a Ghost Wolf, increasing movement speed by 40% for 10 min."
       },
       "stormstrike": {
-        "name": "Stormstrike",
+        "name": "Storm Strike",
         "description": "Channels the storm through your weapon, instantly striking for weapon damage plus {damage}."
       },
       "shadow_bolt": {
-        "name": "Shadow Bolt",
+        "name": "Death Bolt",
         "description": "Sends a shadowy bolt at the enemy for {damage} Shadow damage."
       },
       "demon_skin": {
-        "name": "Demon Skin",
+        "name": "Grave Hide",
         "description": "Demonic skin increases your armor by 30 for 30 min."
       },
       "immolate": {
-        "name": "Immolate",
+        "name": "Pyre Curse",
         "description": "Burns the enemy for 11 Fire damage and an additional {damage} over 15 sec."
       },
       "corruption": {
-        "name": "Corruption",
+        "name": "Necrotic Rot",
         "description": "Corrupts the target, causing {damage} Shadow damage over 18 sec."
       },
       "life_tap": {
-        "name": "Life Tap",
+        "name": "Blood Pact",
         "description": "Converts 30 health into 30 mana."
       },
       "curse_of_agony": {
@@ -3284,47 +3284,47 @@ export const en_CA: EnTranslations = {
         "description": "Curses the target with agony: {damage} Shadow damage over 24 sec."
       },
       "drain_life": {
-        "name": "Drain Life",
+        "name": "Life Leech",
         "description": "Drains the target's life, transferring 7 health to you each second for 5 sec."
       },
       "fear": {
-        "name": "Fear",
+        "name": "Dread",
         "description": "Strikes terror into the enemy, leaving it cowering for up to 8 sec. Any damage breaks the effect."
       },
       "searing_pain": {
-        "name": "Searing Pain",
+        "name": "Searing Hex",
         "description": "Sears the enemy with agonizing fire for {damage} Fire damage. Quick to cast."
       },
       "shadowburn": {
-        "name": "Shadowburn",
+        "name": "Death Flame",
         "description": "Instantly blasts the target with Shadow Flame for {damage} Shadow damage."
       },
       "wrath": {
-        "name": "Wrath",
+        "name": "Wild Bolt",
         "description": "Hurls a bolt of nature energy for {damage} Nature damage."
       },
       "healing_touch": {
-        "name": "Healing Touch",
+        "name": "Nature's Mending",
         "description": "Heals a friendly target for {damage}."
       },
       "mark_of_the_wild": {
-        "name": "Mark of the Wild",
+        "name": "Oak Blessing",
         "description": "Places the Mark of the Wild on a friendly target, increasing armor by 25 for 30 min."
       },
       "moonfire": {
-        "name": "Moonfire",
+        "name": "Lunar Flame",
         "description": "Burns the enemy with moonfire for {damage} Arcane damage plus damage over time."
       },
       "rejuvenation": {
-        "name": "Rejuvenation",
+        "name": "Sapling Renewal",
         "description": "Heals the target for {damage} over 12 sec."
       },
       "thorns": {
-        "name": "Thorns",
+        "name": "Briar Coat",
         "description": "Thorns sprout from the target: melee attackers take 3 Nature damage."
       },
       "entangling_roots": {
-        "name": "Entangling Roots",
+        "name": "Yrden Roots",
         "description": "Roots the target in place for up to 12 sec."
       },
       "bear_form": {
@@ -3336,7 +3336,7 @@ export const en_CA: EnTranslations = {
         "description": "A mauling attack that increases melee damage by {damage} and causes a high amount of threat. Activates on your next swing. Bear Form only."
       },
       "growl": {
-        "name": "Growl",
+        "name": "Bestial Growl",
         "description": "Growls at the target: your threat rises to match its most hated enemy and it is compelled to attack you for 3 sec. Bear Form only."
       },
       "cat_form": {
@@ -3344,19 +3344,19 @@ export const en_CA: EnTranslations = {
         "description": "Shapeshift into a wolf: attack power rises with your level, your attacks use energy and combo points, and you generate 29% less threat. Cast again to return to caster form."
       },
       "claw": {
-        "name": "Claw",
+        "name": "Rend Claw",
         "description": "Claw the enemy for weapon damage plus {damage}. Awards 1 combo point. Wolf Form only."
       },
       "ferocious_bite": {
-        "name": "Ferocious Bite",
+        "name": "Savage Bite",
         "description": "Finishing move that causes damage per combo point. Wolf Form only."
       },
       "swipe": {
-        "name": "Swipe",
+        "name": "Bear Swipe",
         "description": "Swipe nearby enemies for {damage} damage. Causes extra threat. Bear Form only."
       },
       "regrowth": {
-        "name": "Regrowth",
+        "name": "Verdant Regrowth",
         "description": "Heals a friendly target for {damage} and an additional amount over 21 sec."
       },
       "barkskin": {
@@ -3364,95 +3364,95 @@ export const en_CA: EnTranslations = {
         "description": "Your skin hardens like bark, increasing armor by 150 for 15 sec."
       },
       "starfire": {
-        "name": "Starfire",
+        "name": "Stellar Lance",
         "description": "Calls down a bolt of stellar fire, causing {damage} Arcane damage."
       },
       "travel_form": {
-        "name": "Travel Form",
+        "name": "Stag Form",
         "description": "Instantly shift into a swift travel form, increasing movement speed by 40%. You cannot use other abilities while shifted, but can shift in or out of combat — ideal for escaping."
       },
       "enrage": {
-        "name": "Enrage",
+        "name": "Primal Rage",
         "description": "Generates 20 rage instantly. Bear Form only."
       },
       "bash": {
-        "name": "Bash",
+        "name": "Bear Bash",
         "description": "Stuns the target for 2 sec. Bear Form only."
       },
       "faerie_fire": {
-        "name": "Faerie Fire",
+        "name": "Sylvan Mark",
         "description": "Decreases the target's armor by 35 for 40 sec."
       },
       "hibernate": {
-        "name": "Hibernate",
+        "name": "Slumber",
         "description": "Forces the target into a deep sleep for up to 8 sec. Any damage will awaken it."
       },
       "dash": {
-        "name": "Dash",
+        "name": "Wolf Dash",
         "description": "Sprint forward, increasing movement speed by 50% for 15 sec. Wolf Form only."
       },
       "pounce": {
-        "name": "Pounce",
+        "name": "Wolf Leap",
         "description": "A stealth opener that stuns the target for 2 sec. Awards 1 combo point. Wolf Form only."
       },
       "insect_swarm": {
-        "name": "Insect Swarm",
+        "name": "Wild Swarm",
         "description": "The enemy is swarmed by insects, taking {damage} Nature damage over 12 sec."
       },
       "tigers_fury": {
-        "name": "Tiger's Fury",
+        "name": "Wolf's Fury",
         "description": "Increases attack power by 40 for 6 sec. Wolf Form only."
       },
       "rip": {
-        "name": "Rip",
+        "name": "Lacerate",
         "description": "Finishing move that causes Bleed damage over 12 sec. Consumes combo points. Wolf Form only."
       },
       "mortal_strike": {
-        "name": "Mortal Strike",
+        "name": "Mortal Blow",
         "description": "A vicious strike dealing weapon damage plus {damage}. (Arms signature)"
       },
       "bloodthirst": {
-        "name": "Bloodthirst",
+        "name": "Blood Frenzy",
         "description": "Instantly attack in a blood frenzy for {damage}. (Fury signature)"
       },
       "shield_slam": {
-        "name": "Shield Slam",
+        "name": "Shield Bash",
         "description": "Slam the target with your shield for {damage} and massive threat. (Protection signature)"
       },
       "whirlwind": {
-        "name": "Whirlwind",
+        "name": "Bladestorm",
         "description": "Spin in a deadly arc, striking all nearby enemies for {damage}. (Fury talent)"
       },
       "berserker_rage": {
-        "name": "Berserker Rage",
+        "name": "Bloodlust",
         "description": "Enter a berserker rage, generating 20 rage. (Warrior talent)"
       },
       "summon_imp": {
-        "name": "Summon Imp",
+        "name": "Bind Imp",
         "description": "Summons an Imp under the command of the Warlock. The Imp hurls Firebolts at your enemies from afar. Summoning a new demon dismisses your current one. You may have one demon at a time."
       },
       "summon_voidwalker": {
-        "name": "Summon Voidwalker",
+        "name": "Bind Voidwalker",
         "description": "Summons a Voidwalker under the command of the Warlock. The Voidwalker is a sturdy demon that taunts your enemies and soaks up punishment. Summoning a new demon dismisses your current one. You may have one demon at a time."
       },
       "summon_succubus": {
-        "name": "Summon Succubus",
+        "name": "Bind Succubus",
         "description": "Summons a Succubus under the command of the Warlock. The Succubus is a fragile demon that strikes quickly and hits hard in melee. Summoning a new demon dismisses your current one. You may have one demon at a time."
       },
       "summon_felhunter": {
-        "name": "Summon Felhunter",
+        "name": "Bind Felhunter",
         "description": "Summons a Felhunter under the command of the Warlock. The Felhunter harries enemies from range with Shadow Bite and excels at hunting spellcasters. Summoning a new demon dismisses your current one. You may have one demon at a time."
       },
       "summon_felguard": {
-        "name": "Summon Felguard",
+        "name": "Bind Felguard",
         "description": "Summons a Felguard under the command of the Warlock. The Felguard is a durable melee demon that wades into battle and holds its own. Summoning a new demon dismisses your current one. You may have one demon at a time."
       },
       "summon_infernal": {
-        "name": "Summon Infernal",
+        "name": "Bind Infernal",
         "description": "Binds an Infernal to your will — a hulking juggernaut with crushing melee and the deepest health and armor of any demon. A long cooldown gates its raw power. Summoning a new demon dismisses your current one. You may have one demon at a time."
       },
       "summon_doomguard": {
-        "name": "Summon Doomguard",
+        "name": "Bind Doomguard",
         "description": "Binds a Doomguard to your will — an elite demon that rains heavy Shadow damage from afar. A long cooldown gates its devastating power. Summoning a new demon dismisses your current one. You may have one demon at a time."
       },
       "bear_charge": {
