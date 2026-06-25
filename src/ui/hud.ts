@@ -45,12 +45,14 @@ import { Meters } from './meters';
 import { TutorialOverlay } from './tutorial';
 import { audio } from '../game/audio';
 import { sfx } from '../game/sfx';
+import { voice } from '../game/voice';
 import { music, musicZoneForLocation, shouldResetMusicForDungeonEntry } from '../game/music';
 import { iconDataUrl, QUALITY_COLOR, raidMarkerDataUrl, RAID_MARKER_NAMES } from './icons';
 import { UnitPortraitPainter } from './unit_portrait_painter';
 import { crestIdForEntity } from './unit_portrait';
 import { svgIcon } from './ui_icons';
 import { shouldPlayCombatImpactForTarget, shouldPlayCritSfxForTarget, shouldPlayMobVoiceSfxForEntity } from './combat_sfx';
+import { nextVoicedYell, voicedYellGain, type VoicedYellState } from './voice_events';
 import { walletDisplayAvailable, walletUiEnabled, wocBalance, wocBalanceVerified, verifiedWocBalance, onWalletUiChange } from './wallet_balance';
 import {
   renderPlayerCardCanvas, cardCanvasToBlob, cardCanvasToUploadBlob, CARD_POSES,
@@ -405,6 +407,17 @@ function weaponSwingKey(cls: string): string {
   }
 }
 
+// Stable voice-clip key for a spoken yell line. MUST match the generator slug in
+// scripts/voices/extra_lines.mjs (yellKey) so encounter dialogue (e.g. the
+// Nythraxis raid) plays the right clip from the live chat event text.
+function yellVoiceKey(text: string): string {
+  return 'yell__' + text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '')
+    .slice(0, 60);
+}
+
 export class Hud {
   private static readonly BAR_ABILITY_SLOTS = 11; // bar slots 1..11; slot 0 is the fixed Attack toggle
   private static ddSeq = 0; // monotonic id source for buildDropdown listbox/option ARIA wiring
@@ -437,6 +450,7 @@ export class Hud {
   private emoteWheelEl: HTMLDivElement | null = null;
   private emoteWheelPinned = false;
   private chatLogEl = $('#chatlog');
+  private lastVoicedYell: VoicedYellState | null = null;
   // Classic "Show Timestamps" interface option — off by default, persisted to
   // localStorage. New chat lines get a bracketed wall-clock prefix when on.
   private chatTimestamps = localStorage.getItem('chatTimestamps') === '1';
@@ -4262,6 +4276,13 @@ export class Hud {
             const bubble = ev.channel === 'emote' ? `${ev.from} ${masked}` : masked;
             this.renderer.showChatBubble(ev.entityId, bubble, ev.channel === 'yell');
           }
+          // Voiced encounter dialogue (boss/NPC yells) — no-op unless a clip was
+          // generated for this exact line (scripts/voices/extra_lines.mjs).
+          if (ev.channel === 'yell') {
+            const voiced = nextVoicedYell(this.lastVoicedYell, yellVoiceKey(ev.text), performance.now());
+            this.lastVoicedYell = voiced.state;
+            if (voiced.play) voice.play(voiced.state.key, { gain: voicedYellGain(ev.from) });
+          }
           break;
         }
         case 'tradeDone':
@@ -4417,6 +4438,8 @@ export class Hud {
         case 'log': {
           const text = this.localizeSystemText(ev.text);
           this.log(text, ev.color ?? '#ccc');
+          // Witcher clue self-talk: speak the line in the chosen inner voice.
+          if (ev.voiceKey) voice.playMonologue(ev.voiceKey);
           const isNythraxisVisionLine = [
             'My king was a good man.',
             'I swore my blade to him.',
@@ -5109,6 +5132,10 @@ export class Hud {
     this.questDialogOpenedAtMs = performance.now();
     if ($('#quest-dialog').style.display !== 'block') this.questDialogReturnFocus = this.currentFocusableElement();
     this.closeOtherWindows('#quest-dialog');
+    // Voice the greeting only on the initial open — renderGossip also runs when
+    // navigating back from a quest detail or after accept/turn-in, where a
+    // re-greeting would be noise.
+    voice.play(`greeting__${npc.templateId}`);
     this.renderGossip(npc);
   }
 
@@ -5194,6 +5221,7 @@ export class Hud {
     this.openQuestDetailId = questId;
     const state = this.sim.questState(questId);
     const text = questNarrative(questId, state === 'ready' ? 'completion' : 'text', this.sim.player.name);
+    voice.play(state === 'ready' ? `quest__${questId}__complete` : `quest__${questId}__offer`);
     el.setAttribute('role', 'dialog');
     el.setAttribute('aria-modal', 'false');
     el.setAttribute('aria-labelledby', 'quest-dialog-title');
@@ -9594,6 +9622,7 @@ export class Hud {
     const body = this.settingsViewShell(t('hud.options.audio'));
     this.settingSlider(body, t('hud.options.soundEffects'), 'sfxVolume');
     this.settingSlider(body, t('hud.options.musicVolume'), 'musicVolume');
+    this.settingSlider(body, t('hud.options.voiceVolume'), 'voiceVolume');
     const row = document.createElement('div');
     row.className = 'set-row';
     const name = document.createElement('span');
@@ -9611,6 +9640,8 @@ export class Hud {
     toggle.addEventListener('click', () => { audio.click(); music.setEnabled(!music.enabled); sync(); });
     row.append(name, toggle);
     body.appendChild(row);
+    this.settingBoolToggle(body, t('hud.options.npcVoices'), 'voiceEnabled');
+    this.settingBoolToggle(body, t('hudChrome.options.innerVoiceFeminine'), 'innerVoiceFemale');
     this.settingBoolToggle(body, t('hudChrome.options.footstepSounds'), 'footstepSfx');
     this.settingBoolToggle(body, t('hudChrome.options.clickFeedback'), 'clickFeedback');
     this.settingsViewFooter();
