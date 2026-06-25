@@ -139,6 +139,17 @@ that turns it green. Detailed heuristics and the bug-fix workflow live in the
   `npm run dev` (often `npm run server` too) running. Bot raids / E2E that teleport
   or level need `ALLOW_DEV_COMMANDS=1` (dev only).
 
+## Working agreement, YOU MUST
+- **Ask, don't assume.** If something is unclear, ask before writing a single line. Never
+  make silent assumptions about intent, architecture, or requirements.
+- **Simplest solution first.** Always implement the simplest thing that could work. Do not
+  add abstractions or flexibility that weren't explicitly requested.
+- **Don't touch unrelated code.** If a file or function is not directly part of the current
+  task, do not modify it, even if you think it could be improved.
+- **Flag uncertainty explicitly.** If you are not confident about an approach or technical
+  detail, say so before proceeding. Confidence without certainty causes more damage than
+  admitting a gap.
+
 ## Working style and effort by model
 This whole file is the baseline for **any** model: obey all of it. Your active model is
 named in your system prompt ("You are powered by the model named ... model ID ..."). The
