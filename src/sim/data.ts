@@ -30,6 +30,7 @@ import {
   TEMPLE_CAMPS, TEMPLE_DUNGEON_DEFS, TEMPLE_DUNGEON_MOBS, TEMPLE_ITEMS, TEMPLE_MOBS,
   TEMPLE_NPCS, TEMPLE_OBJECTS, TEMPLE_PROPS, TEMPLE_QUEST_ORDER, TEMPLE_QUESTS,
 } from './content/temple';
+import { THE_CRAWL_DUNGEON_DEFS } from './content/the_crawl';
 
 function mergeItems(...parts: Record<string, ItemDef>[]): Record<string, ItemDef> {
   const merged = Object.assign({}, ...parts);
@@ -175,7 +176,10 @@ export function instanceOrigin(dungeonIndex: number, slot: number): { x: number;
   return { x: 900 + dungeonIndex * 600, z: -1250 + slot * 500 };
 }
 
-export const DUNGEONS: Record<string, DungeonDef> = { ...DUNGEON_DEFS, ...TEMPLE_DUNGEON_DEFS };
+// The Crawl floors take instance x-bands at index 6..12 (instanceOrigin x
+// 4500..8100); the arena band (ARENA_X) sits beyond them so dungeonAt never
+// reads a Crawl instance as an arena.
+export const DUNGEONS: Record<string, DungeonDef> = { ...DUNGEON_DEFS, ...TEMPLE_DUNGEON_DEFS, ...THE_CRAWL_DUNGEON_DEFS };
 
 export const DUNGEON_LIST: DungeonDef[] = Object.values(DUNGEONS).sort((a, b) => a.index - b.index);
 
@@ -197,7 +201,10 @@ export function dungeonAt(x: number): DungeonDef | null {
 // the band split below keeps arena positions from being read as a dungeon.
 // ---------------------------------------------------------------------------
 
-export const ARENA_X = 4200; // arena instances share this x; slots stack along z
+// Arena band sits beyond the last dungeon instance x-band. Dungeons occupy
+// index 0..12 (The Crawl's deepest floor is index 12 at instanceOrigin x 8100),
+// so the arena starts well past that to keep dungeonAt's x-band test unambiguous.
+export const ARENA_X = 9000; // arena instances share this x; slots stack along z
 export const ARENA_X_MIN = ARENA_X; // x at/after this = an arena instance, not a dungeon
 export const ARENA_SLOT_COUNT = 4; // concurrent 1v1 matches the world can host
 const ARENA_Z0 = -1250;

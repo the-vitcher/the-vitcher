@@ -1251,6 +1251,30 @@ export const GUIDE_DUNGEONS: GuideDungeon[] = [
     "name": "The Hollow Crypt"
   },
   {
+    "id": "crawl_floor_3",
+    "isRaid": false,
+    "suggestedPlayers": 5,
+    "min": 7,
+    "max": 10,
+    "name": "The Crawl: Floor 3, The Hollow Crypt"
+  },
+  {
+    "id": "crawl_floor_5",
+    "isRaid": false,
+    "suggestedPlayers": 5,
+    "min": 7,
+    "max": 13,
+    "name": "The Crawl: Floor 5, The Mist Warrens"
+  },
+  {
+    "id": "crawl_floor_4",
+    "isRaid": false,
+    "suggestedPlayers": 5,
+    "min": 9,
+    "max": 13,
+    "name": "The Crawl: Floor 4, The Drowned Ranks"
+  },
+  {
     "id": "sunken_bastion",
     "isRaid": false,
     "suggestedPlayers": 5,
@@ -1259,12 +1283,28 @@ export const GUIDE_DUNGEONS: GuideDungeon[] = [
     "name": "The Sunken Bastion"
   },
   {
+    "id": "crawl_floor_6",
+    "isRaid": false,
+    "suggestedPlayers": 5,
+    "min": 13,
+    "max": 20,
+    "name": "The Crawl: Floor 6, The Bonewright Halls"
+  },
+  {
     "id": "drowned_temple",
     "isRaid": false,
     "suggestedPlayers": 5,
     "min": 16,
     "max": 18,
     "name": "The Drowned Temple"
+  },
+  {
+    "id": "crawl_floor_7",
+    "isRaid": false,
+    "suggestedPlayers": 5,
+    "min": 18,
+    "max": 20,
+    "name": "The Crawl: Floor 7, The Showrunners Vault"
   },
   {
     "id": "gravewyrm_sanctum",

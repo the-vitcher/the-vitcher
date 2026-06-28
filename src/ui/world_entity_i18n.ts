@@ -68,7 +68,13 @@ const QUEST_IDS = [
 ] as const;
 
 const ZONE_IDS = ['eastbrook_vale', 'mirefen_marsh', 'thornpeak_heights'] as const;
-const DUNGEON_IDS = ['hollow_crypt', 'sunken_bastion', 'gravewyrm_sanctum', 'nythraxis_crypt', 'nythraxis_boss_arena'] as const;
+const DUNGEON_IDS = [
+  'hollow_crypt', 'sunken_bastion', 'gravewyrm_sanctum', 'nythraxis_crypt', 'nythraxis_boss_arena',
+  // The Crawl: a 7-floor descending dungeon-crawl scenario (src/sim/content/the_crawl.ts).
+  // drowned_temple is registered separately in i18n.catalog/merge.ts, so it is not listed here.
+  'crawl_floor_1', 'crawl_floor_2', 'crawl_floor_3', 'crawl_floor_4',
+  'crawl_floor_5', 'crawl_floor_6', 'crawl_floor_7',
+] as const;
 
 type MobId = typeof MOB_IDS[number];
 type NpcId = typeof NPC_IDS[number];
