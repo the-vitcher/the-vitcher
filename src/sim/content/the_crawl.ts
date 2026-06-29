@@ -78,41 +78,43 @@ const FLOOR_ROSTERS: string[][] = [
 
 // The Showrunner narrates every threshold. Sardonic, in the genre's game-show
 // register: the dungeon is live entertainment and the crawler is the underdog.
+// Kept concise and in sync with the catalog source in src/ui/i18n.catalog/merge.ts
+// (the localized copy of these names/lines). No em/en dashes per house style.
 const FLOOR_TEXT: { name: string; enter: string; leave: string }[] = [
   {
     name: 'The Crawl: Floor 1, Orientation',
-    enter: 'Floor 1. The cameras are live and the audience is already bored. Kill things, gain levels, find the stairs down. Try not to die in the first minute; it tests poorly.',
+    enter: 'Floor 1. The cameras are live. Gain levels, find the stairs down, and try not to die in the first minute.',
     leave: 'You climb back toward the surface that no longer exists.',
   },
   {
     name: 'The Crawl: Floor 2, The Restless Dead',
-    enter: 'Floor 2. The previous tenants are up and walking. Sponsorship reminds you that staying on one floor too long is, statistically, a way to die on it.',
-    leave: 'You retreat up the stairwell, audience approval trailing behind you.',
+    enter: 'Floor 2. The old tenants are up and walking. Lingering on one floor is a fine way to die on it.',
+    leave: 'You retreat back up the stairwell.',
   },
   {
     name: 'The Crawl: Floor 3, The Hollow Crypt',
-    enter: 'Floor 3. Morthen runs this level and he does not share. Level up first, then knock.',
+    enter: 'Floor 3. Morthen runs this level and does not share. Gain a few levels first, then knock.',
     leave: 'You back out of the crypt while you still can.',
   },
   {
     name: 'The Crawl: Floor 4, The Drowned Ranks',
-    enter: 'Floor 4. The water is cold, the dead are colder, and the Knight-Commander has opinions about visitors.',
+    enter: 'Floor 4. Cold water, colder dead, and a Knight-Commander with strong opinions about visitors.',
     leave: 'You wade back up out of the drowning dark.',
   },
   {
     name: 'The Crawl: Floor 5, The Mist Warrens',
-    enter: 'Floor 5. Vael is calling the mist, and the mist is calling reinforcements. The ratings love reinforcements.',
+    enter: 'Floor 5. Vael calls the mist, and the mist calls reinforcements. The audience loves reinforcements.',
     leave: 'You feel your way back up through the thinning mist.',
   },
   {
     name: 'The Crawl: Floor 6, The Bonewright Halls',
-    enter: 'Floor 6. Korgath the Bound is the warmup act for what is below. The Showrunner suggests you be the right level for this. The Showrunner suggests nothing else.',
+    enter: 'Floor 6. Korgath the Bound is only the warmup for what waits below. Be the right level for this.',
     leave: 'You haul yourself back up the bonewright stair.',
   },
   {
     name: 'The Crawl: Floor 7, The Showrunners Vault',
-    enter: 'The bottom floor. Korzul the Gravewyrm waits on the great dais and the whole galaxy is watching. There are no more stairs down. Win here, or be content.',
-    leave: 'You turn your back on the dais and the lights, and climb.',
+    enter: 'The bottom floor. Korzul the Gravewyrm waits on the great dais, and the whole galaxy is watching. There are no more stairs down.',
+    leave: 'You turn your back on the dais and climb.',
   },
 ];
 

@@ -2403,6 +2403,14 @@ const mergeExtraEn = {
     },
     dungeons: {
       drowned_temple: { name: "The Drowned Temple", enterText: "You step through the moongate — the air turns to cold water and pale light, and the singing closes over your head.", leaveText: "You surface through the moongate into the mountain night." },
+      // The Crawl: a 7-floor descending dungeon-crawl scenario (src/sim/content/the_crawl.ts).
+      crawl_floor_1: { name: "The Crawl: Floor 1, Orientation", enterText: "Floor 1. The cameras are live. Gain levels, find the stairs down, and try not to die in the first minute.", leaveText: "You climb back toward the surface that no longer exists." },
+      crawl_floor_2: { name: "The Crawl: Floor 2, The Restless Dead", enterText: "Floor 2. The old tenants are up and walking. Lingering on one floor is a fine way to die on it.", leaveText: "You retreat back up the stairwell." },
+      crawl_floor_3: { name: "The Crawl: Floor 3, The Hollow Crypt", enterText: "Floor 3. Morthen runs this level and does not share. Gain a few levels first, then knock.", leaveText: "You back out of the crypt while you still can." },
+      crawl_floor_4: { name: "The Crawl: Floor 4, The Drowned Ranks", enterText: "Floor 4. Cold water, colder dead, and a Knight-Commander with strong opinions about visitors.", leaveText: "You wade back up out of the drowning dark." },
+      crawl_floor_5: { name: "The Crawl: Floor 5, The Mist Warrens", enterText: "Floor 5. Vael calls the mist, and the mist calls reinforcements. The audience loves reinforcements.", leaveText: "You feel your way back up through the thinning mist." },
+      crawl_floor_6: { name: "The Crawl: Floor 6, The Bonewright Halls", enterText: "Floor 6. Korgath the Bound is only the warmup for what waits below. Be the right level for this.", leaveText: "You haul yourself back up the bonewright stair." },
+      crawl_floor_7: { name: "The Crawl: Floor 7, The Showrunners Vault", enterText: "The bottom floor. Korzul the Gravewyrm waits on the great dais, and the whole galaxy is watching. There are no more stairs down.", leaveText: "You turn your back on the dais and climb." },
     },
 };
 
@@ -2479,6 +2487,13 @@ export const mergeExtra = {
     },
     dungeons: {
       drowned_temple: { name: "El Templo Ahogado", enterText: "Atraviesas la puerta lunar: el aire se vuelve agua fría y luz pálida, y el canto se cierra sobre tu cabeza.", leaveText: "Emerges a través de la puerta lunar a la noche de la montaña." },
+      crawl_floor_1: { name: "El Descenso: Planta 1, Orientación", enterText: "Planta 1. Las cámaras están en directo. Sube de nivel, encuentra las escaleras hacia abajo e intenta no morir en el primer minuto.", leaveText: "Vuelves a trepar hacia la superficie que ya no existe." },
+      crawl_floor_2: { name: "El Descenso: Planta 2, Los Muertos Inquietos", enterText: "Planta 2. Los antiguos inquilinos se han levantado y caminan. Quedarse demasiado en una planta es una buena forma de morir en ella.", leaveText: "Te retiras escaleras arriba." },
+      crawl_floor_3: { name: "El Descenso: Planta 3, La Cripta Hueca", enterText: "Planta 3. Morthen manda en este nivel y no comparte. Sube unos cuantos niveles primero y luego llama a la puerta.", leaveText: "Sales de la cripta mientras aún puedes." },
+      crawl_floor_4: { name: "El Descenso: Planta 4, Las Filas Ahogadas", enterText: "Planta 4. Agua fría, muertos aún más fríos y un Caballero-Comandante con opiniones firmes sobre las visitas.", leaveText: "Vuelves a vadear hacia arriba, fuera de la oscuridad anegada." },
+      crawl_floor_5: { name: "El Descenso: Planta 5, Las Madrigueras de Niebla", enterText: "Planta 5. Vael invoca la niebla, y la niebla invoca refuerzos. Al público le encantan los refuerzos.", leaveText: "Subes a tientas a través de la niebla que se disipa." },
+      crawl_floor_6: { name: "El Descenso: Planta 6, Los Salones del Huesero", enterText: "Planta 6. Korgath el Atado solo es el telonero de lo que aguarda abajo. Ten el nivel adecuado para esto.", leaveText: "Te arrastras de vuelta arriba por la escalera del huesero." },
+      crawl_floor_7: { name: "El Descenso: Planta 7, La Cámara del Showrunner", enterText: "La planta más profunda. Korzul el Gusano Sepulcral aguarda en el gran altar, y toda la galaxia está mirando. Ya no hay más escaleras hacia abajo.", leaveText: "Le das la espalda al altar y comienzas a subir." },
     },
   },
   fr_FR: {
@@ -2551,6 +2566,13 @@ export const mergeExtra = {
     },
     dungeons: {
       drowned_temple: { name: "Le Temple noyé", enterText: "Tu franchis la porte de lune — l'air se mue en eau froide et en lumière blafarde, et le chant se referme au-dessus de ta tête.", leaveText: "Tu refais surface par la porte de lune dans la nuit de la montagne." },
+      crawl_floor_1: { name: "La Descente : Étage 1, Orientation", enterText: "Étage 1. Les caméras tournent en direct. Gagne des niveaux, trouve l'escalier qui descend et tâche de ne pas mourir dans la première minute.", leaveText: "Tu remontes vers la surface qui n'existe plus." },
+      crawl_floor_2: { name: "La Descente : Étage 2, Les Morts sans repos", enterText: "Étage 2. Les anciens locataires se sont levés et marchent. S'attarder à un étage est un bon moyen d'y mourir.", leaveText: "Tu bats en retraite par l'escalier." },
+      crawl_floor_3: { name: "La Descente : Étage 3, La Crypte creuse", enterText: "Étage 3. Morthen règne sur ce niveau et ne partage pas. Prends d'abord quelques niveaux, puis frappe à la porte.", leaveText: "Tu ressors de la crypte tant que tu le peux encore." },
+      crawl_floor_4: { name: "La Descente : Étage 4, Les Rangs noyés", enterText: "Étage 4. Eau froide, morts plus froids encore, et un Chevalier-Commandant qui a son avis sur les visiteurs.", leaveText: "Tu remontes en pataugeant hors des ténèbres noyées." },
+      crawl_floor_5: { name: "La Descente : Étage 5, Les Terriers de brume", enterText: "Étage 5. Vael appelle la brume, et la brume appelle des renforts. Le public adore les renforts.", leaveText: "Tu remontes à tâtons à travers la brume qui se dissipe." },
+      crawl_floor_6: { name: "La Descente : Étage 6, Les Salles du tailleur d'os", enterText: "Étage 6. Korgath l'Enchaîné n'est que la première partie de ce qui attend en dessous. Aie le bon niveau pour ça.", leaveText: "Tu te hisses péniblement par l'escalier du tailleur d'os." },
+      crawl_floor_7: { name: "La Descente : Étage 7, La Chambre forte du showrunner", enterText: "L'étage le plus bas. Korzul le Ver sépulcral attend sur le grand autel, et toute la galaxie regarde. Il n'y a plus d'escalier vers le bas.", leaveText: "Tu tournes le dos à l'autel et tu commences à monter." },
     },
   },
   it_IT: {
@@ -2728,6 +2750,13 @@ export const mergeExtra = {
     },
     dungeons: {
       drowned_temple: { name: "溺亡神殿", enterText: "你踏过那道月门——空气化作冰冷的水与苍白的光，歌声在你头顶合拢。", leaveText: "你穿过月门，浮上山间的夜色之中。" },
+      crawl_floor_1: { name: "地城爬行：第1层，新手引导", enterText: "第1层。镜头已经开播。升级，找到向下的楼梯，尽量别在头一分钟里就死掉。", leaveText: "你向着那座已不复存在的地表，重新往上攀爬。" },
+      crawl_floor_2: { name: "地城爬行：第2层，不眠死者", enterText: "第2层。旧住户都爬起来走动了。在一层楼上逗留太久，是个送命的好办法。", leaveText: "你退回楼梯，向上撤离。" },
+      crawl_floor_3: { name: "地城爬行：第3层，空巢墓窟", enterText: "第3层。莫森（Morthen）掌管这一层，而且从不分享。先升几级，再去敲门。", leaveText: "趁还能脱身，你退出了墓窟。" },
+      crawl_floor_4: { name: "地城爬行：第4层，溺亡军列", enterText: "第4层。冰冷的水，更冷的死者，还有一位对来客很有意见的骑士统领。", leaveText: "你从溺亡的黑暗中重新涉水而上。" },
+      crawl_floor_5: { name: "地城爬行：第5层，迷雾窟巢", enterText: "第5层。瓦尔（Vael）在召唤迷雾，而迷雾在召唤援军。观众最爱援军了。", leaveText: "你在渐渐稀薄的迷雾里摸索着向上。" },
+      crawl_floor_6: { name: "地城爬行：第6层，骨匠长厅", enterText: "第6层。受缚者科加斯（Korgath）只是下方真正大戏的暖场。先把等级练够。", leaveText: "你沿着骨匠的阶梯，奋力向上攀回。" },
+      crawl_floor_7: { name: "地城爬行：第7层，节目总监的密库", enterText: "最底层。墓蛟科尔祖（Korzul）盘踞在巨大的祭坛上，整个银河都在观看。再没有向下的楼梯了。", leaveText: "你背对祭坛，开始向上攀登。" },
     },
   },
   zh_TW: {
@@ -2787,6 +2816,13 @@ export const mergeExtra = {
     },
     dungeons: {
       drowned_temple: { name: "溺亡神殿", enterText: "你踏過月門——空氣化作冰冷的水與蒼白的光，歌聲在你頭頂之上闔攏。", leaveText: "你穿過月門浮出水面，回到山間的夜色之中。" },
+      crawl_floor_1: { name: "地城爬行：第1層，新手引導", enterText: "第1層。鏡頭已經開播。升級，找到向下的樓梯，盡量別在頭一分鐘就死掉。", leaveText: "你向著那座已不復存在的地表，重新往上攀爬。" },
+      crawl_floor_2: { name: "地城爬行：第2層，不眠死者", enterText: "第2層。舊住戶都爬起來走動了。在一層樓上逗留太久，是個送命的好辦法。", leaveText: "你退回樓梯，向上撤離。" },
+      crawl_floor_3: { name: "地城爬行：第3層，空巢墓窟", enterText: "第3層。莫森（Morthen）掌管這一層，而且從不分享。先升幾級，再去敲門。", leaveText: "趁還能脫身，你退出了墓窟。" },
+      crawl_floor_4: { name: "地城爬行：第4層，溺亡軍列", enterText: "第4層。冰冷的水，更冷的死者，還有一位對來客很有意見的騎士統領。", leaveText: "你從溺亡的黑暗中重新涉水而上。" },
+      crawl_floor_5: { name: "地城爬行：第5層，迷霧窟巢", enterText: "第5層。瓦爾（Vael）在召喚迷霧，而迷霧在召喚援軍。觀眾最愛援軍了。", leaveText: "你在漸漸稀薄的迷霧裡摸索著向上。" },
+      crawl_floor_6: { name: "地城爬行：第6層，骨匠長廳", enterText: "第6層。受縛者科加斯（Korgath）只是下方真正大戲的暖場。先把等級練夠。", leaveText: "你沿著骨匠的階梯，奮力向上攀回。" },
+      crawl_floor_7: { name: "地城爬行：第7層，節目總監的密庫", enterText: "最底層。墓蛟科爾祖（Korzul）盤踞在巨大的祭壇上，整個銀河都在觀看。再沒有向下的樓梯了。", leaveText: "你背對祭壇，開始向上攀登。" },
     },
   },
   ko_KR: {
@@ -2846,6 +2882,13 @@ export const mergeExtra = {
     },
     dungeons: {
       drowned_temple: { name: "익사한 신전", enterText: "당신은 달의 관문을 지나갑니다 — 공기가 차가운 물과 창백한 빛으로 변하고, 노랫소리가 당신의 머리 위로 닫혀 옵니다.", leaveText: "당신은 달의 관문을 통해 산속의 밤으로 떠오릅니다." },
+      crawl_floor_1: { name: "크롤: 1층, 오리엔테이션", enterText: "1층. 카메라가 생방송 중이다. 레벨을 올리고, 내려가는 계단을 찾고, 첫 1분 안에 죽지 않도록 해라.", leaveText: "당신은 더 이상 존재하지 않는 지상을 향해 다시 기어오른다." },
+      crawl_floor_2: { name: "크롤: 2층, 잠들지 못한 사자", enterText: "2층. 옛 입주자들이 일어나 돌아다니고 있다. 한 층에 오래 머무는 것은 거기서 죽는 좋은 방법이다.", leaveText: "당신은 계단을 되짚어 위로 물러난다." },
+      crawl_floor_3: { name: "크롤: 3층, 텅 빈 납골당", enterText: "3층. 이 층은 모르덴(Morthen)이 다스리며, 결코 나누지 않는다. 먼저 몇 레벨 올린 뒤에 문을 두드려라.", leaveText: "아직 빠져나갈 수 있을 때, 당신은 납골당에서 물러난다." },
+      crawl_floor_4: { name: "크롤: 4층, 익사한 대열", enterText: "4층. 차가운 물, 더 차가운 사자, 그리고 방문객에게 할 말이 많은 기사단장.", leaveText: "당신은 익사의 어둠 속에서 다시 물을 헤치며 올라간다." },
+      crawl_floor_5: { name: "크롤: 5층, 안개 굴", enterText: "5층. 바엘(Vael)이 안개를 부르고, 안개가 증원을 부른다. 관객은 증원을 무척 좋아한다.", leaveText: "당신은 옅어지는 안개 속을 더듬으며 위로 나아간다." },
+      crawl_floor_6: { name: "크롤: 6층, 뼈장이의 대전당", enterText: "6층. 결박된 코르가스(Korgath)는 아래에서 기다리는 본 무대의 몸풀기에 불과하다. 적정 레벨을 맞춰 두어라.", leaveText: "당신은 뼈장이의 계단을 힘겹게 다시 기어오른다." },
+      crawl_floor_7: { name: "크롤: 7층, 쇼러너의 보물고", enterText: "최하층. 무덤룡 코르줄(Korzul)이 거대한 제단에 자리 잡고 있으며, 온 은하가 지켜보고 있다. 더 이상 내려가는 계단은 없다.", leaveText: "당신은 제단에 등을 돌리고 오르기 시작한다." },
     },
   },
   ja_JP: {
@@ -2905,6 +2948,13 @@ export const mergeExtra = {
     },
     dungeons: {
       drowned_temple: { name: "溺れし神殿", enterText: "月の門をくぐり抜けると——大気は冷たい水と蒼白の光に変わり、歌声が頭上で閉ざされていく。", leaveText: "月の門を抜けて、山の夜へと浮かび上がる。" },
+      crawl_floor_1: { name: "クロウル：1階、オリエンテーション", enterText: "1階。カメラは生放送中。レベルを上げ、下りの階段を見つけ、最初の1分で死なないようにしろ。", leaveText: "あなたは、もはや存在しない地上へと再び登っていく。" },
+      crawl_floor_2: { name: "クロウル：2階、安らがぬ死者", enterText: "2階。かつての住人たちが起き上がって歩き回っている。一つの階に長居するのは、そこで死ぬ近道だ。", leaveText: "あなたは階段を引き返し、上へと退く。" },
+      crawl_floor_3: { name: "クロウル：3階、虚ろの納骨堂", enterText: "3階。この階を仕切るのはモーセン（Morthen）、しかも分け前は渡さない。まず数レベル上げてから、戸を叩け。", leaveText: "まだ抜け出せるうちに、あなたは納骨堂から後ずさる。" },
+      crawl_floor_4: { name: "クロウル：4階、溺れし軍列", enterText: "4階。冷たい水、もっと冷たい死者、そして来訪者にうるさい騎士団長。", leaveText: "あなたは溺れる闇の中から、再び水をかき分けて登る。" },
+      crawl_floor_5: { name: "クロウル：5階、霧の巣窟", enterText: "5階。ヴェール（Vael）が霧を呼び、霧が増援を呼ぶ。観客は増援が大好きだ。", leaveText: "あなたは薄れゆく霧の中を、手探りで上へ進む。" },
+      crawl_floor_6: { name: "クロウル：6階、骨細工の大広間", enterText: "6階。縛められしコルガス（Korgath）は、下に待つ本番の前座にすぎない。ふさわしいレベルになっておけ。", leaveText: "あなたは骨細工の階段を、苦労して上へと登り返す。" },
+      crawl_floor_7: { name: "クロウル：7階、ショーランナーの宝庫", enterText: "最下層。墓竜コルズル（Korzul）が大祭壇に陣取り、銀河じゅうが見ている。もう下りの階段はない。", leaveText: "あなたは祭壇に背を向け、登りはじめる。" },
     },
   },
   pt_BR: {
@@ -3023,6 +3073,13 @@ export const mergeExtra = {
     },
     dungeons: {
       drowned_temple: { name: "Утонувший храм", enterText: "Ты проходишь сквозь лунные врата — воздух обращается в холодную воду и бледный свет, и пение смыкается над твоей головой.", leaveText: "Ты всплываешь сквозь лунные врата в горную ночь." },
+      crawl_floor_1: { name: "Спуск: Этаж 1, Вводный инструктаж", enterText: "Этаж 1. Камеры в эфире. Набирай уровни, найди лестницу вниз и постарайся не умереть в первую минуту.", leaveText: "Ты снова карабкаешься вверх, к поверхности, которой больше нет." },
+      crawl_floor_2: { name: "Спуск: Этаж 2, Беспокойные мертвецы", enterText: "Этаж 2. Прежние жильцы поднялись и бродят. Задержаться на одном этаже, статистически, верный способ на нём и погибнуть.", leaveText: "Ты отступаешь обратно вверх по лестнице." },
+      crawl_floor_3: { name: "Спуск: Этаж 3, Полая крипта", enterText: "Этаж 3. Этим уровнем правит Мортен (Morthen), и он ничем не делится. Сначала возьми пару уровней, а потом стучись.", leaveText: "Пока ещё можешь, ты пятишься прочь из крипты." },
+      crawl_floor_4: { name: "Спуск: Этаж 4, Утонувшие ряды", enterText: "Этаж 4. Холодная вода, мертвецы ещё холоднее, и рыцарь-командор, у которого есть мнение о гостях.", leaveText: "Ты снова выбираешься вброд из тонущей тьмы." },
+      crawl_floor_5: { name: "Спуск: Этаж 5, Туманные норы", enterText: "Этаж 5. Ваэль (Vael) зовёт туман, а туман зовёт подкрепления. Зрители обожают подкрепления.", leaveText: "Ты на ощупь поднимаешься сквозь редеющий туман." },
+      crawl_floor_6: { name: "Спуск: Этаж 6, Залы костодела", enterText: "Этаж 6. Скованный Коргат (Korgath) лишь разогрев перед тем, что ждёт внизу. Дорасти до нужного уровня.", leaveText: "Ты с трудом карабкаешься обратно вверх по лестнице костодела." },
+      crawl_floor_7: { name: "Спуск: Этаж 7, Хранилище шоураннера", enterText: "Самый нижний этаж. Могильный вирм Корзул (Korzul) восседает на огромном алтаре, и вся галактика смотрит. Лестниц вниз больше нет.", leaveText: "Ты поворачиваешься спиной к алтарю и начинаешь подъём." },
     },
   },
   es_ES: {} as typeof mergeExtraEn,

@@ -5980,45 +5980,45 @@ export const ja_JP: EnTranslations = {
         "enterText": "封印された王家の扉を通り抜けます。",
         "leaveText": "ソーンピークの冷たい空気へ戻ります。"
       },
-      "crawl_floor_1": {
-        "name": "The Crawl: Floor 1, Orientation",
-        "enterText": "Floor 1. The cameras are live and the audience is already bored. Kill things, gain levels, find the stairs down. Try not to die in the first minute; it tests poorly.",
-        "leaveText": "You climb back toward the surface that no longer exists."
-      },
-      "crawl_floor_2": {
-        "name": "The Crawl: Floor 2, The Restless Dead",
-        "enterText": "Floor 2. The previous tenants are up and walking. Sponsorship reminds you that staying on one floor too long is, statistically, a way to die on it.",
-        "leaveText": "You retreat up the stairwell, audience approval trailing behind you."
-      },
-      "crawl_floor_3": {
-        "name": "The Crawl: Floor 3, The Hollow Crypt",
-        "enterText": "Floor 3. Morthen runs this level and he does not share. Level up first, then knock.",
-        "leaveText": "You back out of the crypt while you still can."
-      },
-      "crawl_floor_4": {
-        "name": "The Crawl: Floor 4, The Drowned Ranks",
-        "enterText": "Floor 4. The water is cold, the dead are colder, and the Knight-Commander has opinions about visitors.",
-        "leaveText": "You wade back up out of the drowning dark."
-      },
-      "crawl_floor_5": {
-        "name": "The Crawl: Floor 5, The Mist Warrens",
-        "enterText": "Floor 5. Vael is calling the mist, and the mist is calling reinforcements. The ratings love reinforcements.",
-        "leaveText": "You feel your way back up through the thinning mist."
-      },
-      "crawl_floor_6": {
-        "name": "The Crawl: Floor 6, The Bonewright Halls",
-        "enterText": "Floor 6. Korgath the Bound is the warmup act for what is below. The Showrunner suggests you be the right level for this. The Showrunner suggests nothing else.",
-        "leaveText": "You haul yourself back up the bonewright stair."
-      },
-      "crawl_floor_7": {
-        "name": "The Crawl: Floor 7, The Showrunners Vault",
-        "enterText": "The bottom floor. Korzul the Gravewyrm waits on the great dais and the whole galaxy is watching. There are no more stairs down. Win here, or be content.",
-        "leaveText": "You turn your back on the dais and the lights, and climb."
-      },
       "drowned_temple": {
         "name": "溺れし神殿",
         "enterText": "月の門をくぐり抜けると——大気は冷たい水と蒼白の光に変わり、歌声が頭上で閉ざされていく。",
         "leaveText": "月の門を抜けて、山の夜へと浮かび上がる。"
+      },
+      "crawl_floor_1": {
+        "name": "クロウル：1階、オリエンテーション",
+        "enterText": "1階。カメラは生放送中。レベルを上げ、下りの階段を見つけ、最初の1分で死なないようにしろ。",
+        "leaveText": "あなたは、もはや存在しない地上へと再び登っていく。"
+      },
+      "crawl_floor_2": {
+        "name": "クロウル：2階、安らがぬ死者",
+        "enterText": "2階。かつての住人たちが起き上がって歩き回っている。一つの階に長居するのは、そこで死ぬ近道だ。",
+        "leaveText": "あなたは階段を引き返し、上へと退く。"
+      },
+      "crawl_floor_3": {
+        "name": "クロウル：3階、虚ろの納骨堂",
+        "enterText": "3階。この階を仕切るのはモーセン（Morthen）、しかも分け前は渡さない。まず数レベル上げてから、戸を叩け。",
+        "leaveText": "まだ抜け出せるうちに、あなたは納骨堂から後ずさる。"
+      },
+      "crawl_floor_4": {
+        "name": "クロウル：4階、溺れし軍列",
+        "enterText": "4階。冷たい水、もっと冷たい死者、そして来訪者にうるさい騎士団長。",
+        "leaveText": "あなたは溺れる闇の中から、再び水をかき分けて登る。"
+      },
+      "crawl_floor_5": {
+        "name": "クロウル：5階、霧の巣窟",
+        "enterText": "5階。ヴェール（Vael）が霧を呼び、霧が増援を呼ぶ。観客は増援が大好きだ。",
+        "leaveText": "あなたは薄れゆく霧の中を、手探りで上へ進む。"
+      },
+      "crawl_floor_6": {
+        "name": "クロウル：6階、骨細工の大広間",
+        "enterText": "6階。縛められしコルガス（Korgath）は、下に待つ本番の前座にすぎない。ふさわしいレベルになっておけ。",
+        "leaveText": "あなたは骨細工の階段を、苦労して上へと登り返す。"
+      },
+      "crawl_floor_7": {
+        "name": "クロウル：7階、ショーランナーの宝庫",
+        "enterText": "最下層。墓竜コルズル（Korzul）が大祭壇に陣取り、銀河じゅうが見ている。もう下りの階段はない。",
+        "leaveText": "あなたは祭壇に背を向け、登りはじめる。"
       }
     }
   },

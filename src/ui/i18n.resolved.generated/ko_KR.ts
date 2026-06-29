@@ -5980,45 +5980,45 @@ export const ko_KR: EnTranslations = {
         "enterText": "봉인된 왕실 문을 지나갑니다.",
         "leaveText": "쏜피크의 차가운 공기 속으로 돌아옵니다."
       },
-      "crawl_floor_1": {
-        "name": "The Crawl: Floor 1, Orientation",
-        "enterText": "Floor 1. The cameras are live and the audience is already bored. Kill things, gain levels, find the stairs down. Try not to die in the first minute; it tests poorly.",
-        "leaveText": "You climb back toward the surface that no longer exists."
-      },
-      "crawl_floor_2": {
-        "name": "The Crawl: Floor 2, The Restless Dead",
-        "enterText": "Floor 2. The previous tenants are up and walking. Sponsorship reminds you that staying on one floor too long is, statistically, a way to die on it.",
-        "leaveText": "You retreat up the stairwell, audience approval trailing behind you."
-      },
-      "crawl_floor_3": {
-        "name": "The Crawl: Floor 3, The Hollow Crypt",
-        "enterText": "Floor 3. Morthen runs this level and he does not share. Level up first, then knock.",
-        "leaveText": "You back out of the crypt while you still can."
-      },
-      "crawl_floor_4": {
-        "name": "The Crawl: Floor 4, The Drowned Ranks",
-        "enterText": "Floor 4. The water is cold, the dead are colder, and the Knight-Commander has opinions about visitors.",
-        "leaveText": "You wade back up out of the drowning dark."
-      },
-      "crawl_floor_5": {
-        "name": "The Crawl: Floor 5, The Mist Warrens",
-        "enterText": "Floor 5. Vael is calling the mist, and the mist is calling reinforcements. The ratings love reinforcements.",
-        "leaveText": "You feel your way back up through the thinning mist."
-      },
-      "crawl_floor_6": {
-        "name": "The Crawl: Floor 6, The Bonewright Halls",
-        "enterText": "Floor 6. Korgath the Bound is the warmup act for what is below. The Showrunner suggests you be the right level for this. The Showrunner suggests nothing else.",
-        "leaveText": "You haul yourself back up the bonewright stair."
-      },
-      "crawl_floor_7": {
-        "name": "The Crawl: Floor 7, The Showrunners Vault",
-        "enterText": "The bottom floor. Korzul the Gravewyrm waits on the great dais and the whole galaxy is watching. There are no more stairs down. Win here, or be content.",
-        "leaveText": "You turn your back on the dais and the lights, and climb."
-      },
       "drowned_temple": {
         "name": "익사한 신전",
         "enterText": "당신은 달의 관문을 지나갑니다 — 공기가 차가운 물과 창백한 빛으로 변하고, 노랫소리가 당신의 머리 위로 닫혀 옵니다.",
         "leaveText": "당신은 달의 관문을 통해 산속의 밤으로 떠오릅니다."
+      },
+      "crawl_floor_1": {
+        "name": "크롤: 1층, 오리엔테이션",
+        "enterText": "1층. 카메라가 생방송 중이다. 레벨을 올리고, 내려가는 계단을 찾고, 첫 1분 안에 죽지 않도록 해라.",
+        "leaveText": "당신은 더 이상 존재하지 않는 지상을 향해 다시 기어오른다."
+      },
+      "crawl_floor_2": {
+        "name": "크롤: 2층, 잠들지 못한 사자",
+        "enterText": "2층. 옛 입주자들이 일어나 돌아다니고 있다. 한 층에 오래 머무는 것은 거기서 죽는 좋은 방법이다.",
+        "leaveText": "당신은 계단을 되짚어 위로 물러난다."
+      },
+      "crawl_floor_3": {
+        "name": "크롤: 3층, 텅 빈 납골당",
+        "enterText": "3층. 이 층은 모르덴(Morthen)이 다스리며, 결코 나누지 않는다. 먼저 몇 레벨 올린 뒤에 문을 두드려라.",
+        "leaveText": "아직 빠져나갈 수 있을 때, 당신은 납골당에서 물러난다."
+      },
+      "crawl_floor_4": {
+        "name": "크롤: 4층, 익사한 대열",
+        "enterText": "4층. 차가운 물, 더 차가운 사자, 그리고 방문객에게 할 말이 많은 기사단장.",
+        "leaveText": "당신은 익사의 어둠 속에서 다시 물을 헤치며 올라간다."
+      },
+      "crawl_floor_5": {
+        "name": "크롤: 5층, 안개 굴",
+        "enterText": "5층. 바엘(Vael)이 안개를 부르고, 안개가 증원을 부른다. 관객은 증원을 무척 좋아한다.",
+        "leaveText": "당신은 옅어지는 안개 속을 더듬으며 위로 나아간다."
+      },
+      "crawl_floor_6": {
+        "name": "크롤: 6층, 뼈장이의 대전당",
+        "enterText": "6층. 결박된 코르가스(Korgath)는 아래에서 기다리는 본 무대의 몸풀기에 불과하다. 적정 레벨을 맞춰 두어라.",
+        "leaveText": "당신은 뼈장이의 계단을 힘겹게 다시 기어오른다."
+      },
+      "crawl_floor_7": {
+        "name": "크롤: 7층, 쇼러너의 보물고",
+        "enterText": "최하층. 무덤룡 코르줄(Korzul)이 거대한 제단에 자리 잡고 있으며, 온 은하가 지켜보고 있다. 더 이상 내려가는 계단은 없다.",
+        "leaveText": "당신은 제단에 등을 돌리고 오르기 시작한다."
       }
     }
   },

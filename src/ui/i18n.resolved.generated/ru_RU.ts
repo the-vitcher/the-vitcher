@@ -5980,45 +5980,45 @@ export const ru_RU: EnTranslations = {
         "enterText": "Вы проходите через запечатанную королевскую дверь.",
         "leaveText": "Вы возвращаетесь в холодный воздух Терновых высот."
       },
-      "crawl_floor_1": {
-        "name": "The Crawl: Floor 1, Orientation",
-        "enterText": "Floor 1. The cameras are live and the audience is already bored. Kill things, gain levels, find the stairs down. Try not to die in the first minute; it tests poorly.",
-        "leaveText": "You climb back toward the surface that no longer exists."
-      },
-      "crawl_floor_2": {
-        "name": "The Crawl: Floor 2, The Restless Dead",
-        "enterText": "Floor 2. The previous tenants are up and walking. Sponsorship reminds you that staying on one floor too long is, statistically, a way to die on it.",
-        "leaveText": "You retreat up the stairwell, audience approval trailing behind you."
-      },
-      "crawl_floor_3": {
-        "name": "The Crawl: Floor 3, The Hollow Crypt",
-        "enterText": "Floor 3. Morthen runs this level and he does not share. Level up first, then knock.",
-        "leaveText": "You back out of the crypt while you still can."
-      },
-      "crawl_floor_4": {
-        "name": "The Crawl: Floor 4, The Drowned Ranks",
-        "enterText": "Floor 4. The water is cold, the dead are colder, and the Knight-Commander has opinions about visitors.",
-        "leaveText": "You wade back up out of the drowning dark."
-      },
-      "crawl_floor_5": {
-        "name": "The Crawl: Floor 5, The Mist Warrens",
-        "enterText": "Floor 5. Vael is calling the mist, and the mist is calling reinforcements. The ratings love reinforcements.",
-        "leaveText": "You feel your way back up through the thinning mist."
-      },
-      "crawl_floor_6": {
-        "name": "The Crawl: Floor 6, The Bonewright Halls",
-        "enterText": "Floor 6. Korgath the Bound is the warmup act for what is below. The Showrunner suggests you be the right level for this. The Showrunner suggests nothing else.",
-        "leaveText": "You haul yourself back up the bonewright stair."
-      },
-      "crawl_floor_7": {
-        "name": "The Crawl: Floor 7, The Showrunners Vault",
-        "enterText": "The bottom floor. Korzul the Gravewyrm waits on the great dais and the whole galaxy is watching. There are no more stairs down. Win here, or be content.",
-        "leaveText": "You turn your back on the dais and the lights, and climb."
-      },
       "drowned_temple": {
         "name": "Утонувший храм",
         "enterText": "Ты проходишь сквозь лунные врата — воздух обращается в холодную воду и бледный свет, и пение смыкается над твоей головой.",
         "leaveText": "Ты всплываешь сквозь лунные врата в горную ночь."
+      },
+      "crawl_floor_1": {
+        "name": "Спуск: Этаж 1, Вводный инструктаж",
+        "enterText": "Этаж 1. Камеры в эфире. Набирай уровни, найди лестницу вниз и постарайся не умереть в первую минуту.",
+        "leaveText": "Ты снова карабкаешься вверх, к поверхности, которой больше нет."
+      },
+      "crawl_floor_2": {
+        "name": "Спуск: Этаж 2, Беспокойные мертвецы",
+        "enterText": "Этаж 2. Прежние жильцы поднялись и бродят. Задержаться на одном этаже, статистически, верный способ на нём и погибнуть.",
+        "leaveText": "Ты отступаешь обратно вверх по лестнице."
+      },
+      "crawl_floor_3": {
+        "name": "Спуск: Этаж 3, Полая крипта",
+        "enterText": "Этаж 3. Этим уровнем правит Мортен (Morthen), и он ничем не делится. Сначала возьми пару уровней, а потом стучись.",
+        "leaveText": "Пока ещё можешь, ты пятишься прочь из крипты."
+      },
+      "crawl_floor_4": {
+        "name": "Спуск: Этаж 4, Утонувшие ряды",
+        "enterText": "Этаж 4. Холодная вода, мертвецы ещё холоднее, и рыцарь-командор, у которого есть мнение о гостях.",
+        "leaveText": "Ты снова выбираешься вброд из тонущей тьмы."
+      },
+      "crawl_floor_5": {
+        "name": "Спуск: Этаж 5, Туманные норы",
+        "enterText": "Этаж 5. Ваэль (Vael) зовёт туман, а туман зовёт подкрепления. Зрители обожают подкрепления.",
+        "leaveText": "Ты на ощупь поднимаешься сквозь редеющий туман."
+      },
+      "crawl_floor_6": {
+        "name": "Спуск: Этаж 6, Залы костодела",
+        "enterText": "Этаж 6. Скованный Коргат (Korgath) лишь разогрев перед тем, что ждёт внизу. Дорасти до нужного уровня.",
+        "leaveText": "Ты с трудом карабкаешься обратно вверх по лестнице костодела."
+      },
+      "crawl_floor_7": {
+        "name": "Спуск: Этаж 7, Хранилище шоураннера",
+        "enterText": "Самый нижний этаж. Могильный вирм Корзул (Korzul) восседает на огромном алтаре, и вся галактика смотрит. Лестниц вниз больше нет.",
+        "leaveText": "Ты поворачиваешься спиной к алтарю и начинаешь подъём."
       }
     }
   },
