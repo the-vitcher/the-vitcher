@@ -4248,6 +4248,30 @@ export const ja_JP: EnTranslations = {
       "verlans_oathblade": {
         "name": "ヴァーランの誓約刃"
       },
+      "crawl_token": {
+        "name": "クロウル・トークン"
+      },
+      "gnashers_fang": {
+        "name": "ナッシャーの牙"
+      },
+      "landlords_padded_vest": {
+        "name": "大家のパッド入りベスト"
+      },
+      "producers_pet_collar": {
+        "name": "プロデューサーのペットの首輪"
+      },
+      "hostess_long_gloves": {
+        "name": "司会者のロンググローブ"
+      },
+      "mist_anchor_pauldrons": {
+        "name": "霧のアンカーの肩当て"
+      },
+      "headliners_crown": {
+        "name": "主役の冠"
+      },
+      "showrunners_gavel": {
+        "name": "ショーランナーの小槌"
+      },
       "briny_idol": {
         "name": "潮辛の偶像"
       },
@@ -4666,6 +4690,57 @@ export const ja_JP: EnTranslations = {
       },
       "brightwood_monarch": {
         "name": "ブライトウッドの君主"
+      },
+      "crawl_tutorial_grub": {
+        "name": "チュートリアル・グラブ"
+      },
+      "crawl_spectator_drone": {
+        "name": "観客ドローン"
+      },
+      "crawl_alley_skitterling": {
+        "name": "路地のスキッターリング"
+      },
+      "crawl_husk_tenant": {
+        "name": "抜け殻の住人"
+      },
+      "crawl_spark_hound": {
+        "name": "スパークハウンド"
+      },
+      "crawl_stitched_meatgolem": {
+        "name": "縫合肉ゴーレム"
+      },
+      "crawl_rust_revenant": {
+        "name": "錆びついたレヴナント"
+      },
+      "crawl_static_wraith": {
+        "name": "静電のレイス"
+      },
+      "crawl_chrome_zealot": {
+        "name": "クロームの狂信者"
+      },
+      "crawl_ratings_horror": {
+        "name": "視聴率ホラー"
+      },
+      "crawl_boss_gnasher": {
+        "name": "ナッシャー、第1階の人気者"
+      },
+      "crawl_boss_vurmix": {
+        "name": "大家ヴァーミックス"
+      },
+      "crawl_boss_producers_pet": {
+        "name": "プロデューサーのペット"
+      },
+      "crawl_boss_mortdecai": {
+        "name": "司会者モルデカイ"
+      },
+      "crawl_boss_mist_anchor": {
+        "name": "霧のアンカー"
+      },
+      "crawl_boss_kordeth": {
+        "name": "主役コルデス"
+      },
+      "crawl_boss_showrunner": {
+        "name": "ショーランナー"
       },
       "elder_bristleback": {
         "name": "老ブリストルバック"

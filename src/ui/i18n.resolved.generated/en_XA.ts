@@ -4248,6 +4248,30 @@ export const en_XA: EnTranslations = {
       "verlans_oathblade": {
         "name": "[Ʋéŕļáñ'š Óáţĥƀļáðé]"
       },
+      "crawl_token": {
+        "name": "[Çŕáŵļ Ţóķéñ]"
+      },
+      "gnashers_fang": {
+        "name": "[Ĝñášĥéŕ'š Ƒáñĝ]"
+      },
+      "landlords_padded_vest": {
+        "name": "[Ļáñðļóŕð'š Þáððéð Ʋéšţ]"
+      },
+      "producers_pet_collar": {
+        "name": "[Þŕóðúçéŕ'š Þéţ Çóļļáŕ]"
+      },
+      "hostess_long_gloves": {
+        "name": "[Ĥóšţéšš'š Ļóñĝ Ĝļóʋéš]"
+      },
+      "mist_anchor_pauldrons": {
+        "name": "[Ɱíšţ-Áñçĥóŕ Þáúļðŕóñš]"
+      },
+      "headliners_crown": {
+        "name": "[Ĥéáðļíñéŕ'š Çŕóŵñ]"
+      },
+      "showrunners_gavel": {
+        "name": "[Ţĥé Šĥóŵŕúññéŕ'š Ĝáʋéļ]"
+      },
       "briny_idol": {
         "name": "[Ɓŕíñý Íðóļ]"
       },
@@ -4666,6 +4690,57 @@ export const en_XA: EnTranslations = {
       },
       "brightwood_monarch": {
         "name": "[Ţĥé Ɓŕíĝĥţŵóóð Ɱóñáŕçĥ]"
+      },
+      "crawl_tutorial_grub": {
+        "name": "[Ţúţóŕíáļ Ĝŕúƀ]"
+      },
+      "crawl_spectator_drone": {
+        "name": "[Šþéçţáţóŕ Ðŕóñé]"
+      },
+      "crawl_alley_skitterling": {
+        "name": "[Áļļéý Šķíţţéŕļíñĝ]"
+      },
+      "crawl_husk_tenant": {
+        "name": "[Ĥúšķ Ţéñáñţ]"
+      },
+      "crawl_spark_hound": {
+        "name": "[Šþáŕķ Ĥóúñð]"
+      },
+      "crawl_stitched_meatgolem": {
+        "name": "[Šţíţçĥéð Ɱéáţ-Ĝóļéɱ]"
+      },
+      "crawl_rust_revenant": {
+        "name": "[Ŕúšţ Ŕéʋéñáñţ]"
+      },
+      "crawl_static_wraith": {
+        "name": "[Šţáţíç Ŵŕáíţĥ]"
+      },
+      "crawl_chrome_zealot": {
+        "name": "[Çĥŕóɱé Žéáļóţ]"
+      },
+      "crawl_ratings_horror": {
+        "name": "[Ŕáţíñĝš Ĥóŕŕóŕ]"
+      },
+      "crawl_boss_gnasher": {
+        "name": "[Ĝñášĥéŕ, ţĥé Ƒíŕšţ-Ƒļóóŕ Ƒáʋóŕíţé]"
+      },
+      "crawl_boss_vurmix": {
+        "name": "[Ʋúŕɱíẋ ţĥé Ļáñðļóŕð]"
+      },
+      "crawl_boss_producers_pet": {
+        "name": "[Ţĥé Þŕóðúçéŕ'š Þéţ]"
+      },
+      "crawl_boss_mortdecai": {
+        "name": "[Ĥóšţéšš Ɱóŕţðéçáí]"
+      },
+      "crawl_boss_mist_anchor": {
+        "name": "[Ţĥé Ɱíšţ Áñçĥóŕ]"
+      },
+      "crawl_boss_kordeth": {
+        "name": "[Ķóŕðéţĥ ţĥé Ĥéáðļíñéŕ]"
+      },
+      "crawl_boss_showrunner": {
+        "name": "[Ţĥé Šĥóŵŕúññéŕ]"
       },
       "elder_bristleback": {
         "name": "[Éļðéŕ Ɓŕíšţļéƀáçķ]"

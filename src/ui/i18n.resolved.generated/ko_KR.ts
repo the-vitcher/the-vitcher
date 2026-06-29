@@ -4248,6 +4248,30 @@ export const ko_KR: EnTranslations = {
       "verlans_oathblade": {
         "name": "베를란의 맹세검"
       },
+      "crawl_token": {
+        "name": "크롤 토큰"
+      },
+      "gnashers_fang": {
+        "name": "깨무는 자의 송곳니"
+      },
+      "landlords_padded_vest": {
+        "name": "집주인의 패딩 조끼"
+      },
+      "producers_pet_collar": {
+        "name": "프로듀서의 애완동물 목줄"
+      },
+      "hostess_long_gloves": {
+        "name": "진행자의 긴 장갑"
+      },
+      "mist_anchor_pauldrons": {
+        "name": "안개의 닻 어깨보호구"
+      },
+      "headliners_crown": {
+        "name": "헤드라이너의 왕관"
+      },
+      "showrunners_gavel": {
+        "name": "쇼러너의 의사봉"
+      },
       "briny_idol": {
         "name": "소금기 어린 우상"
       },
@@ -4666,6 +4690,57 @@ export const ko_KR: EnTranslations = {
       },
       "brightwood_monarch": {
         "name": "브라이트우드의 군주"
+      },
+      "crawl_tutorial_grub": {
+        "name": "튜토리얼 애벌레"
+      },
+      "crawl_spectator_drone": {
+        "name": "관객 드론"
+      },
+      "crawl_alley_skitterling": {
+        "name": "골목 스키터링"
+      },
+      "crawl_husk_tenant": {
+        "name": "껍데기 입주자"
+      },
+      "crawl_spark_hound": {
+        "name": "스파크 사냥개"
+      },
+      "crawl_stitched_meatgolem": {
+        "name": "꿰맨 살덩이 골렘"
+      },
+      "crawl_rust_revenant": {
+        "name": "녹슨 망령"
+      },
+      "crawl_static_wraith": {
+        "name": "정전기 원귀"
+      },
+      "crawl_chrome_zealot": {
+        "name": "크롬 광신도"
+      },
+      "crawl_ratings_horror": {
+        "name": "시청률 공포체"
+      },
+      "crawl_boss_gnasher": {
+        "name": "깨무는 자, 1층의 인기 스타"
+      },
+      "crawl_boss_vurmix": {
+        "name": "집주인 부르믹스"
+      },
+      "crawl_boss_producers_pet": {
+        "name": "프로듀서의 애완동물"
+      },
+      "crawl_boss_mortdecai": {
+        "name": "진행자 모르데카이"
+      },
+      "crawl_boss_mist_anchor": {
+        "name": "안개의 닻"
+      },
+      "crawl_boss_kordeth": {
+        "name": "헤드라이너 코르데스"
+      },
+      "crawl_boss_showrunner": {
+        "name": "쇼러너"
       },
       "elder_bristleback": {
         "name": "늙은 뻣센등뼈"

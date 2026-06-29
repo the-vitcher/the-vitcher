@@ -4248,6 +4248,30 @@ export const de_DE: EnTranslations = {
       "verlans_oathblade": {
         "name": "Verlans Eidklinge"
       },
+      "crawl_token": {
+        "name": "Crawl-Marke"
+      },
+      "gnashers_fang": {
+        "name": "Gnashers Fangzahn"
+      },
+      "landlords_padded_vest": {
+        "name": "Gepolsterte Weste des Vermieters"
+      },
+      "producers_pet_collar": {
+        "name": "Halsband des Produzenten-Haustiers"
+      },
+      "hostess_long_gloves": {
+        "name": "Lange Handschuhe der Gastgeberin"
+      },
+      "mist_anchor_pauldrons": {
+        "name": "Schulterstücke des Nebelankers"
+      },
+      "headliners_crown": {
+        "name": "Krone des Showstars"
+      },
+      "showrunners_gavel": {
+        "name": "Der Hammer des Showrunners"
+      },
       "briny_idol": {
         "name": "Salzlaken-Götze"
       },
@@ -4666,6 +4690,57 @@ export const de_DE: EnTranslations = {
       },
       "brightwood_monarch": {
         "name": "Der Hellholz-Monarch"
+      },
+      "crawl_tutorial_grub": {
+        "name": "Tutorial Grub"
+      },
+      "crawl_spectator_drone": {
+        "name": "Spectator Drone"
+      },
+      "crawl_alley_skitterling": {
+        "name": "Alley Skitterling"
+      },
+      "crawl_husk_tenant": {
+        "name": "Husk Tenant"
+      },
+      "crawl_spark_hound": {
+        "name": "Spark Hound"
+      },
+      "crawl_stitched_meatgolem": {
+        "name": "Stitched Meat-Golem"
+      },
+      "crawl_rust_revenant": {
+        "name": "Rust Revenant"
+      },
+      "crawl_static_wraith": {
+        "name": "Static Wraith"
+      },
+      "crawl_chrome_zealot": {
+        "name": "Chrome Zealot"
+      },
+      "crawl_ratings_horror": {
+        "name": "Ratings Horror"
+      },
+      "crawl_boss_gnasher": {
+        "name": "Gnasher, the First-Floor Favorite"
+      },
+      "crawl_boss_vurmix": {
+        "name": "Vurmix the Landlord"
+      },
+      "crawl_boss_producers_pet": {
+        "name": "The Producer's Pet"
+      },
+      "crawl_boss_mortdecai": {
+        "name": "Hostess Mortdecai"
+      },
+      "crawl_boss_mist_anchor": {
+        "name": "The Mist Anchor"
+      },
+      "crawl_boss_kordeth": {
+        "name": "Kordeth the Headliner"
+      },
+      "crawl_boss_showrunner": {
+        "name": "The Showrunner"
       },
       "elder_bristleback": {
         "name": "Alter Bristleback"

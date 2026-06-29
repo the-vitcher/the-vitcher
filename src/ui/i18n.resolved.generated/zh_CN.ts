@@ -4248,6 +4248,30 @@ export const zh_CN: EnTranslations = {
       "verlans_oathblade": {
         "name": "维尔兰的誓约之刃"
       },
+      "crawl_token": {
+        "name": "爬行代币"
+      },
+      "gnashers_fang": {
+        "name": "啃咬者之牙"
+      },
+      "landlords_padded_vest": {
+        "name": "房东的衬垫背心"
+      },
+      "producers_pet_collar": {
+        "name": "制作人宠物项圈"
+      },
+      "hostess_long_gloves": {
+        "name": "女主持的长手套"
+      },
+      "mist_anchor_pauldrons": {
+        "name": "迷雾之锚护肩"
+      },
+      "headliners_crown": {
+        "name": "头牌的冠冕"
+      },
+      "showrunners_gavel": {
+        "name": "节目总监的木槌"
+      },
       "briny_idol": {
         "name": "咸海神像"
       },
@@ -4666,6 +4690,57 @@ export const zh_CN: EnTranslations = {
       },
       "brightwood_monarch": {
         "name": "明木君主"
+      },
+      "crawl_tutorial_grub": {
+        "name": "教学幼虫"
+      },
+      "crawl_spectator_drone": {
+        "name": "观众无人机"
+      },
+      "crawl_alley_skitterling": {
+        "name": "巷弄爬虫"
+      },
+      "crawl_husk_tenant": {
+        "name": "空壳住户"
+      },
+      "crawl_spark_hound": {
+        "name": "电火猎犬"
+      },
+      "crawl_stitched_meatgolem": {
+        "name": "缝合血肉傀儡"
+      },
+      "crawl_rust_revenant": {
+        "name": "锈蚀亡魂"
+      },
+      "crawl_static_wraith": {
+        "name": "静电怨灵"
+      },
+      "crawl_chrome_zealot": {
+        "name": "铬钢狂徒"
+      },
+      "crawl_ratings_horror": {
+        "name": "收视恐魔"
+      },
+      "crawl_boss_gnasher": {
+        "name": "啃咬者，一层的宠儿"
+      },
+      "crawl_boss_vurmix": {
+        "name": "房东沃尔米克斯"
+      },
+      "crawl_boss_producers_pet": {
+        "name": "制作人的宠物"
+      },
+      "crawl_boss_mortdecai": {
+        "name": "女主持莫德凯"
+      },
+      "crawl_boss_mist_anchor": {
+        "name": "迷雾之锚"
+      },
+      "crawl_boss_kordeth": {
+        "name": "头牌科尔德斯"
+      },
+      "crawl_boss_showrunner": {
+        "name": "节目总监"
       },
       "elder_bristleback": {
         "name": "年长硬鬃"

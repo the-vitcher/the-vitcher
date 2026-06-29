@@ -1243,6 +1243,14 @@ export const GUIDE_ZONES: GuideZoneInfo[] = [
 
 export const GUIDE_DUNGEONS: GuideDungeon[] = [
   {
+    "id": "crawl_floor_3",
+    "isRaid": false,
+    "suggestedPlayers": 5,
+    "min": 5,
+    "max": 13,
+    "name": "The Crawl: Floor 3, The Hollow Crypt"
+  },
+  {
     "id": "hollow_crypt",
     "isRaid": false,
     "suggestedPlayers": 5,
@@ -1251,28 +1259,20 @@ export const GUIDE_DUNGEONS: GuideDungeon[] = [
     "name": "The Hollow Crypt"
   },
   {
-    "id": "crawl_floor_3",
+    "id": "crawl_floor_4",
     "isRaid": false,
     "suggestedPlayers": 5,
-    "min": 7,
-    "max": 10,
-    "name": "The Crawl: Floor 3, The Hollow Crypt"
+    "min": 9,
+    "max": 15,
+    "name": "The Crawl: Floor 4, The Drowned Ranks"
   },
   {
     "id": "crawl_floor_5",
     "isRaid": false,
     "suggestedPlayers": 5,
-    "min": 7,
-    "max": 13,
+    "min": 11,
+    "max": 17,
     "name": "The Crawl: Floor 5, The Mist Warrens"
-  },
-  {
-    "id": "crawl_floor_4",
-    "isRaid": false,
-    "suggestedPlayers": 5,
-    "min": 9,
-    "max": 13,
-    "name": "The Crawl: Floor 4, The Drowned Ranks"
   },
   {
     "id": "sunken_bastion",
@@ -1287,8 +1287,16 @@ export const GUIDE_DUNGEONS: GuideDungeon[] = [
     "isRaid": false,
     "suggestedPlayers": 5,
     "min": 13,
-    "max": 20,
+    "max": 19,
     "name": "The Crawl: Floor 6, The Bonewright Halls"
+  },
+  {
+    "id": "crawl_floor_7",
+    "isRaid": false,
+    "suggestedPlayers": 5,
+    "min": 15,
+    "max": 20,
+    "name": "The Crawl: Floor 7, The Showrunners Vault"
   },
   {
     "id": "drowned_temple",
@@ -1297,14 +1305,6 @@ export const GUIDE_DUNGEONS: GuideDungeon[] = [
     "min": 16,
     "max": 18,
     "name": "The Drowned Temple"
-  },
-  {
-    "id": "crawl_floor_7",
-    "isRaid": false,
-    "suggestedPlayers": 5,
-    "min": 18,
-    "max": 20,
-    "name": "The Crawl: Floor 7, The Showrunners Vault"
   },
   {
     "id": "gravewyrm_sanctum",

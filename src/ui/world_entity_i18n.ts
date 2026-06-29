@@ -35,6 +35,12 @@ const MOB_IDS = [
   'brightwood_hare', 'glade_fox', 'spotted_fawn', 'meadow_crane', 'thornpelt_badger',
   'dawnmane_doe', 'bramble_lynx', 'brightwood_stag', 'grovetusk_boar', 'sunhide_bear',
   'brightwood_monarch',
+  // The Crawl (src/sim/content/the_crawl.ts): bespoke roster + floor bosses
+  'crawl_tutorial_grub', 'crawl_spectator_drone', 'crawl_alley_skitterling', 'crawl_husk_tenant',
+  'crawl_spark_hound', 'crawl_stitched_meatgolem', 'crawl_rust_revenant', 'crawl_static_wraith',
+  'crawl_chrome_zealot', 'crawl_ratings_horror',
+  'crawl_boss_gnasher', 'crawl_boss_vurmix', 'crawl_boss_producers_pet', 'crawl_boss_mortdecai',
+  'crawl_boss_mist_anchor', 'crawl_boss_kordeth', 'crawl_boss_showrunner',
 ] as const;
 
 const NPC_IDS = [

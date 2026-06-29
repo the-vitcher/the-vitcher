@@ -4248,6 +4248,30 @@ export const ru_RU: EnTranslations = {
       "verlans_oathblade": {
         "name": "Клинок клятвы Верлана"
       },
+      "crawl_token": {
+        "name": "Жетон Спуска"
+      },
+      "gnashers_fang": {
+        "name": "Клык Грызуна"
+      },
+      "landlords_padded_vest": {
+        "name": "Стёганый жилет Домовладельца"
+      },
+      "producers_pet_collar": {
+        "name": "Ошейник питомца Продюсера"
+      },
+      "hostess_long_gloves": {
+        "name": "Длинные перчатки Ведущей"
+      },
+      "mist_anchor_pauldrons": {
+        "name": "Наплечники Якоря Тумана"
+      },
+      "headliners_crown": {
+        "name": "Корона Хедлайнера"
+      },
+      "showrunners_gavel": {
+        "name": "Молоток Шоураннера"
+      },
       "briny_idol": {
         "name": "Просоленный идол"
       },
@@ -4666,6 +4690,57 @@ export const ru_RU: EnTranslations = {
       },
       "brightwood_monarch": {
         "name": "Монарх Брайтвуда"
+      },
+      "crawl_tutorial_grub": {
+        "name": "Учебная личинка"
+      },
+      "crawl_spectator_drone": {
+        "name": "Зрительский дрон"
+      },
+      "crawl_alley_skitterling": {
+        "name": "Переулочный скиттер"
+      },
+      "crawl_husk_tenant": {
+        "name": "Жилец-оболочка"
+      },
+      "crawl_spark_hound": {
+        "name": "Искровая гончая"
+      },
+      "crawl_stitched_meatgolem": {
+        "name": "Сшитый мясной голем"
+      },
+      "crawl_rust_revenant": {
+        "name": "Ржавый ревенант"
+      },
+      "crawl_static_wraith": {
+        "name": "Статический призрак"
+      },
+      "crawl_chrome_zealot": {
+        "name": "Хромированный фанатик"
+      },
+      "crawl_ratings_horror": {
+        "name": "Рейтинговый ужас"
+      },
+      "crawl_boss_gnasher": {
+        "name": "Грызун, любимец первого этажа"
+      },
+      "crawl_boss_vurmix": {
+        "name": "Вурмикс Домовладелец"
+      },
+      "crawl_boss_producers_pet": {
+        "name": "Питомец Продюсера"
+      },
+      "crawl_boss_mortdecai": {
+        "name": "Ведущая Мордекай"
+      },
+      "crawl_boss_mist_anchor": {
+        "name": "Якорь Тумана"
+      },
+      "crawl_boss_kordeth": {
+        "name": "Кордет Хедлайнер"
+      },
+      "crawl_boss_showrunner": {
+        "name": "Шоураннер"
       },
       "elder_bristleback": {
         "name": "Старый Щетиноспин"

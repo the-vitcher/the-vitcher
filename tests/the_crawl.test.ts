@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { Sim } from '../src/sim/sim';
-import { DUNGEONS, DUNGEON_LIST, DUNGEON_X_THRESHOLD, MOBS, dungeonAt } from '../src/sim/data';
-import { THE_CRAWL_FLOOR_IDS } from '../src/sim/content/the_crawl';
+import { DUNGEONS, DUNGEON_LIST, DUNGEON_X_THRESHOLD, ITEMS, MOBS, dungeonAt } from '../src/sim/data';
+import { THE_CRAWL_FLOOR_IDS, THE_CRAWL_ITEMS, THE_CRAWL_MOBS } from '../src/sim/content/the_crawl';
 
 const SEED = 20061;
 const FLOOR_COUNT = 7;
@@ -60,6 +60,36 @@ describe('The Crawl: a descending dungeon-crawl scenario', () => {
     // The descent really spans the level curve: Floor 1 boss is low, Floor 7 is the cap.
     expect(MOBS[DUNGEONS.crawl_floor_1.spawns.find((s) => s.z === 98)!.mobId].minLevel).toBeLessThan(10);
     expect(MOBS[DUNGEONS.crawl_floor_7.spawns.find((s) => s.z === 98)!.mobId].minLevel).toBe(20);
+  });
+
+  it('uses its own bespoke roster (no reused mobs) with a unique boss per floor', () => {
+    // Every floor boss is a bespoke crawl_boss_* template registered in THE_CRAWL_MOBS.
+    const bossIds: string[] = [];
+    for (let i = 1; i <= FLOOR_COUNT; i++) {
+      const boss = DUNGEONS[`crawl_floor_${i}`].spawns.find((s) => s.z === 98)!;
+      expect(boss.mobId.startsWith('crawl_boss_'), `floor ${i} boss is bespoke`).toBe(true);
+      expect(THE_CRAWL_MOBS[boss.mobId], `${boss.mobId} is registered`).toBeTruthy();
+      bossIds.push(boss.mobId);
+    }
+    expect(new Set(bossIds).size).toBe(FLOOR_COUNT); // one unique boss per floor
+    // Every spawn across the chain is a bespoke crawl_* template (nothing reused).
+    for (let i = 1; i <= FLOOR_COUNT; i++) {
+      for (const s of DUNGEONS[`crawl_floor_${i}`].spawns) {
+        expect(THE_CRAWL_MOBS[s.mobId], `${s.mobId} is a Crawl mob`).toBeTruthy();
+      }
+    }
+  });
+
+  it('drops bespoke loot: every boss has a signature Crawl item', () => {
+    for (let i = 1; i <= FLOOR_COUNT; i++) {
+      const bossId = DUNGEONS[`crawl_floor_${i}`].spawns.find((s) => s.z === 98)!.mobId;
+      const drops = MOBS[bossId].loot.map((l) => l.itemId).filter(Boolean) as string[];
+      const signature = drops.find((id) => THE_CRAWL_ITEMS[id]);
+      expect(signature, `${bossId} drops a Crawl item`).toBeTruthy();
+      expect(ITEMS[signature!], `${signature} is registered in ITEMS`).toBeTruthy();
+    }
+    // The finale boss drops the epic Showrunner's Gavel.
+    expect(MOBS.crawl_boss_showrunner.loot.some((l) => l.itemId === 'showrunners_gavel')).toBe(true);
   });
 
   it('lets a crawler enter Floor 1 and descend the chain to the next instance', () => {
