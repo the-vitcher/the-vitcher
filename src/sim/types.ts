@@ -694,6 +694,9 @@ export interface DungeonDef {
   exitOffset: { x: number; z: number }; // exit portal (instance-local)
   spawns: DungeonSpawn[];
   objects?: DungeonObjectSpawn[];
+  // NPCs spawned into the instance when a party claims it (positions are
+  // instance-local, like spawns/objects). Used for safe-room guides, etc.
+  npcs?: { npcId: string; x: number; z: number }[];
   interior: 'crypt' | 'sanctum' | 'temple' | 'nythraxis'; // renderer + collider interior builder key
   suggestedPlayers: number;
   enterText: string;

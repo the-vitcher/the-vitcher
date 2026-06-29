@@ -31,6 +31,9 @@ export const pending: Record<string, readonly string[]> = {
     "entities.dungeons.crawl_floor_7.enterText",
     "entities.dungeons.crawl_floor_7.leaveText",
     "entities.dungeons.crawl_floor_7.name",
+    "entities.dungeons.crawl_guide_room.enterText",
+    "entities.dungeons.crawl_guide_room.leaveText",
+    "entities.dungeons.crawl_guide_room.name",
     "entities.mobs.crawl_alley_skitterling.name",
     "entities.mobs.crawl_boss_gnasher.name",
     "entities.mobs.crawl_boss_kordeth.name",
@@ -47,7 +50,10 @@ export const pending: Record<string, readonly string[]> = {
     "entities.mobs.crawl_spectator_drone.name",
     "entities.mobs.crawl_static_wraith.name",
     "entities.mobs.crawl_stitched_meatgolem.name",
-    "entities.mobs.crawl_tutorial_grub.name"
+    "entities.mobs.crawl_tutorial_grub.name",
+    "entities.npcs.crawl_guide_sotreel.greeting",
+    "entities.npcs.crawl_guide_sotreel.name",
+    "entities.npcs.crawl_guide_sotreel.title"
   ],
   "es_ES": [
     "entities.dungeons.crawl_floor_1.enterText",
@@ -71,6 +77,9 @@ export const pending: Record<string, readonly string[]> = {
     "entities.dungeons.crawl_floor_7.enterText",
     "entities.dungeons.crawl_floor_7.leaveText",
     "entities.dungeons.crawl_floor_7.name",
+    "entities.dungeons.crawl_guide_room.enterText",
+    "entities.dungeons.crawl_guide_room.leaveText",
+    "entities.dungeons.crawl_guide_room.name",
     "entities.mobs.crawl_alley_skitterling.name",
     "entities.mobs.crawl_boss_gnasher.name",
     "entities.mobs.crawl_boss_kordeth.name",
@@ -87,7 +96,10 @@ export const pending: Record<string, readonly string[]> = {
     "entities.mobs.crawl_spectator_drone.name",
     "entities.mobs.crawl_static_wraith.name",
     "entities.mobs.crawl_stitched_meatgolem.name",
-    "entities.mobs.crawl_tutorial_grub.name"
+    "entities.mobs.crawl_tutorial_grub.name",
+    "entities.npcs.crawl_guide_sotreel.greeting",
+    "entities.npcs.crawl_guide_sotreel.name",
+    "entities.npcs.crawl_guide_sotreel.title"
   ],
   "fr_FR": [
     "entities.dungeons.crawl_floor_1.enterText",
@@ -111,6 +123,9 @@ export const pending: Record<string, readonly string[]> = {
     "entities.dungeons.crawl_floor_7.enterText",
     "entities.dungeons.crawl_floor_7.leaveText",
     "entities.dungeons.crawl_floor_7.name",
+    "entities.dungeons.crawl_guide_room.enterText",
+    "entities.dungeons.crawl_guide_room.leaveText",
+    "entities.dungeons.crawl_guide_room.name",
     "entities.mobs.crawl_alley_skitterling.name",
     "entities.mobs.crawl_boss_gnasher.name",
     "entities.mobs.crawl_boss_kordeth.name",
@@ -127,7 +142,10 @@ export const pending: Record<string, readonly string[]> = {
     "entities.mobs.crawl_spectator_drone.name",
     "entities.mobs.crawl_static_wraith.name",
     "entities.mobs.crawl_stitched_meatgolem.name",
-    "entities.mobs.crawl_tutorial_grub.name"
+    "entities.mobs.crawl_tutorial_grub.name",
+    "entities.npcs.crawl_guide_sotreel.greeting",
+    "entities.npcs.crawl_guide_sotreel.name",
+    "entities.npcs.crawl_guide_sotreel.title"
   ],
   "fr_CA": [
     "entities.dungeons.crawl_floor_1.enterText",
@@ -151,6 +169,9 @@ export const pending: Record<string, readonly string[]> = {
     "entities.dungeons.crawl_floor_7.enterText",
     "entities.dungeons.crawl_floor_7.leaveText",
     "entities.dungeons.crawl_floor_7.name",
+    "entities.dungeons.crawl_guide_room.enterText",
+    "entities.dungeons.crawl_guide_room.leaveText",
+    "entities.dungeons.crawl_guide_room.name",
     "entities.mobs.crawl_alley_skitterling.name",
     "entities.mobs.crawl_boss_gnasher.name",
     "entities.mobs.crawl_boss_kordeth.name",
@@ -167,7 +188,10 @@ export const pending: Record<string, readonly string[]> = {
     "entities.mobs.crawl_spectator_drone.name",
     "entities.mobs.crawl_static_wraith.name",
     "entities.mobs.crawl_stitched_meatgolem.name",
-    "entities.mobs.crawl_tutorial_grub.name"
+    "entities.mobs.crawl_tutorial_grub.name",
+    "entities.npcs.crawl_guide_sotreel.greeting",
+    "entities.npcs.crawl_guide_sotreel.name",
+    "entities.npcs.crawl_guide_sotreel.title"
   ],
   "en_CA": [],
   "it_IT": [
@@ -192,6 +216,9 @@ export const pending: Record<string, readonly string[]> = {
     "entities.dungeons.crawl_floor_7.enterText",
     "entities.dungeons.crawl_floor_7.leaveText",
     "entities.dungeons.crawl_floor_7.name",
+    "entities.dungeons.crawl_guide_room.enterText",
+    "entities.dungeons.crawl_guide_room.leaveText",
+    "entities.dungeons.crawl_guide_room.name",
     "entities.mobs.crawl_alley_skitterling.name",
     "entities.mobs.crawl_boss_gnasher.name",
     "entities.mobs.crawl_boss_kordeth.name",
@@ -208,7 +235,10 @@ export const pending: Record<string, readonly string[]> = {
     "entities.mobs.crawl_spectator_drone.name",
     "entities.mobs.crawl_static_wraith.name",
     "entities.mobs.crawl_stitched_meatgolem.name",
-    "entities.mobs.crawl_tutorial_grub.name"
+    "entities.mobs.crawl_tutorial_grub.name",
+    "entities.npcs.crawl_guide_sotreel.greeting",
+    "entities.npcs.crawl_guide_sotreel.name",
+    "entities.npcs.crawl_guide_sotreel.title"
   ],
   "de_DE": [
     "entities.dungeons.crawl_floor_1.enterText",
@@ -232,6 +262,9 @@ export const pending: Record<string, readonly string[]> = {
     "entities.dungeons.crawl_floor_7.enterText",
     "entities.dungeons.crawl_floor_7.leaveText",
     "entities.dungeons.crawl_floor_7.name",
+    "entities.dungeons.crawl_guide_room.enterText",
+    "entities.dungeons.crawl_guide_room.leaveText",
+    "entities.dungeons.crawl_guide_room.name",
     "entities.mobs.crawl_alley_skitterling.name",
     "entities.mobs.crawl_boss_gnasher.name",
     "entities.mobs.crawl_boss_kordeth.name",
@@ -248,7 +281,10 @@ export const pending: Record<string, readonly string[]> = {
     "entities.mobs.crawl_spectator_drone.name",
     "entities.mobs.crawl_static_wraith.name",
     "entities.mobs.crawl_stitched_meatgolem.name",
-    "entities.mobs.crawl_tutorial_grub.name"
+    "entities.mobs.crawl_tutorial_grub.name",
+    "entities.npcs.crawl_guide_sotreel.greeting",
+    "entities.npcs.crawl_guide_sotreel.name",
+    "entities.npcs.crawl_guide_sotreel.title"
   ],
   "zh_CN": [],
   "zh_TW": [],
@@ -276,6 +312,9 @@ export const pending: Record<string, readonly string[]> = {
     "entities.dungeons.crawl_floor_7.enterText",
     "entities.dungeons.crawl_floor_7.leaveText",
     "entities.dungeons.crawl_floor_7.name",
+    "entities.dungeons.crawl_guide_room.enterText",
+    "entities.dungeons.crawl_guide_room.leaveText",
+    "entities.dungeons.crawl_guide_room.name",
     "entities.mobs.crawl_alley_skitterling.name",
     "entities.mobs.crawl_boss_gnasher.name",
     "entities.mobs.crawl_boss_kordeth.name",
@@ -292,7 +331,10 @@ export const pending: Record<string, readonly string[]> = {
     "entities.mobs.crawl_spectator_drone.name",
     "entities.mobs.crawl_static_wraith.name",
     "entities.mobs.crawl_stitched_meatgolem.name",
-    "entities.mobs.crawl_tutorial_grub.name"
+    "entities.mobs.crawl_tutorial_grub.name",
+    "entities.npcs.crawl_guide_sotreel.greeting",
+    "entities.npcs.crawl_guide_sotreel.name",
+    "entities.npcs.crawl_guide_sotreel.title"
   ],
   "ru_RU": []
 };

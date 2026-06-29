@@ -50,6 +50,7 @@ const NPC_IDS = [
   'brother_aldric_highwatch', 'scout_maren_highwatch', 'quartermaster_bree', 'armorer_hode',
   'loremaster_caddis', 'ranger_elwyn',
   'brother_aldric_raid', // dynamically-spawned raid turn-in NPC (Crypt of Nythraxis)
+  'crawl_guide_sotreel', // The Crawl's guide, spawned into the Guide Room instance
 ] as const;
 
 const QUEST_IDS = [

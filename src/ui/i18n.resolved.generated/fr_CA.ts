@@ -4966,6 +4966,11 @@ export const fr_CA: EnTranslations = {
         "title": "Prêtre du Val",
         "greeting": "D'un cimetière de chapelle au toit du monde... la piste s'achève ici. Je sens la montagne écouter."
       },
+      "crawl_guide_sotreel": {
+        "name": "Sotreel",
+        "title": "Tier-9 Liaison",
+        "greeting": "Crawler. Sotreel, Tier-9 Liaison, that is me, and yes I drew the short straw. Fast version, because everything down here is on a timer: your world got redeveloped and you are now a contestant on the Crawl, a live broadcast the whole galaxy is betting on. There are floors below us, each deadlier than the last. Kill things, take their levels, find the stairs down, and do not get boring, because the audience pays for the bold. Approval is the only currency that buys a way out, so stay near your party and try to be worth watching. The stairs are at the back. Good luck. I get paid when you live."
+      },
       "tidewatcher_ondrel": {
         "name": "Ondrel Vane",
         "title": "Veille-marées",
@@ -6094,6 +6099,11 @@ export const fr_CA: EnTranslations = {
         "name": "The Crawl: Floor 7, The Showrunners Vault",
         "enterText": "The bottom floor. The Showrunner waits on the great dais, and the whole galaxy is watching. There are no more stairs down.",
         "leaveText": "You turn your back on the dais and climb."
+      },
+      "crawl_guide_room": {
+        "name": "The Crawl: Guide Room",
+        "enterText": "Welcome to the Crawl. This is a safe room, so nothing dies in here, including you. Find your guide, hear them out, and take the stairs down when you are ready.",
+        "leaveText": "You step back out toward the surface that no longer exists."
       }
     }
   },

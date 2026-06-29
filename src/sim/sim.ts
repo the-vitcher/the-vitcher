@@ -11007,6 +11007,15 @@ export class Sim {
       this.addEntity(obj);
       inst.objectIds.push(obj.id);
     }
+    for (const npcSpawn of dungeon.npcs ?? []) {
+      const npcDef = NPCS[npcSpawn.npcId];
+      if (!npcDef) continue;
+      const npc = createNpc(this.nextId++, npcDef, this.groundPos(origin.x + npcSpawn.x, origin.z + npcSpawn.z));
+      npc.facing = Math.PI; // face the entrance
+      npc.prevFacing = npc.facing;
+      this.addEntity(npc);
+      inst.mobIds.push(npc.id); // tracked with the instance so it despawns on free
+    }
     const exit = createGroundObject(this.nextId++, '', `${dungeon.name} Exit`, this.groundPos(origin.x + dungeon.exitOffset.x, origin.z + dungeon.exitOffset.z));
     exit.templateId = 'dungeon_exit';
     exit.dungeonId = dungeon.id;

@@ -30,7 +30,7 @@ import {
   TEMPLE_CAMPS, TEMPLE_DUNGEON_DEFS, TEMPLE_DUNGEON_MOBS, TEMPLE_ITEMS, TEMPLE_MOBS,
   TEMPLE_NPCS, TEMPLE_OBJECTS, TEMPLE_PROPS, TEMPLE_QUEST_ORDER, TEMPLE_QUESTS,
 } from './content/temple';
-import { THE_CRAWL_DUNGEON_DEFS, THE_CRAWL_ITEMS, THE_CRAWL_MOBS } from './content/the_crawl';
+import { THE_CRAWL_DUNGEON_DEFS, THE_CRAWL_ITEMS, THE_CRAWL_MOBS, THE_CRAWL_NPCS } from './content/the_crawl';
 
 function mergeItems(...parts: Record<string, ItemDef>[]): Record<string, ItemDef> {
   const merged = Object.assign({}, ...parts);
@@ -61,7 +61,7 @@ export const MOBS: Record<string, MobTemplate> = {
 };
 
 export const NPCS: Record<string, NpcDef> = {
-  ...ZONE1_NPCS, ...ZONE2_NPCS, ...ZONE3_NPCS, ...TEMPLE_NPCS,
+  ...ZONE1_NPCS, ...ZONE2_NPCS, ...ZONE3_NPCS, ...TEMPLE_NPCS, ...THE_CRAWL_NPCS,
 };
 
 export const QUESTS: Record<string, QuestDef> = {

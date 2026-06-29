@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { Sim } from '../src/sim/sim';
-import { DUNGEONS, DUNGEON_LIST, DUNGEON_X_THRESHOLD, ITEMS, MOBS, dungeonAt } from '../src/sim/data';
+import { DUNGEONS, DUNGEON_LIST, DUNGEON_X_THRESHOLD, ITEMS, MOBS, NPCS, dungeonAt } from '../src/sim/data';
 import { THE_CRAWL_FLOOR_IDS, THE_CRAWL_ITEMS, THE_CRAWL_MOBS } from '../src/sim/content/the_crawl';
 
 const SEED = 20061;
@@ -24,11 +24,21 @@ describe('The Crawl: a descending dungeon-crawl scenario', () => {
     expect(new Set(indices).size).toBe(indices.length);
   });
 
-  it('only opens one surface portal; deeper floors are reached by stairs', () => {
-    expect(DUNGEONS.crawl_floor_1.overworldDoor).toBe(true);
-    for (let i = 2; i <= FLOOR_COUNT; i++) {
+  it('opens one surface portal (the Guide Room); floors are reached by descending', () => {
+    expect(DUNGEONS.crawl_guide_room.overworldDoor).toBe(true);
+    for (let i = 1; i <= FLOOR_COUNT; i++) {
       expect(DUNGEONS[`crawl_floor_${i}`].overworldDoor).toBe(false);
     }
+  });
+
+  it('has a safe Guide Room with the guide NPC and stairs down to Floor 1', () => {
+    const room = DUNGEONS.crawl_guide_room;
+    expect(room).toBeTruthy();
+    expect(room.spawns.length, 'guide room has no hostiles').toBe(0);
+    expect(room.npcs?.some((n) => n.npcId === 'crawl_guide_sotreel'), 'guide is present').toBe(true);
+    expect(NPCS.crawl_guide_sotreel, 'guide NPC is registered').toBeTruthy();
+    const stairs = (room.objects ?? []).find((o) => o.templateId === 'dungeon_door');
+    expect(stairs?.dungeonId, 'stairs lead to Floor 1').toBe('crawl_floor_1');
   });
 
   it('links each floor to the next with a Stairway Down, and the last has none', () => {

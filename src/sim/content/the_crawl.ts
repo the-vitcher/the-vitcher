@@ -18,7 +18,27 @@
 // the safe centre aisle (|x| <= 9, z 18..98) and each Stairway Down sits flush to
 // the back wall at z 110.4, mirroring the proven Nythraxis door placement.
 
-import type { DungeonDef, DungeonObjectSpawn, DungeonSpawn, ItemDef, MobTemplate } from '../types';
+import type { DungeonDef, DungeonObjectSpawn, DungeonSpawn, ItemDef, MobTemplate, NpcDef } from '../types';
+
+// ---------------------------------------------------------------------------
+// The guide. Sotreel is spawned into the Guide Room instance (dynamic: true, so
+// the world loader does not surface-place it); the crawler talks to it to hear
+// what is going on. Its greeting is the orientation, including the spectator /
+// approval economy that drives the whole broadcast.
+// ---------------------------------------------------------------------------
+export const THE_CRAWL_NPCS: Record<string, NpcDef> = {
+  crawl_guide_sotreel: {
+    id: 'crawl_guide_sotreel',
+    name: 'Sotreel',
+    title: 'Tier-9 Liaison',
+    pos: { x: 0, z: 0 }, // ignored: spawned into the instance, not surface-placed
+    facing: 0,
+    color: 0x6b8f3a,
+    questIds: [],
+    greeting: 'Crawler. Sotreel, Tier-9 Liaison, that is me, and yes I drew the short straw. Fast version, because everything down here is on a timer: your world got redeveloped and you are now a contestant on the Crawl, a live broadcast the whole galaxy is betting on. There are floors below us, each deadlier than the last. Kill things, take their levels, find the stairs down, and do not get boring, because the audience pays for the bold. Approval is the only currency that buys a way out, so stay near your party and try to be worth watching. The stairs are at the back. Good luck. I get paid when you live.',
+    dynamic: true,
+  },
+};
 
 // ---------------------------------------------------------------------------
 // Bespoke loot: a signature drop per boss, plus a junk token the trash drops.
@@ -317,7 +337,7 @@ function buildFloors(): Record<string, DungeonDef> {
       name: text.name,
       index: 6 + i, // x-band 6..12 -> instanceOrigin x 4500..8100 (clear of the arena band)
       doorPos: { ...CRAWL_DOOR },
-      overworldDoor: floor === 1, // only the first floor opens a portal on the surface
+      overworldDoor: false, // the surface portal opens into the Guide Room; floors are reached by descending
       entry: { x: 0, z: 4 },
       exitOffset: { x: 0, z: -6 },
       spawns: floorSpawns(FLOOR_ROSTERS[i]),
@@ -331,7 +351,29 @@ function buildFloors(): Record<string, DungeonDef> {
   return out;
 }
 
-export const THE_CRAWL_DUNGEON_DEFS: Record<string, DungeonDef> = buildFloors();
+const CRAWL_FLOORS = buildFloors();
 
-// Ordered floor ids, for registries that want the chain in descent order.
-export const THE_CRAWL_FLOOR_IDS: string[] = Object.keys(THE_CRAWL_DUNGEON_DEFS);
+// The Guide Room: a safe lobby reached from the surface portal. The crawler meets
+// their guide (Sotreel) here, hears what is going on, then takes the stairs down to
+// Floor 1. Instanced per party like every Crawl floor, so a group shares one guide.
+const CRAWL_GUIDE_ROOM: DungeonDef = {
+  id: 'crawl_guide_room',
+  name: 'The Crawl: Guide Room',
+  index: 13, // instanceOrigin x = 8400, clear of the arena band (ARENA_X 9000)
+  doorPos: { ...CRAWL_DOOR }, // the surface portal opens into the Guide Room first
+  overworldDoor: true,
+  entry: { x: 0, z: 4 },
+  exitOffset: { x: 0, z: -6 },
+  spawns: [], // safe room: no hostiles
+  objects: [stairsTo('crawl_floor_1')], // stairway down to Floor 1
+  npcs: [{ npcId: 'crawl_guide_sotreel', x: 0, z: 22 }],
+  interior: 'crypt',
+  suggestedPlayers: 1,
+  enterText: 'Welcome to the Crawl. This is a safe room, so nothing dies in here, including you. Find your guide, hear them out, and take the stairs down when you are ready.',
+  leaveText: 'You step back out toward the surface that no longer exists.',
+};
+
+export const THE_CRAWL_DUNGEON_DEFS: Record<string, DungeonDef> = { crawl_guide_room: CRAWL_GUIDE_ROOM, ...CRAWL_FLOORS };
+
+// Ordered floor ids (the seven combat floors, not the guide room).
+export const THE_CRAWL_FLOOR_IDS: string[] = Object.keys(CRAWL_FLOORS);

@@ -2432,6 +2432,7 @@ const mergeExtraEn = {
       crawl_floor_5: { name: "The Crawl: Floor 5, The Mist Warrens", enterText: "Floor 5. The Mist Anchor drags the fog in, and the fog drags reinforcements. The audience loves reinforcements.", leaveText: "You feel your way back up through the thinning mist." },
       crawl_floor_6: { name: "The Crawl: Floor 6, The Bonewright Halls", enterText: "Floor 6. Kordeth the Headliner is only the warmup for what waits below. Be the right level for this.", leaveText: "You haul yourself back up the bonewright stair." },
       crawl_floor_7: { name: "The Crawl: Floor 7, The Showrunners Vault", enterText: "The bottom floor. The Showrunner waits on the great dais, and the whole galaxy is watching. There are no more stairs down.", leaveText: "You turn your back on the dais and climb." },
+      crawl_guide_room: { name: "The Crawl: Guide Room", enterText: "Welcome to the Crawl. This is a safe room, so nothing dies in here, including you. Find your guide, hear them out, and take the stairs down when you are ready.", leaveText: "You step back out toward the surface that no longer exists." },
     },
 };
 
@@ -2515,6 +2516,7 @@ export const mergeExtra = {
       crawl_floor_5: { name: "El Descenso: Planta 5, Las Madrigueras de Niebla", enterText: "Planta 5. Vael invoca la niebla, y la niebla invoca refuerzos. Al público le encantan los refuerzos.", leaveText: "Subes a tientas a través de la niebla que se disipa." },
       crawl_floor_6: { name: "El Descenso: Planta 6, Los Salones del Huesero", enterText: "Planta 6. Korgath el Atado solo es el telonero de lo que aguarda abajo. Ten el nivel adecuado para esto.", leaveText: "Te arrastras de vuelta arriba por la escalera del huesero." },
       crawl_floor_7: { name: "El Descenso: Planta 7, La Cámara del Showrunner", enterText: "La planta más profunda. Korzul el Gusano Sepulcral aguarda en el gran altar, y toda la galaxia está mirando. Ya no hay más escaleras hacia abajo.", leaveText: "Le das la espalda al altar y comienzas a subir." },
+      crawl_guide_room: { name: "El Descenso: Sala del Guía", enterText: "Bienvenido al Descenso. Esta es una sala segura, así que aquí no muere nadie, ni siquiera tú. Encuentra a tu guía, escúchalo y baja por las escaleras cuando estés listo.", leaveText: "Vuelves a salir hacia la superficie que ya no existe." },
     },
   },
   fr_FR: {
@@ -2594,6 +2596,7 @@ export const mergeExtra = {
       crawl_floor_5: { name: "La Descente : Étage 5, Les Terriers de brume", enterText: "Étage 5. Vael appelle la brume, et la brume appelle des renforts. Le public adore les renforts.", leaveText: "Tu remontes à tâtons à travers la brume qui se dissipe." },
       crawl_floor_6: { name: "La Descente : Étage 6, Les Salles du tailleur d'os", enterText: "Étage 6. Korgath l'Enchaîné n'est que la première partie de ce qui attend en dessous. Aie le bon niveau pour ça.", leaveText: "Tu te hisses péniblement par l'escalier du tailleur d'os." },
       crawl_floor_7: { name: "La Descente : Étage 7, La Chambre forte du showrunner", enterText: "L'étage le plus bas. Korzul le Ver sépulcral attend sur le grand autel, et toute la galaxie regarde. Il n'y a plus d'escalier vers le bas.", leaveText: "Tu tournes le dos à l'autel et tu commences à monter." },
+      crawl_guide_room: { name: "La Descente : Salle du Guide", enterText: "Bienvenue dans la Descente. Ceci est une salle sûre, donc rien n'y meurt, pas même toi. Trouve ton guide, écoute-le, et prends l'escalier vers le bas quand tu es prêt.", leaveText: "Tu ressors vers la surface qui n'existe plus." },
     },
   },
   it_IT: {
