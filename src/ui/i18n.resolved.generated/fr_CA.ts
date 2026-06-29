@@ -6072,27 +6072,27 @@ export const fr_CA: EnTranslations = {
       },
       "crawl_floor_3": {
         "name": "The Crawl: Floor 3, The Hollow Crypt",
-        "enterText": "Floor 3. Morthen runs this level and does not share. Gain a few levels first, then knock.",
+        "enterText": "Floor 3. The Producer keeps a pet down here and does not share. Gain a few levels first, then knock.",
         "leaveText": "You back out of the crypt while you still can."
       },
       "crawl_floor_4": {
         "name": "The Crawl: Floor 4, The Drowned Ranks",
-        "enterText": "Floor 4. Cold water, colder dead, and a Knight-Commander with strong opinions about visitors.",
+        "enterText": "Floor 4. Cold water, colder dead, and a Hostess with strong opinions about visitors.",
         "leaveText": "You wade back up out of the drowning dark."
       },
       "crawl_floor_5": {
         "name": "The Crawl: Floor 5, The Mist Warrens",
-        "enterText": "Floor 5. Vael calls the mist, and the mist calls reinforcements. The audience loves reinforcements.",
+        "enterText": "Floor 5. The Mist Anchor drags the fog in, and the fog drags reinforcements. The audience loves reinforcements.",
         "leaveText": "You feel your way back up through the thinning mist."
       },
       "crawl_floor_6": {
         "name": "The Crawl: Floor 6, The Bonewright Halls",
-        "enterText": "Floor 6. Korgath the Bound is only the warmup for what waits below. Be the right level for this.",
+        "enterText": "Floor 6. Kordeth the Headliner is only the warmup for what waits below. Be the right level for this.",
         "leaveText": "You haul yourself back up the bonewright stair."
       },
       "crawl_floor_7": {
         "name": "The Crawl: Floor 7, The Showrunners Vault",
-        "enterText": "The bottom floor. Korzul the Gravewyrm waits on the great dais, and the whole galaxy is watching. There are no more stairs down.",
+        "enterText": "The bottom floor. The Showrunner waits on the great dais, and the whole galaxy is watching. There are no more stairs down.",
         "leaveText": "You turn your back on the dais and climb."
       }
     }
