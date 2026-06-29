@@ -469,7 +469,7 @@ function blankEntity(id: number): Entity {
     spawnPos: { x: 0, y: 0, z: 0 }, leashAnchor: null, evadeStall: 0, fleeTimer: 0, fleeReturnTimer: 0, hasFled: false, wanderTarget: null, wanderTimer: 0,
     aggroTargetId: null, respawnTimer: 0, corpseTimer: 0, lootable: false, loot: null,
     xpValue: 0, questIds: [], vendorItems: [], objectItemId: null, dungeonId: null,
-    dead: false, scale: 1, color: 0xffffff, skinCatalog: 'class', skin: 0, guild: '',
+    dead: false, spectateTargetId: null, scale: 1, color: 0xffffff, skinCatalog: 'class', skin: 0, guild: '',
   };
 }
 
@@ -1180,6 +1180,15 @@ export class ClientWorld implements IWorld {
   }
   isSpectator(): boolean {
     return !!this.player?.spectator;
+  }
+  spectate(targetId: number): void {
+    this.cmd({ cmd: 'spectate', id: targetId });
+  }
+  spectateNext(): void {
+    this.cmd({ cmd: 'spectate_next' });
+  }
+  spectatePrev(): void {
+    this.cmd({ cmd: 'spectate_prev' });
   }
   chat(text: string): void {
     this.cmd({ cmd: 'chat', text });

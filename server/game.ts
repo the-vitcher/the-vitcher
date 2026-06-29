@@ -1285,6 +1285,9 @@ export class GameServer {
         }
         break;
       case 'release': sim.releaseSpirit(pid); break;
+      case 'spectate': if (typeof msg.id === 'number') sim.spectate(msg.id, pid); break;
+      case 'spectate_next': sim.spectateNext(pid); break;
+      case 'spectate_prev': sim.spectatePrev(pid); break;
       case 'challengeResponse':
         if (typeof msg.n === 'string' && typeof msg.r === 'string' && typeof msg.sig === 'string') {
           if (!verifyChallenge(msg.n, msg.r, msg.sig, session.clientSeed)) break;

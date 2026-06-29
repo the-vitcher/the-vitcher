@@ -1707,12 +1707,16 @@ export class Sim {
       const p = this.entities.get(meta.entityId);
       if (!p) continue;
       if (!p.dead) {
-        this.updatePlayerMovement(p, meta);
-        this.updateDoorTriggers(p);
-        this.updateCasting(p, meta);
-        this.updatePlayerAutoAttack(p, meta);
-        this.updateRegen(p, meta);
-        this.updateRested(p, meta);
+        if (p.spectator) {
+          this.updateSpectatorFollow(p, meta);
+        } else {
+          this.updatePlayerMovement(p, meta);
+          this.updateDoorTriggers(p);
+          this.updateCasting(p, meta);
+          this.updatePlayerAutoAttack(p, meta);
+          this.updateRegen(p, meta);
+          this.updateRested(p, meta);
+        }
       }
       this.updateTimers(p);
       this.updateAuras(p);
@@ -4365,6 +4369,7 @@ export class Sim {
         e.inCombat = false;
         e.combatTimer = 99;
         e.targetId = null;
+        e.spectateTargetId = this.liveCrawlerIds()[0] ?? null; // start watching a live crawler
         this.emit({ type: 'spectator', pid: e.id });
       } else {
         this.emit({ type: 'playerDeath', pid: e.id });
@@ -8721,6 +8726,7 @@ export class Sim {
       const p = this.entities.get(meta.entityId);
       if (!p) continue;
       p.spectator = false;
+      p.spectateTargetId = null;
       p.dead = false;
       p.auras = [];
       p.ccDr.clear();
@@ -8735,6 +8741,63 @@ export class Sim {
       p.prevPos = { ...p.pos };
       this.rebucket(p);
       this.emit({ type: 'respawn', pid: meta.entityId });
+    }
+  }
+
+  // Live crawlers a spectator can watch: players still in the run (alive, not yet
+  // spectating). Sorted by id so cycling is deterministic and stable across ticks.
+  private liveCrawlerIds(): number[] {
+    const ids: number[] = [];
+    for (const meta of this.players.values()) {
+      const e = this.entities.get(meta.entityId);
+      if (e && e.kind === 'player' && !e.dead && !e.spectator) ids.push(e.id);
+    }
+    return ids.sort((a, b) => a - b);
+  }
+
+  private isLiveCrawler(e: Entity | null | undefined): e is Entity {
+    return !!e && e.kind === 'player' && !e.dead && !e.spectator;
+  }
+
+  // Spectator camera: watch a specific live crawler by id.
+  spectate(targetId: number, pid?: number): void {
+    const r = this.resolve(pid);
+    if (!r || !r.e.spectator || targetId === r.e.id) return;
+    if (this.isLiveCrawler(this.entities.get(targetId))) r.e.spectateTargetId = targetId;
+  }
+
+  // Spectator camera: cycle to the next / previous live crawler.
+  spectateNext(pid?: number): void { this.spectateCycle(1, pid); }
+  spectatePrev(pid?: number): void { this.spectateCycle(-1, pid); }
+
+  private spectateCycle(dir: number, pid?: number): void {
+    const r = this.resolve(pid);
+    if (!r || !r.e.spectator) return;
+    const ids = this.liveCrawlerIds();
+    if (!ids.length) { r.e.spectateTargetId = null; return; }
+    const cur = ids.indexOf(r.e.spectateTargetId ?? -1);
+    const next = cur < 0 ? (dir > 0 ? 0 : ids.length - 1) : (((cur + dir) % ids.length) + ids.length) % ids.length;
+    r.e.spectateTargetId = ids[next];
+  }
+
+  // Glue a spectator to the live crawler they are watching so the camera follows
+  // them (and the server interest-scopes that crawler's fight into the snapshot).
+  // If the watched crawler dies or leaves, advance to the next live one; if nobody
+  // is left to watch, the spectator free-roams.
+  private updateSpectatorFollow(p: Entity, meta: PlayerMeta): void {
+    let target = p.spectateTargetId != null ? this.entities.get(p.spectateTargetId) : undefined;
+    if (!this.isLiveCrawler(target)) {
+      const ids = this.liveCrawlerIds();
+      p.spectateTargetId = ids.length ? ids[0] : null;
+      target = p.spectateTargetId != null ? this.entities.get(p.spectateTargetId) : undefined;
+    }
+    if (this.isLiveCrawler(target)) {
+      p.pos = { x: target.pos.x, y: target.pos.y, z: target.pos.z };
+      p.facing = target.facing;
+      p.prevPos = { ...p.pos };
+      this.rebucket(p);
+    } else {
+      this.updatePlayerMovement(p, meta); // nobody live to watch: free-roam camera
     }
   }
 

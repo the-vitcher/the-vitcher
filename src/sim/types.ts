@@ -883,6 +883,10 @@ export interface Entity {
   chargeTimeLeft: number; // seconds; failsafe so a blocked charge can't run forever
   chargePath: Vec3[]; // waypoints consumed front-to-back; last leg homes on the live target
   followTargetId: number | null; // /follow: auto-walk after another player until interrupted
+  // Crawl season mode: which live crawler this spectator is currently watching
+  // (the sim glues the spectator to them each tick so the camera follows). Cycled
+  // with spectateNext/Prev or set by spectate(id); only meaningful when spectator.
+  spectateTargetId: number | null;
   savedMana: number; // druid forms: mana put aside while running on rage/energy
   sitting: boolean;
   eating: Consuming | null;

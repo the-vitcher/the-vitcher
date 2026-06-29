@@ -300,6 +300,11 @@ export interface IWorld {
   releaseSpirit(): void;
   // Crawl season mode: true once this player has died and is spectating the run.
   isSpectator(): boolean;
+  // Spectator camera: watch a specific live crawler, or cycle through them. The
+  // sim glues the spectator to the chosen crawler so the camera follows the fight.
+  spectate(targetId: number): void;
+  spectateNext(): void;
+  spectatePrev(): void;
   chat(text: string): void;
   playEmote(emoteId: OverheadEmoteId): void;
   abandonPet(): void;

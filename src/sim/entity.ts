@@ -19,7 +19,7 @@ function baseEntity(id: number, pos: Vec3): Entity {
     channeling: false, channelTickTimer: 0, channelTickEvery: 0,
     gcdRemaining: 0, cooldowns: new Map(), queuedOnSwing: null, fiveSecondRule: 99,
     comboPoints: 0, comboTargetId: null, overpowerUntil: -1, potionCooldownUntil: -1, savedMana: 0,
-    chargeTargetId: null, chargeTimeLeft: 0, chargePath: [], followTargetId: null,
+    chargeTargetId: null, chargeTimeLeft: 0, chargePath: [], followTargetId: null, spectateTargetId: null,
     sitting: false, eating: null, drinking: null,
     aiState: 'idle', tappedById: null, pulseTimer: 0, stompTimer: 0, stoneskinTimer: 0, terrifyTimer: 0, detonateTimer: Infinity, mendTimer: 0, wardTimer: 0, rallyTimer: 0, warcryTimer: 0, firedSummons: 0, summonedIds: [], enraged: false, healedThisPull: false,
     threat: new Map(), forcedTargetId: null, forcedTargetTimer: 0, ownerId: null, petMode: 'defensive', petTauntTimer: 0, petPath: [], petPathCooldown: 0,
