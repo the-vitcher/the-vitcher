@@ -326,6 +326,214 @@ The Crawl had its underdog.
 > Floors remaining: 17.
 > Audience approval (Dex): rising.
 > Audience approval (Biscuit): the corgi does not need your help.
+> Next: *The Guide Room.*
+
+---
+
+## Chapter Three: The Guide Room
+
+The stairs down were not stairs so much as a throat.
+
+They went on too long, swallowing the cold blue torchlight a step at a time, and
+Dex had counted ninety of them and given up when Biscuit stopped, ears up, in
+front of a door that had no business existing.
+
+It was a normal door. That was the problem. Everything in the Crawl so far had
+been black stone and cruelty and modal windows with no close button, and here, set
+into the rock like a tooth in a jaw, was a perfectly ordinary office door: hollow
+core, brass handle, a frosted-glass panel, and a laminated sign that read, in the
+cheerful sans-serif of a thousand dead human break rooms:
+
+> **SAFE ROOM**
+> No combat. No looting. No dying (we checked; you cannot, in here, it voids the
+> insurance). Guide assignment in progress. Please form an orderly line of one.
+
+"A safe room," Dex said.
+
+> **Phone:** safe rooms are real
+> **Phone:** i found the wiki, there's a wiki, the crawlers before us made a wiki
+> **Phone:** rule one of the wiki is "the wiki is a trap" so. grain of salt
+
+Biscuit pushed the door with his whole body, the way he did, and they went in.
+
+The room was small and aggressively beige. There was a couch that had clearly been
+generated from a stock photo of a couch. There was a water cooler with no water and
+a sign that said WATER: PREMIUM FEATURE. There was a low table with a bowl of
+something the system labeled COMPLIMENTARY ANXIETY MINTS. And there was a wall, the
+whole far wall, taken up by a battered flat screen with a crack down one corner, the
+kind of screen that had spent its whole life in an airport gate area telling people
+their flight was delayed.
+
+The screen woke up.
+
+For a second it showed a logo, a spinning gold ring with the words THE CRAWL: A
+SYNDICATE BROADCAST, and under it a tagline in small print: "Their World. Your
+Evening." Then the logo shrank to a corner and the rest of the screen filled with a
+face.
+
+The face was not human. It was greenish, and broad, and had too many eyes arranged
+in a way that Dex's brain kept trying to resolve into a normal number of eyes and
+failing. It had four arms, two of which were holding what looked like clipboards and
+two of which were doing the universal gesture of someone who has been on hold with a
+call center for forty minutes. It wore a lanyard. Dex felt an immediate, treasonous
+kinship with anyone in the universe who had been issued a lanyard.
+
+"Okafor, Dex," the face said, reading off a clipboard, in a voice like a tired
+photocopier. "Resource world 7-Gamma, deceased. Class: still unassigned, which is a
+choice, I guess. One (1) registered companion, designation Biscuit, species canine,
+current ranking, oh, that can't be right." It looked up with all of its eyes at
+once. "Your dog is in the district top three."
+
+"Everyone keeps saying that," Dex said.
+
+"Everyone keeps saying that because it keeps being true. Sit down. Don't eat the
+mints, they're a sponsorship and they do nothing, the company that makes them is
+being sued in nine systems." The face set down two of its clipboards. "I'm your
+Guide. My name is Sotreel, I'm a Tier-Nine Liaison, which is the lowest tier of
+Liaison there is, which is why I got you, no offense, and my job, the entire job,
+the only reason I am patched through to you across forty light-years of relay, is to
+keep you alive long enough to be interesting. Questions?"
+
+Dex had approximately nine hundred thousand questions. He led with the load-bearing
+one.
+
+"Why," he said, "is any of this happening."
+
+Sotreel sighed with what sounded like every one of its lungs.
+
+> **Guide assigned: Sotreel (Tier-9 Liaison).**
+> Your Guide profits when you survive and is paid nothing when you die. This is
+> the most honest relationship you will have in the Crawl. Cherish it.
+> Guides are assigned only to Crawlers who cross the **Notability** threshold.
+> You did not cross it. Your dog did. You are, administratively, the dog's plus-one.
+
+"Okay, ow," Dex said.
+
+"Here is what is happening," Sotreel said, and the screen behind its face changed to
+a slow, almost gentle animation, the kind of explainer video an HR department makes
+about a new dental plan. "Your world had something somebody wanted. Doesn't matter
+what. Minerals, real estate, narrative potential, the line items are above my pay
+grade. The Syndicate holds the development rights to a great many worlds, and when a
+world's lease comes due, it gets, the polite word is redeveloped. The surface gets
+recycled. And the population, the part that makes it down below grade in the ninety
+seconds, that part gets a second life. Down here. As content."
+
+"As content," Dex repeated.
+
+"You are a television program," Sotreel said, not unkindly. "A very large, very
+profitable, very long-running television program. Eighteen floors. Each one is a
+season. The deeper you go, the more the audience pays to watch, because the deeper
+you go, the more inventive the ways are that you can die. People all over the
+member systems are, at this exact moment, watching you specifically, in a beige
+room, refusing to eat mints. Say hello."
+
+"To who?"
+
+Sotreel gestured with a spare arm, and a panel slid open along the bottom third of
+the wall.
+
+It was a feed. A live feed, scrolling, the way Dex had seen ten thousand livestream
+chats scroll, except this one moved in languages his eyes could not hold and
+symbols that itched, and every few lines a little gold burst announced a gift.
+
+> **GleepSeven** tipped 200 and says: the dog. give us the dog. more dog
+> **A_Concerned_Citizen_Of_Vask** tipped 50 and says: he seems nice. i hope the
+> nice one lives. (he will not live. nobody nice lives. but i hope.)
+> **[SPONSORED]** Borant Industries reminds you: a dead Crawler buys nothing.
+> Stay thirsty. Stay solvent. Drink Verdance.
+> **MOD_NOTE:** wagering on this room is now OPEN. current line: Okafor to clear
+> Floor 2, 6 to 1 against. the dog is the favorite. the dog is always the favorite.
+
+Dex watched six to one against scroll past his own name and felt something he had
+not felt during the literal end of the world, which was offended.
+
+"They're betting on me."
+
+"They're betting against you," Sotreel corrected. "It's different and it's worse and
+you can use it. The audience is the whole game, Okafor. Not the loot, not the
+levels, not the boss on Floor Eighteen, although that thing will absolutely kill you,
+write that down. The audience. Approval is the only currency that spends in two
+directions: it buys the Syndicate their advertising, and it buys you, if you get
+enough of it, the one thing nobody can loot. A way out. They will not tell you the
+number. There is a number. Get loud, get liked, get bet on, and the number comes
+down. Get boring, and the floor does what the floor does to boring people."
+
+"Which is?"
+
+The animation on the screen changed to a countdown. It was already running.
+
+> **Floor 1 recycles in: 19:52**
+> When a floor closes, it is recycled with everything still on it. The Syndicate
+> calls this "set rotation." Crawlers call it other things. The stairs down are
+> the only way off a floor before rotation. There is no way back up. There has
+> never been a way back up. Stop looking for the way back up; the audience finds
+> it sad, and sad does not sell.
+
+"So the room with the couch is on a timer," Dex said.
+
+"Everything is on a timer. That is the single most useful sentence I will say to
+you, so I'm going to say it again while the cameras are on me and it counts toward
+my quarterly review." Sotreel leaned its enormous green face close to the cracked
+glass. "Everything is on a timer. The floors. The boss respawns. The sponsorships.
+Your dog's frankly unsustainable kill streak. Me. You move, or the timer moves you.
+Now. You have eighteen minutes, one unassigned class, a cursed consumable you are
+absolutely going to use at the worst possible moment, and a corgi the entire
+fourth quadrant has decided to adopt. Pick a class. Quickly. I have four other
+contestants and three of them are already dead, which, on the bright side, frees up
+my afternoon."
+
+Biscuit, who had spent the entire orientation methodically eating the complimentary
+anxiety mints, looked up, swallowed, and burped a small, defiant burp.
+
+A gold burst crossed the feed.
+
+> **The entire fourth quadrant** tipped 50,000 and says: THE DOG ATE THE MINTS
+> **MOD_NOTE:** new line: the dog to outlive the human, 2 to 1 ON. (we are no
+> longer taking the other side of this bet. we have learned.)
+
+Sotreel looked at the number. Sotreel looked at Dex. For the first time, something
+that was almost respect moved through its too-many eyes, the way a draft moves
+through a building you thought was sealed.
+
+"Fifty thousand," it said quietly. "Okafor. Do you understand what just happened.
+Your dog ate a worthless mint, on camera, with attitude, and made fifty thousand in
+approval in under a second. That is the game. That is the entire game. I have been
+trying to explain the game to dead people for eleven seasons and your dog just
+played it perfectly by accident." It straightened its lanyard. "Stay near the dog.
+Whatever you do, professionally, as your Guide, my one note is: stay near the dog."
+
+> **Class selection is now available.**
+> Choose before the floor rotates, or one is chosen for you, and you will not enjoy
+> what gets chosen for the man whose entire brand is "the dog's plus-one."
+> Sotreel has flagged this decision as **load-bearing.**
+> The audience would like you to know they have opinions, and have already paid to
+> express them.
+
+Dex looked at the door, and the timer, and the scrolling wall of strangers betting
+on how he would die. He looked at his cracked, sentient phone, which had quietly
+started logging everything, because he had told it to, back when telling a phone to
+do something was a normal thing a person did.
+
+He looked at Biscuit.
+
+Biscuit looked back with the bottomless, uncomplicated confidence of an animal who
+has just learned he is beloved by an entire quadrant of the galaxy and intends to
+do absolutely nothing differently.
+
+"Okay," Dex said, to the room, to the feed, to the forty light-years of strangers,
+to the tired green civil servant who was, against every instinct, on his side. "Okay.
+Let's give them a show."
+
+The feed, for one line, agreed with him.
+
+> **A_Concerned_Citizen_Of_Vask** tipped 50 and says: oh. oh no. i like him now.
+> this is how it gets you.
+
+> **End of Chapter Three.**
+> Floors remaining: 17.
+> Class: about to be load-bearing.
+> Guide: assigned, unimpressed, quietly rooting for the dog.
+> Audience: invested. (This is the dangerous one.)
 > Next: *Floor 2: The Open Beta.*
 
 ---
@@ -337,5 +545,9 @@ litRPG (the genre Matt Dinniman's *Dungeon Crawler Carl* defined): a sudden
 apocalypse, a cruel and very funny game System, diegetic stat boxes and loot,
 a reluctant human protagonist, and an animal companion who is frankly carrying
 the team. Names, characters, and the in-world "ClaudeCraft" framing are original
-to this repository. It is laid out to continue across more floors; treat each
-chapter as one descent.
+to this repository. The guide-room beat in Chapter Three (a between-floors safe
+room where a contestant meets an assigned handler who explains the rules) is a
+convention of the genre; the guide here (Sotreel, a tired Tier-9 Liaison), the
+Syndicate framing, the spectator-economy details, and all dialogue are original
+and not drawn from any specific book. It is laid out to continue across more
+floors; treat each chapter as one descent.
