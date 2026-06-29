@@ -826,6 +826,7 @@ export class Sim {
       playerName: cfg.playerName ?? 'Adventurer',
       devCommands: this.devCommands,
       lockoutNowMs: cfg.lockoutNowMs ?? (() => Math.floor(this.time * 1000)),
+      crawlMode: cfg.crawlMode ?? false,
     };
     this.rng = new Rng(cfg.seed);
 
@@ -4036,6 +4037,7 @@ export class Sim {
     threatOpts?: { flat?: number; mult?: number },
   ): void {
     if (target.dead) return;
+    if (target.spectator || source?.spectator) return; // crawl-mode spectators neither take nor deal damage
     if (target.gm) return; // GM characters are invulnerable — every damage path funnels here
     // A mob that broke leash (or a pet freed to the wild) is in 'evade': it has
     // dropped its hate table and walks home without fighting back, healing to
@@ -4351,7 +4353,22 @@ export class Sim {
       e.chargeTargetId = null;
       e.chargePath = [];
       e.followTargetId = null;
-      this.emit({ type: 'playerDeath', pid: e.id });
+      if (this.cfg.crawlMode && !e.spectator) {
+        // The Crawl: one death and you are out for the rest of the run. Instead of
+        // the graveyard/release flow, the player becomes a spectator: alive enough
+        // to roam and watch, but untargetable, immune, and benched from combat
+        // (isHostileTo + dealDamage both gate on spectator) until startCrawlRun().
+        e.spectator = true;
+        e.dead = false;
+        e.hp = e.maxHp;
+        e.resource = e.resourceType === 'mana' ? e.maxResource : 0;
+        e.inCombat = false;
+        e.combatTimer = 99;
+        e.targetId = null;
+        this.emit({ type: 'spectator', pid: e.id });
+      } else {
+        this.emit({ type: 'playerDeath', pid: e.id });
+      }
       for (const m of this.entities.values()) {
         if (m.kind === 'mob' && !m.dead && m.aggroTargetId === e.id && m.aiState !== 'dead') {
           // turn on the next nearby attacker; go home only if nobody is left
@@ -8687,7 +8704,42 @@ export class Sim {
     return null;
   }
 
+  // Crawl season mode: has this player died and become a spectator for the run?
+  isSpectator(pid?: number): boolean {
+    const r = this.resolve(pid);
+    return !!r?.e.spectator;
+  }
+
+  // Begin a fresh Crawl run for everyone in this world: clear spectator status,
+  // restore players to full, send them back to the start, and reset all dungeon
+  // instances so the floors re-roll. The host calls this on the hourly run
+  // boundary (see sim/crawl_run.ts for the clock; a production season may instead
+  // spin up a fresh Sim seeded by runSeed()). No-op outside crawl mode is fine.
+  startCrawlRun(): void {
+    for (const inst of this.instances) this.freeInstance(inst);
+    for (const meta of this.players.values()) {
+      const p = this.entities.get(meta.entityId);
+      if (!p) continue;
+      p.spectator = false;
+      p.dead = false;
+      p.auras = [];
+      p.ccDr.clear();
+      recalcPlayerStats(p, meta.cls, meta.equipment, this.playerMods(meta));
+      p.hp = p.maxHp;
+      p.resource = p.resourceType === 'mana' ? p.maxResource : p.resourceType === 'energy' ? 100 : 0;
+      p.inCombat = false;
+      p.combatTimer = 99;
+      p.targetId = null;
+      p.autoAttack = false;
+      p.pos = this.groundPos(PLAYER_START.x, PLAYER_START.z);
+      p.prevPos = { ...p.pos };
+      this.rebucket(p);
+      this.emit({ type: 'respawn', pid: meta.entityId });
+    }
+  }
+
   isHostileTo(attacker: Entity, target: Entity): boolean {
+    if (target.spectator) return false; // crawl-mode spectators are untargetable
     if (target.kind === 'mob') {
       if (target.templateId.startsWith('vision_')) return false;
       if (target.ownerId !== null) {

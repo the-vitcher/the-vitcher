@@ -942,6 +942,10 @@ export interface Entity {
   dungeonId: string | null; // set on dungeon door/exit portals
   // misc
   dead: boolean;
+  // The Crawl season mode: once a player dies they become a spectator for the
+  // rest of the run (untargetable, takes no damage, benched until the next run).
+  // Only ever set when SimConfig.crawlMode is on, so normal play is unaffected.
+  spectator?: boolean;
   scale: number;
   color: number;
   skinCatalog: SkinCatalog; // player appearance catalog: class texture set or cosmetic body.
@@ -1024,6 +1028,7 @@ export type SimEvent = { pid?: number } & (
   | { type: 'comboPoint'; points: number }
   | { type: 'playerDeath' }
   | { type: 'respawn' }
+  | { type: 'spectator' } // crawl mode: this player just died and is now spectating
   | { type: 'vendor'; action: 'buy' | 'sell' | 'buyback'; itemId: string }
   // say/yell are delivered only to players in range and carry the speaker's
   // entity id so the client can hang a chat bubble over their head; whisper
@@ -1093,6 +1098,10 @@ export interface SimConfig {
   noPlayer?: boolean; // multiplayer server: start with an empty world and addPlayer() later
   devCommands?: boolean; // local dev: /dev level|tp|give chat cheats
   lockoutNowMs?: () => number; // host wall-clock for persisted raid lockouts
+  // The Crawl "season" mode: one death turns a player into a spectator for the
+  // rest of the run (see handleDeath); the host starts a fresh run each hour via
+  // Sim.startCrawlRun(). Off by default, so the normal MMO is unaffected.
+  crawlMode?: boolean;
 }
 
 export function emptyMoveInput(): MoveInput {

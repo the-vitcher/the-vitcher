@@ -857,6 +857,7 @@ export class ClientWorld implements IWorld {
       e.overheadEmoteUntil = e.overheadEmoteId ? Number.POSITIVE_INFINITY : 0;
       if (typeof w.emoSeq === 'number') e.overheadEmoteSeq = w.emoSeq;
       e.dead = nowDead;
+      e.spectator = !!w.spec;
       e.lootable = !!w.loot;
       e.hostile = !!w.h;
       e.castingAbility = w.cast ?? null;
@@ -1176,6 +1177,9 @@ export class ClientWorld implements IWorld {
   }
   releaseSpirit(): void {
     this.cmd({ cmd: 'release' });
+  }
+  isSpectator(): boolean {
+    return !!this.player?.spectator;
   }
   chat(text: string): void {
     this.cmd({ cmd: 'chat', text });

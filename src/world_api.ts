@@ -298,6 +298,8 @@ export interface IWorld {
   claimEventSkin(skin: number): void;
   unequipMechChroma(chromaId: string): void;
   releaseSpirit(): void;
+  // Crawl season mode: true once this player has died and is spectating the run.
+  isSpectator(): boolean;
   chat(text: string): void;
   playEmote(emoteId: OverheadEmoteId): void;
   abandonPet(): void;

@@ -243,6 +243,7 @@ function dynamicFields(e: Entity): Record<string, unknown> {
     hp: e.hp, mhp: e.maxHp,
   };
   if (e.dead) out.dead = 1;
+  if (e.spectator) out.spec = 1;
   if (e.lootable) out.loot = 1;
   if (e.hostile) out.h = 1;
   if (e.castingAbility) {
