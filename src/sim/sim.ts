@@ -11222,6 +11222,7 @@ export class Sim {
     inst.objectIds = [];
     inst.exitId = null;
     inst.emptyFor = 0;
+    inst.floorDeadline = 0;
   }
 
   private updateInstances(): void {

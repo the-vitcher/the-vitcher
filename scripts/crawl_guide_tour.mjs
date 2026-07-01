@@ -24,8 +24,9 @@ await page.waitForSelector('#btn-offline', { timeout: 30000 });
 await page.evaluate(() => document.querySelector('#btn-offline').click());
 await sleep(200);
 await page.type('#char-name', 'Crawler');
-await page.click('#offline-select .mini-class[data-class="warrior"]');
-await page.click('#btn-start-offline');
+await page.evaluate(() => document.querySelector('#offline-select .mini-class[data-class="warrior"]')?.click());
+await sleep(150);
+await page.evaluate(() => document.querySelector('#btn-start-offline')?.click());
 await page.waitForFunction(() => window.__game && window.__game.sim && window.__game.sim.player, { timeout: 60000 });
 await sleep(1500);
 
