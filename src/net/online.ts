@@ -938,8 +938,10 @@ export class ClientWorld implements IWorld {
       this.xp = s.xp ?? 0;
       this.floorTimeLeftValue = typeof s.ftl === 'number' ? s.ftl : null;
       this.spectateTargetNameValue = typeof s.sw === 'string' ? s.sw : null;
+      // total is the shared RUNS_PER_DAY constant (identical on both hosts), so it
+      // is not sent on the wire; only the live run index (rn) and reset countdown (rl) are.
       this.crawlRunValue = typeof s.rn === 'number' && typeof s.rl === 'number'
-        ? { run: s.rn, total: s.rtot ?? RUNS_PER_DAY, secondsLeft: s.rl }
+        ? { run: s.rn, total: RUNS_PER_DAY, secondsLeft: s.rl }
         : null;
       this.lifetimeXp = s.lxp ?? 0;
       this.restedXp = s.rxp ?? 0;
