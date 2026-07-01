@@ -53,7 +53,8 @@ export const pending: Record<string, readonly string[]> = {
     "entities.mobs.crawl_tutorial_grub.name",
     "entities.npcs.crawl_guide_sotreel.greeting",
     "entities.npcs.crawl_guide_sotreel.name",
-    "entities.npcs.crawl_guide_sotreel.title"
+    "entities.npcs.crawl_guide_sotreel.title",
+    "hudChrome.floorTimer"
   ],
   "es_ES": [
     "entities.dungeons.crawl_floor_1.enterText",
@@ -99,7 +100,8 @@ export const pending: Record<string, readonly string[]> = {
     "entities.mobs.crawl_tutorial_grub.name",
     "entities.npcs.crawl_guide_sotreel.greeting",
     "entities.npcs.crawl_guide_sotreel.name",
-    "entities.npcs.crawl_guide_sotreel.title"
+    "entities.npcs.crawl_guide_sotreel.title",
+    "hudChrome.floorTimer"
   ],
   "fr_FR": [
     "entities.dungeons.crawl_floor_1.enterText",
@@ -145,7 +147,8 @@ export const pending: Record<string, readonly string[]> = {
     "entities.mobs.crawl_tutorial_grub.name",
     "entities.npcs.crawl_guide_sotreel.greeting",
     "entities.npcs.crawl_guide_sotreel.name",
-    "entities.npcs.crawl_guide_sotreel.title"
+    "entities.npcs.crawl_guide_sotreel.title",
+    "hudChrome.floorTimer"
   ],
   "fr_CA": [
     "entities.dungeons.crawl_floor_1.enterText",
@@ -191,7 +194,8 @@ export const pending: Record<string, readonly string[]> = {
     "entities.mobs.crawl_tutorial_grub.name",
     "entities.npcs.crawl_guide_sotreel.greeting",
     "entities.npcs.crawl_guide_sotreel.name",
-    "entities.npcs.crawl_guide_sotreel.title"
+    "entities.npcs.crawl_guide_sotreel.title",
+    "hudChrome.floorTimer"
   ],
   "en_CA": [],
   "it_IT": [
@@ -238,7 +242,8 @@ export const pending: Record<string, readonly string[]> = {
     "entities.mobs.crawl_tutorial_grub.name",
     "entities.npcs.crawl_guide_sotreel.greeting",
     "entities.npcs.crawl_guide_sotreel.name",
-    "entities.npcs.crawl_guide_sotreel.title"
+    "entities.npcs.crawl_guide_sotreel.title",
+    "hudChrome.floorTimer"
   ],
   "de_DE": [
     "entities.dungeons.crawl_floor_1.enterText",
@@ -284,7 +289,8 @@ export const pending: Record<string, readonly string[]> = {
     "entities.mobs.crawl_tutorial_grub.name",
     "entities.npcs.crawl_guide_sotreel.greeting",
     "entities.npcs.crawl_guide_sotreel.name",
-    "entities.npcs.crawl_guide_sotreel.title"
+    "entities.npcs.crawl_guide_sotreel.title",
+    "hudChrome.floorTimer"
   ],
   "zh_CN": [],
   "zh_TW": [],
@@ -334,7 +340,8 @@ export const pending: Record<string, readonly string[]> = {
     "entities.mobs.crawl_tutorial_grub.name",
     "entities.npcs.crawl_guide_sotreel.greeting",
     "entities.npcs.crawl_guide_sotreel.name",
-    "entities.npcs.crawl_guide_sotreel.title"
+    "entities.npcs.crawl_guide_sotreel.title",
+    "hudChrome.floorTimer"
   ],
   "ru_RU": []
 };

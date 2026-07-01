@@ -75,6 +75,7 @@ export const hudChromeStrings = {
     toggleHaptics: "Toggle haptics",
   },
   // Minimap / compass / clock / coordinate widget tooltips and accessible names.
+  floorTimer: "Floor collapses in {time}",
   widgets: {
     clockTitle: "Local time - click to toggle 12/24-hour",
     worldCoordinates: "World coordinates",

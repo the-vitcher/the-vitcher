@@ -209,6 +209,7 @@ export const it_IT: EnTranslations = {
       "hapticsOff": "Vibrazione disattivata",
       "toggleHaptics": "Attiva/disattiva vibrazione"
     },
+    "floorTimer": "Floor collapses in {time}",
     "widgets": {
       "clockTitle": "Ora locale - clicca per alternare 12/24 ore",
       "worldCoordinates": "Coordinate del mondo",

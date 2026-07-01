@@ -453,6 +453,8 @@ export interface InstanceSlot {
   objectIds: number[];
   exitId: number | null;
   emptyFor: number;
+  // Crawl floor timer: sim.time at which this floor collapses (0 = no timer).
+  floorDeadline: number;
 }
 
 export interface ResolvedAbility {
@@ -875,7 +877,7 @@ export class Sim {
     for (const dungeon of DUNGEON_LIST) {
       if (dungeon.overworldDoor === false) {
         for (let i = 0; i < INSTANCE_SLOT_COUNT; i++) {
-          this.instances.push({ dungeonId: dungeon.id, slot: i, partyKey: null, mobIds: [], objectIds: [], exitId: null, emptyFor: 0 });
+          this.instances.push({ dungeonId: dungeon.id, slot: i, partyKey: null, mobIds: [], objectIds: [], exitId: null, emptyFor: 0, floorDeadline: 0 });
         }
         continue;
       }
@@ -887,7 +889,7 @@ export class Sim {
       door.lootable = true; // interactable
       this.addEntity(door);
       for (let i = 0; i < INSTANCE_SLOT_COUNT; i++) {
-        this.instances.push({ dungeonId: dungeon.id, slot: i, partyKey: null, mobIds: [], objectIds: [], exitId: null, emptyFor: 0 });
+        this.instances.push({ dungeonId: dungeon.id, slot: i, partyKey: null, mobIds: [], objectIds: [], exitId: null, emptyFor: 0, floorDeadline: 0 });
       }
     }
 
@@ -1687,6 +1689,7 @@ export class Sim {
     this.tickCount++;
     this.updatePendingMobRespawns();
     this.updateGroundAoEs();
+    this.updateFloorTimers();
 
     const despawnIds: number[] = [];
     for (const e of this.entities.values()) {
@@ -8760,6 +8763,38 @@ export class Sim {
     }
   }
 
+  // Crawl floor timers: when a claimed floor's deadline passes, it collapses and
+  // catches everyone still inside (a lethal takedown; in crawlMode that means they
+  // drop to spectator). Deterministic: driven by sim.time, no wall-clock. Called
+  // once per tick.
+  private updateFloorTimers(): void {
+    for (const inst of this.instances) {
+      if (inst.partyKey === null || inst.floorDeadline <= 0 || this.time < inst.floorDeadline) continue;
+      inst.floorDeadline = 0; // fire once
+      for (const meta of this.players.values()) {
+        const pl = this.entities.get(meta.entityId);
+        if (!pl || pl.dead || pl.spectator) continue;
+        if (dungeonAt(pl.pos.x)?.id === inst.dungeonId && this.instanceSlotAt(pl.pos) === inst.slot) {
+          this.handleDeath(pl, null); // caught by the collapsing floor
+        }
+      }
+    }
+  }
+
+  // Seconds remaining before the floor this player stands in collapses, or null if
+  // they are not on a timed floor. Drives the HUD countdown.
+  floorTimeLeft(pid?: number): number | null {
+    const r = this.resolve(pid);
+    if (!r) return null;
+    const dungeon = dungeonAt(r.e.pos.x);
+    if (!dungeon) return null;
+    const slot = this.instanceSlotAt(r.e.pos);
+    if (slot === null) return null;
+    const inst = this.instances.find((i) => i.dungeonId === dungeon.id && i.slot === slot);
+    if (!inst || inst.floorDeadline <= 0) return null;
+    return Math.max(0, Math.ceil(inst.floorDeadline - this.time));
+  }
+
   // Live crawlers a spectator can watch: players still in the run (alive, not yet
   // spectating). Sorted by id so cycling is deterministic and stable across ticks.
   private liveCrawlerIds(): number[] {
@@ -11127,6 +11162,7 @@ export class Sim {
     const dungeon = DUNGEONS[inst.dungeonId];
     inst.partyKey = key;
     inst.emptyFor = 0;
+    inst.floorDeadline = dungeon.floorTimeSec ? this.time + dungeon.floorTimeSec : 0;
     const origin = this.instanceOriginOf(inst);
     for (const spawn of dungeon.spawns) {
       const template = MOBS[spawn.mobId];

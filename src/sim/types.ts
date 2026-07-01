@@ -698,6 +698,9 @@ export interface DungeonDef {
   // instance-local, like spawns/objects). Used for safe-room guides, etc.
   npcs?: { npcId: string; x: number; z: number }[];
   interior: 'crypt' | 'sanctum' | 'temple' | 'nythraxis'; // renderer + collider interior builder key
+  // Crawl floors: seconds a party has to reach the stairs down before the floor
+  // collapses (catching anyone still inside). Omitted = no timer (e.g. safe rooms).
+  floorTimeSec?: number;
   suggestedPlayers: number;
   enterText: string;
   leaveText: string;

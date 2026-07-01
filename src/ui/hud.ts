@@ -476,6 +476,7 @@ export class Hud {
   private pfResourceEl = $('#pf-resource');
   private buffBarEl = $('#buff-bar');
   private targetFrameEl = $('#target-frame');
+  private floorTimerEl = $('#floor-timer');
   private targetEliteTagEl = $('#tf-elite-tag');
   private targetNameEl = $('#tf-name');
   private targetLevelEl = $('#tf-level');
@@ -2650,6 +2651,17 @@ export class Hud {
   update(): void {
     const sim = this.sim;
     const p = sim.player;
+    // Crawl floor-collapse countdown (top-center); turns urgent under 30s.
+    const ftl = sim.floorTimeLeft();
+    if (ftl === null) {
+      if (!this.floorTimerEl.hidden) this.floorTimerEl.hidden = true;
+    } else {
+      const mmss = `${Math.floor(ftl / 60)}:${String(ftl % 60).padStart(2, '0')}`;
+      const txt = t('hudChrome.floorTimer', { time: mmss });
+      if (this.floorTimerEl.textContent !== txt) this.floorTimerEl.textContent = txt;
+      if (this.floorTimerEl.hidden) this.floorTimerEl.hidden = false;
+      this.floorTimerEl.classList.toggle('urgent', ftl <= 30);
+    }
     const now = performance.now();
     const fastHud = now - this.lastHudFastAt >= 100;
     if (fastHud) { this.lastHudFastAt = now; this.reconcileSfx(); }

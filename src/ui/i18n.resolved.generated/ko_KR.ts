@@ -209,6 +209,7 @@ export const ko_KR: EnTranslations = {
       "hapticsOff": "진동 꺼짐",
       "toggleHaptics": "진동 전환"
     },
+    "floorTimer": "{time} 후 층이 붕괴됩니다",
     "widgets": {
       "clockTitle": "현지 시각 - 클릭하면 12/24시간제 전환",
       "worldCoordinates": "세계 좌표",

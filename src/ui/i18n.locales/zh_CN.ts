@@ -2455,6 +2455,7 @@ export const zh_CN: Partial<Record<TranslationKey, string>> = {
   "entities.dungeons.crawl_guide_room.name": "地城爬行：向导室",
   "entities.dungeons.crawl_guide_room.enterText": "欢迎来到地城爬行。这是一间安全屋，所以这里没有人会死，包括你。找到你的向导，听他把话讲完，准备好了就走下面的楼梯。",
   "entities.dungeons.crawl_guide_room.leaveText": "你重新走出去，朝着那座已不复存在的地表。",
+  "hudChrome.floorTimer": "楼层将在 {time} 后坍塌",
   "entities.npcs.crawl_guide_sotreel.name": "索特里尔",
   "entities.npcs.crawl_guide_sotreel.title": "九级联络员",
   "entities.npcs.crawl_guide_sotreel.greeting": "爬塔者。我是索特里尔，九级联络员，没错，我抽到了下下签。长话短说，因为这下面的一切都有计时：你的世界被重新开发了，如今你是地城爬行的参赛者，一场全银河都在押注的现场直播。下面还有许多层，一层比一层致命。杀怪、夺取它们的等级、找到向下的楼梯，别让自己变得无聊，因为观众只为大胆买单。人气是唯一能买来活路的货币，所以别离队太远，争取让自己值得一看。楼梯在后面。祝你好运。你活着，我才有钱拿。",

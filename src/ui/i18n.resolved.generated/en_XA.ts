@@ -209,6 +209,7 @@ export const en_XA: EnTranslations = {
       "hapticsOff": "[Ĥáþţíçš Óƒƒ]",
       "toggleHaptics": "[Ţóĝĝļé ĥáþţíçš]"
     },
+    "floorTimer": "[Ƒļóóŕ çóļļáþšéš íñ {time}]",
     "widgets": {
       "clockTitle": "[Ļóçáļ ţíɱé - çļíçķ ţó ţóĝĝļé 12/24-ĥóúŕ]",
       "worldCoordinates": "[Ŵóŕļð çóóŕðíñáţéš]",

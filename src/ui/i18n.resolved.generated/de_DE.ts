@@ -209,6 +209,7 @@ export const de_DE: EnTranslations = {
       "hapticsOff": "Haptik aus",
       "toggleHaptics": "Haptik umschalten"
     },
+    "floorTimer": "Floor collapses in {time}",
     "widgets": {
       "clockTitle": "Ortszeit - klicken, um zwischen 12-/24-Stunden zu wechseln",
       "worldCoordinates": "Weltkoordinaten",

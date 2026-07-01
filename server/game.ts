@@ -1649,6 +1649,7 @@ export class GameServer {
       eat: p.eating ? { remaining: round2(p.eating.remaining) } : null,
       drk: p.drinking ? { remaining: round2(p.drinking.remaining) } : null,
       opUntil: p.overpowerUntil > this.sim.time ? 1 : 0,
+      ftl: this.sim.floorTimeLeft(p.id), // Crawl floor-collapse countdown (or null)
       ack: session.lastInputSeq,
     });
     const json = JSON.stringify(self);

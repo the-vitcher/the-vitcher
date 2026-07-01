@@ -209,6 +209,7 @@ export const en_CA: EnTranslations = {
       "hapticsOff": "Haptics Off",
       "toggleHaptics": "Toggle haptics"
     },
+    "floorTimer": "Floor collapses in {time}",
     "widgets": {
       "clockTitle": "Local time - click to toggle 12/24-hour",
       "worldCoordinates": "World coordinates",

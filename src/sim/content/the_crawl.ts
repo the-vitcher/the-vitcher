@@ -231,6 +231,10 @@ export const THE_CRAWL_MOBS: Record<string, MobTemplate> = {
 // well clear of town, on open ground.
 const CRAWL_DOOR = { x: 110, z: 40 };
 
+// Seconds a party has on each floor before it collapses. Sized so a full descent
+// fits inside an hourly run (seven floors) with room to spare.
+const FLOOR_TIME_SEC = 300;
+
 // One Stairway Down, placed flush to the crypt back wall, linking to the next floor.
 function stairsTo(dungeonId: string): DungeonObjectSpawn {
   return { itemId: '', name: 'Stairway Down', x: 0, z: 110.4, templateId: 'dungeon_door', dungeonId };
@@ -343,6 +347,7 @@ function buildFloors(): Record<string, DungeonDef> {
       spawns: floorSpawns(FLOOR_ROSTERS[i]),
       objects: objects.length ? objects : undefined,
       interior: 'crypt',
+      floorTimeSec: FLOOR_TIME_SEC, // reach the stairs down before the floor collapses
       suggestedPlayers: floor <= 2 ? 1 : 5,
       enterText: text.enter,
       leaveText: text.leave,

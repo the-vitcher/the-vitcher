@@ -209,6 +209,7 @@ export const zh_CN: EnTranslations = {
       "hapticsOff": "震动反馈：关",
       "toggleHaptics": "切换震动反馈"
     },
+    "floorTimer": "楼层将在 {time} 后坍塌",
     "widgets": {
       "clockTitle": "本地时间 - 点击切换 12/24 小时制",
       "worldCoordinates": "世界坐标",

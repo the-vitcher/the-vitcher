@@ -2455,6 +2455,7 @@ export const ko_KR: Partial<Record<TranslationKey, string>> = {
   "entities.dungeons.crawl_guide_room.name": "크롤: 가이드 룸",
   "entities.dungeons.crawl_guide_room.enterText": "크롤에 온 걸 환영한다. 여기는 안전 구역이라 아무것도 죽지 않는다, 너를 포함해서. 가이드를 찾아 이야기를 끝까지 듣고, 준비되면 아래로 내려가는 계단을 이용해라.",
   "entities.dungeons.crawl_guide_room.leaveText": "당신은 더 이상 존재하지 않는 지상을 향해 다시 걸어 나간다.",
+  "hudChrome.floorTimer": "{time} 후 층이 붕괴됩니다",
   "entities.npcs.crawl_guide_sotreel.name": "소트릴",
   "entities.npcs.crawl_guide_sotreel.title": "9등급 연락관",
   "entities.npcs.crawl_guide_sotreel.greeting": "크롤러군. 나는 소트릴, 9등급 연락관, 그래 내가 꽝을 뽑았지. 짧게 말하겠다, 여기선 모든 게 타이머에 걸려 있으니까. 네 세계는 재개발됐고, 너는 이제 크롤의 참가자다. 온 은하가 돈을 거는 생방송이지. 아래로는 층이 잔뜩 있고, 한 층씩 더 치명적이다. 적을 죽이고, 그 레벨을 빼앗고, 내려가는 계단을 찾아라. 그리고 지루해지지 마라, 관객은 대담한 자에게만 돈을 낸다. 인기야말로 탈출을 살 수 있는 유일한 화폐다. 그러니 파티 곁을 떠나지 말고, 볼 만한 가치가 있게 굴어라. 계단은 뒤쪽에 있다. 행운을 빈다. 네가 살아야 내가 돈을 받는다.",

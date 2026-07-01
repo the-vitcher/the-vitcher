@@ -209,6 +209,7 @@ export const ru_RU: EnTranslations = {
       "hapticsOff": "Вибрация выкл.",
       "toggleHaptics": "Вкл/выкл вибрацию"
     },
+    "floorTimer": "Этаж обрушится через {time}",
     "widgets": {
       "clockTitle": "Местное время — нажмите для переключения 12/24-часового формата",
       "worldCoordinates": "Координаты мира",

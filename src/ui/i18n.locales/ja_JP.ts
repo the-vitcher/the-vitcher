@@ -2455,6 +2455,7 @@ export const ja_JP: Partial<Record<TranslationKey, string>> = {
   "entities.dungeons.crawl_guide_room.name": "クロウル：ガイド室",
   "entities.dungeons.crawl_guide_room.enterText": "クロウルへようこそ。ここは安全地帯だから、何も死なない、君も含めてな。ガイドを見つけ、話を最後まで聞き、準備ができたら下りの階段を使え。",
   "entities.dungeons.crawl_guide_room.leaveText": "君は、もはや存在しない地上へと再び出ていく。",
+  "hudChrome.floorTimer": "フロアは {time} 後に崩落する",
   "entities.npcs.crawl_guide_sotreel.name": "ソトリール",
   "entities.npcs.crawl_guide_sotreel.title": "ティア9リエゾン",
   "entities.npcs.crawl_guide_sotreel.greeting": "クロウラーだな。おれはソトリール、ティア9のリエゾン、ああ、貧乏くじを引いたよ。手短に言う、ここでは何もかもが時間制限つきだからな。お前の世界は再開発され、お前はいまクロウルの出場者だ。銀河じゅうが賭けている生放送さ。下にはまだ大量の階があり、一つごとに致命的になる。敵を狩り、そのレベルを奪い、下りの階段を見つけろ。そして退屈になるな。観客は大胆さにしか金を払わない。人気だけが出口を買える唯一の通貨だ。だから仲間のそばを離れず、見られる価値のある動きをしろ。階段は奥だ。幸運を。お前が生きれば、おれの稼ぎになる。",

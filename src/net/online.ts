@@ -484,6 +484,8 @@ export class ClientWorld implements IWorld {
   accountCosmetics: AccountCosmetics = { completedQuestIds: [], mechChromaIds: [] };
   copper = 0;
   xp = 0;
+  // Crawl floor timer (seconds left before the floor collapses), mirrored from self.
+  floorTimeLeftValue: number | null = null;
   // Post-cap progression (Max-Level XP Overflow), mirrored from snapshot self.
   lifetimeXp = 0;
   prestigeRank = 0;
@@ -929,6 +931,7 @@ export class ClientWorld implements IWorld {
         ? { itemId: '', kind: 'drink', hpPer2s: 0, manaPer2s: 0, remaining: s.drk.remaining }
         : null;
       this.xp = s.xp ?? 0;
+      this.floorTimeLeftValue = typeof s.ftl === 'number' ? s.ftl : null;
       this.lifetimeXp = s.lxp ?? 0;
       this.restedXp = s.rxp ?? 0;
       this.prestigeRank = s.prk ?? 0;
@@ -1190,6 +1193,9 @@ export class ClientWorld implements IWorld {
   }
   spectatePrev(): void {
     this.cmd({ cmd: 'spectate_prev' });
+  }
+  floorTimeLeft(): number | null {
+    return this.floorTimeLeftValue;
   }
   chat(text: string): void {
     this.cmd({ cmd: 'chat', text });

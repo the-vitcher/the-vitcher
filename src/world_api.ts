@@ -305,6 +305,8 @@ export interface IWorld {
   spectate(targetId: number): void;
   spectateNext(): void;
   spectatePrev(): void;
+  // Seconds before the current floor collapses, or null when not on a timed floor.
+  floorTimeLeft(): number | null;
   chat(text: string): void;
   playEmote(emoteId: OverheadEmoteId): void;
   abandonPet(): void;

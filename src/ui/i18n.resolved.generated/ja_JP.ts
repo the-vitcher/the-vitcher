@@ -209,6 +209,7 @@ export const ja_JP: EnTranslations = {
       "hapticsOff": "振動オフ",
       "toggleHaptics": "振動を切り替え"
     },
+    "floorTimer": "フロアは {time} 後に崩落する",
     "widgets": {
       "clockTitle": "現地時刻 - クリックで12/24時間表記を切り替え",
       "worldCoordinates": "ワールド座標",
