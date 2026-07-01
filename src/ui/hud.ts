@@ -2692,12 +2692,14 @@ export class Hud {
       this.setDisplay(this.targetFrameEl, 'flex');
       this.targetFrameEl.classList.toggle('elite', !!MOBS[target.templateId]?.elite);
       this.setText(this.targetEliteTagEl, MOBS[target.templateId]?.boss ? t('hud.core.boss') : t('hud.core.elite'));
-      this.setText(this.targetNameEl, entityDisplayName(target));
+      // Crawl PvP: a player-killer wears a red skull by their name.
+      const targetPk = target.kind === 'player' && target.playerKiller === true;
+      this.setText(this.targetNameEl, (targetPk ? '☠ ' : '') + entityDisplayName(target));
       this.setText(this.targetLevelEl, MOBS[target.templateId]?.boss ? '☠' : String(target.level));
       this.setTransform(this.targetHpEl, `scaleX(${target.hp / Math.max(1, target.maxHp)})`);
       this.updateAbsorb('#tf-absorb', target.dead ? null : target);
       this.setText(this.targetHpTextEl, target.dead ? t('hud.core.dead') : `${target.hp} / ${target.maxHp}`);
-      const targetNameColor = target.hostile ? 'var(--color-hostile)' : 'var(--color-friendly)';
+      const targetNameColor = targetPk ? '#ff5a5a' : target.hostile ? 'var(--color-hostile)' : 'var(--color-friendly)';
       if (this.targetNameEl.style.color !== targetNameColor) this.targetNameEl.style.color = targetNameColor;
       if (this.lastPortraitTarget !== target.id) {
         this.lastPortraitTarget = target.id;

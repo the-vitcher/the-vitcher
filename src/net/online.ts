@@ -858,6 +858,7 @@ export class ClientWorld implements IWorld {
       if (typeof w.emoSeq === 'number') e.overheadEmoteSeq = w.emoSeq;
       e.dead = nowDead;
       e.spectator = !!w.spec;
+      e.playerKiller = !!w.pk;
       e.lootable = !!w.loot;
       e.hostile = !!w.h;
       e.castingAbility = w.cast ?? null;

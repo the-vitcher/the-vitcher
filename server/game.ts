@@ -244,6 +244,7 @@ function dynamicFields(e: Entity): Record<string, unknown> {
   };
   if (e.dead) out.dead = 1;
   if (e.spectator) out.spec = 1;
+  if (e.playerKiller) out.pk = 1;
   if (e.lootable) out.loot = 1;
   if (e.hostile) out.h = 1;
   if (e.castingAbility) {

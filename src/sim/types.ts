@@ -950,6 +950,9 @@ export interface Entity {
   // rest of the run (untargetable, takes no damage, benched until the next run).
   // Only ever set when SimConfig.crawlMode is on, so normal play is unaffected.
   spectator?: boolean;
+  // Crawl PvP: this player has killed another player this run and wears the red
+  // player-killer skull by their name. Set only in crawlMode; cleared each run.
+  playerKiller?: boolean;
   scale: number;
   color: number;
   skinCatalog: SkinCatalog; // player appearance catalog: class texture set or cosmetic body.

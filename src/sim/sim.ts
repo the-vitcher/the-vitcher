@@ -534,6 +534,9 @@ export interface PlayerMeta {
   questLog: Map<string, QuestProgress>;
   questsDone: Set<string>;
   counters: RewardCounters;
+  // Crawl PvP: how many other players this player has killed this run (drives the
+  // red player-killer skull). Reset each run; only grows in crawlMode.
+  playerKills: number;
   autoEquip: boolean;
   // sim.time when this character entered the world; powers /played. Session-only
   // (sim.time resets to 0 each server boot), so it reports time this session.
@@ -992,6 +995,7 @@ export class Sim {
       questLog: new Map(),
       questsDone: new Set(),
       counters: freshCounters(),
+      playerKills: 0,
       autoEquip: opts?.autoEquip ?? false,
       joinedAt: this.time,
       lastActiveTick: this.tickCount,
@@ -4348,6 +4352,16 @@ export class Sim {
     if (e.kind === 'player') {
       const meta = this.players.get(e.id);
       if (meta) meta.counters.deaths++;
+      // Crawl PvP: a player (or their pet) who lands the killing blow on another
+      // non-party player earns a player-kill and wears the red skull for the run.
+      if (this.cfg.crawlMode && killer) {
+        const kp = this.pvpController(killer);
+        if (kp && kp.kind === 'player' && kp.id !== e.id && !this.sameParty(kp.id, e.id)) {
+          const km = this.players.get(kp.id);
+          if (km) km.playerKills++;
+          kp.playerKiller = true;
+        }
+      }
       e.autoAttack = false;
       e.queuedOnSwing = null;
       e.comboPoints = 0;
@@ -8727,6 +8741,8 @@ export class Sim {
       if (!p) continue;
       p.spectator = false;
       p.spectateTargetId = null;
+      p.playerKiller = false;
+      meta.playerKills = 0;
       p.dead = false;
       p.auras = [];
       p.ccDr.clear();
@@ -8816,6 +8832,9 @@ export class Sim {
       if (!attackerPlayer) return false;
       if (attackerPlayer.dead) return false;
       if (attackerPlayer.id === target.id) return false;
+      // The Crawl is free-for-all: any player may attack any other player who is
+      // not in their party (spectators are already excluded above).
+      if (this.cfg.crawlMode && !attackerPlayer.spectator && !this.sameParty(attackerPlayer.id, target.id)) return true;
       const duel = this.duels.get(attackerPlayer.id);
       if (duel && duel.state === 'active'
         && ((duel.a === attackerPlayer.id && duel.b === target.id)
@@ -8843,6 +8862,13 @@ export class Sim {
   partyOf(pid: number): Party | null {
     const partyId = this.partyByPid.get(pid);
     return partyId !== undefined ? this.parties.get(partyId) ?? null : null;
+  }
+
+  // Two players are grouped when both belong to the same party. Crawl PvP spares
+  // party members (so grouping still works); everyone else is fair game.
+  private sameParty(a: number, b: number): boolean {
+    const pa = this.partyByPid.get(a);
+    return pa !== undefined && pa === this.partyByPid.get(b);
   }
 
   private hasActiveInvite(map: Map<number, { fromPid: number; expires: number }>, targetPid: number): boolean {
