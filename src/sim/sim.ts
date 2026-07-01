@@ -6,6 +6,12 @@ import {
   zoneAt, ZONES, FISHING_TABLES, FISHING_RARE_ID,
 } from './data';
 import { ARENA_SPAWN_A, ARENA_SPAWN_B, ARENA_SPAWNS_A_2v2, ARENA_SPAWNS_B_2v2 } from './dungeon_layout';
+import {
+  assignMobaTeams, mobaTeamForZ, mobaEnemyCore, mobaHeroSpawn, mobaMinionSpawn, mobaRespawnSeconds,
+  mobaWaveComposition, mobaCoreVulnerable, mobaWinner, MOBA_FIRST_WAVE_SEC, MOBA_WAVE_INTERVAL_SEC,
+  MOBA_MATCH_WARMUP_SEC, MOBA_HERO_LEVEL, type MobaTeam,
+} from './moba';
+import { MOBA_ABILITIES, MOBA_HEROES } from './content/moba';
 import { lineOfSightClear, resolveMovement, resolvePosition } from './colliders';
 import { PLAYER_BODY_RADIUS, PLAYER_MAX_CLIMB_SLOPE, PLAYER_SWIM_DEPTH, findPlayerPath } from './pathfind';
 import { combatProfileForMob, effectiveMobMeleeRange, type MobCombatProfile } from './mob_combat';
@@ -398,6 +404,21 @@ export interface ArenaMatch {
   fiesta?: FiestaState; // present only for format === 'fiesta'
 }
 
+// The Clash (MOBA) match state. One lane instance, two teams, structures + minion
+// waves. Lives on the Sim (one match per Sim in v1); torn down on end/reset.
+export interface MobaMatch {
+  slot: number; // moba_lane instance slot
+  teams: Map<number, MobaTeam>; // pid -> team
+  coreA: number; coreB: number; // core entity ids
+  towersA: number[]; towersB: number[]; // tower entity ids per team
+  minionIds: Set<number>; // live wave minions
+  waveTimer: number; // seconds until the next wave from each base
+  waveIndex: number; // waves spawned so far
+  elapsed: number; // match seconds since start
+  phase: 'warmup' | 'playing' | 'ended';
+  winner: MobaTeam | null;
+}
+
 // Everything that makes a Fiesta bout a fiesta. Lives on the ArenaMatch so it is
 // torn down with the match. Deterministic throughout: augment offers draw from
 // `rng` (seeded from the sim stream at match start) so a replay re-offers the
@@ -539,6 +560,10 @@ export interface PlayerMeta {
   // Crawl PvP: how many other players this player has killed this run (drives the
   // red player-killer skull). Reset each run; only grows in crawlMode.
   playerKills: number;
+  // The Clash (MOBA): the hero this player is currently playing (null = none), and
+  // seconds left before they respawn at their base (0 = alive). Set only in mobaMode.
+  mobaHeroId: string | null;
+  mobaRespawnLeft: number;
   autoEquip: boolean;
   // sim.time when this character entered the world; powers /played. Session-only
   // (sim.time resets to 0 each server boot), so it reports time this session.
@@ -820,6 +845,8 @@ export class Sim {
   readonly devCommands: boolean;
   private pendingMobRespawns: PendingMobRespawn[] = [];
   private groundAoEs: GroundAoE[] = [];
+  // The Clash (MOBA): the single active match, or null. Only ever set in mobaMode.
+  mobaMatch: MobaMatch | null = null;
 
   constructor(cfg: SimConfig) {
     this.devCommands = cfg.devCommands ?? false;
@@ -1000,6 +1027,8 @@ export class Sim {
       questsDone: new Set(),
       counters: freshCounters(),
       playerKills: 0,
+      mobaHeroId: null,
+      mobaRespawnLeft: 0,
       autoEquip: opts?.autoEquip ?? false,
       joinedAt: this.time,
       lastActiveTick: this.tickCount,
@@ -1774,6 +1803,7 @@ export class Sim {
     this.updateTradesAndInvites();
     this.updateLootRolls();
     this.updateInstances();
+    if (this.cfg.mobaMode && this.mobaMatch) this.updateMobaMatch();
     this.updateMarket();
     this.emitDueDelayedEvents();
 
@@ -4051,6 +4081,8 @@ export class Sim {
   ): void {
     if (target.dead) return;
     if (target.spectator || source?.spectator) return; // crawl-mode spectators neither take nor deal damage
+    // The Clash: a core cannot be harmed while its team's towers still stand.
+    if (this.cfg.mobaMode && this.mobaRoleOf(target) === 'core' && this.mobaCoreInvulnerable(target)) return;
     if (target.gm) return; // GM characters are invulnerable — every damage path funnels here
     // A mob that broke leash (or a pet freed to the wild) is in 'evade': it has
     // dropped its hate table and walks home without fighting back, healing to
@@ -4376,7 +4408,14 @@ export class Sim {
       e.chargeTargetId = null;
       e.chargePath = [];
       e.followTargetId = null;
-      if (this.cfg.crawlMode && !e.spectator) {
+      if (this.cfg.mobaMode && meta && e.mobaTeam) {
+        // The Clash: a slain hero waits out a level-scaled respawn timer, then
+        // returns at their own core (see updateMobaMatch). No graveyard/spirit flow.
+        meta.mobaRespawnLeft = mobaRespawnSeconds(e.level);
+        e.autoAttack = false;
+        e.targetId = null;
+        this.emit({ type: 'playerDeath', pid: e.id });
+      } else if (this.cfg.crawlMode && !e.spectator) {
         // The Crawl: one death and you are out for the rest of the run. Instead of
         // the graveyard/release flow, the player becomes a spectator: alive enough
         // to roam and watch, but untargetable, immune, and benched from combat
@@ -5041,6 +5080,13 @@ export class Sim {
       if (!isInstanceMob && mob.respawnTimer <= 0 && (mob.corpseTimer <= 0 || !mob.lootable)) {
         this.respawnMob(mob);
       }
+      return;
+    }
+
+    // The Clash: lane structures and minions run a dedicated AI (proactive
+    // team-scan targeting), not the generic threat-table mob AI.
+    if (this.cfg.mobaMode && this.mobaRoleOf(mob)) {
+      this.updateMobaUnit(mob);
       return;
     }
 
@@ -8869,8 +8915,261 @@ export class Sim {
     }
   }
 
+  // -------------------------------------------------------------------------
+  // The Clash (MOBA): single-lane team battle. See src/sim/moba.ts (pure geometry
+  // + rules) and src/sim/content/moba.ts (heroes, structures, minions).
+  // -------------------------------------------------------------------------
+
+  // Enter the lane and (re)start the match. Claims the lane instance (its structures
+  // spawn + get team-tagged in claimInstance), builds the match, and seats the caller.
+  enterMobaMatch(pid?: number): void {
+    if (!this.cfg.mobaMode) return;
+    const r = this.resolve(pid);
+    if (!r) return;
+    if (!this.mobaMatch || this.mobaMatch.phase === 'ended') this.startMobaMatch();
+    const match = this.mobaMatch;
+    if (!match) return;
+    if (!match.teams.has(r.e.id)) {
+      // Seat a latecomer on the smaller side.
+      let a = 0, b = 0;
+      for (const t of match.teams.values()) { if (t === 'A') a++; else b++; }
+      match.teams.set(r.e.id, a <= b ? 'A' : 'B');
+    }
+    const team = match.teams.get(r.e.id)!;
+    r.e.mobaTeam = team;
+    this.mobaApplyHero(r.meta, r.e, r.meta.mobaHeroId ?? Object.keys(MOBA_HEROES)[0]);
+    this.mobaRespawnHero(r.meta, r.e);
+  }
+
+  // Start a fresh match: assign teams over the given pids (default: all players),
+  // claim the lane instance, record its structures, and seat every player.
+  startMobaMatch(pids?: number[]): void {
+    if (!this.cfg.mobaMode) return;
+    const roster = pids ?? [...this.players.keys()];
+    // Find or claim a lane instance (a synthetic 'moba' key: one shared match in v1).
+    let inst = this.instances.find((i) => i.dungeonId === 'moba_lane' && i.partyKey === 'moba');
+    if (!inst) {
+      inst = this.instances.find((i) => i.dungeonId === 'moba_lane' && i.partyKey === null);
+      if (!inst) return;
+      this.claimInstance(inst, 'moba');
+    }
+    const match: MobaMatch = {
+      slot: inst.slot, teams: assignMobaTeams(roster, this.cfg.mobaTeamSize ?? 5),
+      coreA: -1, coreB: -1, towersA: [], towersB: [], minionIds: new Set(),
+      waveTimer: MOBA_FIRST_WAVE_SEC, waveIndex: 0, elapsed: 0,
+      phase: 'warmup', winner: null,
+    };
+    for (const id of inst.mobIds) {
+      const m = this.entities.get(id);
+      if (!m) continue;
+      const role = this.mobaRoleOf(m);
+      if (role === 'core') { if (m.mobaTeam === 'A') match.coreA = id; else match.coreB = id; }
+      else if (role === 'tower') (m.mobaTeam === 'A' ? match.towersA : match.towersB).push(id);
+    }
+    this.mobaMatch = match;
+    for (const [pid, team] of match.teams) {
+      const meta = this.players.get(pid);
+      const e = this.entities.get(pid);
+      if (!meta || !e) continue;
+      e.mobaTeam = team;
+      this.mobaApplyHero(meta, e, meta.mobaHeroId ?? Object.keys(MOBA_HEROES)[0]);
+      this.mobaRespawnHero(meta, e);
+    }
+  }
+
+  // Choose (or swap to) a hero. Applies immediately in v1 (no locked draft).
+  pickMobaHero(heroId: string, pid?: number): void {
+    if (!this.cfg.mobaMode || !MOBA_HEROES[heroId]) return;
+    const r = this.resolve(pid);
+    if (!r) return;
+    this.mobaApplyHero(r.meta, r.e, heroId);
+    if (r.e.mobaTeam) this.mobaRespawnHero(r.meta, r.e);
+  }
+
+  // Rebuild a player as the given hero: bespoke ability kit (not the class kit),
+  // the hero's base class for resource/GCD/stats, and a fixed match level.
+  private mobaApplyHero(meta: PlayerMeta, e: Entity, heroId: string): void {
+    const hero = MOBA_HEROES[heroId];
+    if (!hero) return;
+    meta.mobaHeroId = heroId;
+    meta.cls = hero.baseClass;
+    e.level = MOBA_HERO_LEVEL;
+    e.cooldowns.clear();
+    meta.known = hero.abilities
+      .map((id) => MOBA_ABILITIES[id])
+      .filter((def): def is AbilityDef => !!def)
+      .map((def) => ({
+        def, rank: 1, cost: def.cost, castTime: def.castTime, cooldown: def.cooldown,
+        effects: def.effects, threatFlat: def.threat?.flat ?? 0, threatMult: def.threat?.mult ?? 1,
+      }));
+    recalcPlayerStats(e, meta.cls, meta.equipment);
+    e.hp = e.maxHp;
+    e.resource = e.resourceType === 'mana' ? e.maxResource : e.resourceType === 'energy' ? 100 : 0;
+    e.color = hero.color;
+  }
+
+  // Return a slain (or newly seated) hero to their team's core, at full health.
+  private mobaRespawnHero(meta: PlayerMeta, e: Entity): void {
+    const team: MobaTeam = e.mobaTeam === 'B' ? 'B' : 'A';
+    const inst = this.mobaMatch ? this.instances.find((i) => i.dungeonId === 'moba_lane' && i.slot === this.mobaMatch!.slot) : null;
+    const origin = inst ? this.instanceOriginOf(inst) : { x: 0, z: 0 };
+    const base = mobaHeroSpawn(team);
+    e.dead = false;
+    e.hp = e.maxHp;
+    e.resource = e.resourceType === 'mana' ? e.maxResource : e.resourceType === 'energy' ? 100 : 0;
+    e.pos = this.groundPos(origin.x + base.x, origin.z + base.z);
+    e.prevPos = { ...e.pos };
+    e.facing = team === 'A' ? 0 : Math.PI;
+    e.inCombat = false;
+    e.combatTimer = 99;
+    e.targetId = null;
+    e.autoAttack = false;
+    e.auras = [];
+    e.ccDr.clear();
+    this.rebucket(e);
+    meta.mobaRespawnLeft = 0;
+  }
+
+  // A core is invulnerable while any of its team's towers still stand.
+  private mobaCoreInvulnerable(core: Entity): boolean {
+    const match = this.mobaMatch;
+    if (!match) return false;
+    const towers = core.mobaTeam === 'A' ? match.towersA : match.towersB;
+    let standing = 0;
+    for (const id of towers) { const t = this.entities.get(id); if (t && !t.dead) standing++; }
+    return !mobaCoreVulnerable(standing);
+  }
+
+  // Per-tick match driver: warmup, minion waves, hero respawns, and the win check.
+  private updateMobaMatch(): void {
+    const match = this.mobaMatch;
+    if (!match || match.phase === 'ended') return;
+    match.elapsed += DT;
+    if (match.phase === 'warmup' && match.elapsed >= MOBA_MATCH_WARMUP_SEC) match.phase = 'playing';
+    if (match.phase === 'playing') {
+      match.waveTimer -= DT;
+      if (match.waveTimer <= 0) {
+        match.waveIndex++;
+        this.spawnMobaWave('A', match);
+        this.spawnMobaWave('B', match);
+        match.waveTimer = MOBA_WAVE_INTERVAL_SEC;
+      }
+    }
+    for (const id of [...match.minionIds]) { const m = this.entities.get(id); if (!m || m.dead) match.minionIds.delete(id); }
+    for (const pid of match.teams.keys()) {
+      const meta = this.players.get(pid);
+      const e = this.entities.get(pid);
+      if (!meta || !e || !e.dead) continue;
+      if (meta.mobaRespawnLeft > 0) {
+        meta.mobaRespawnLeft -= DT;
+        if (meta.mobaRespawnLeft <= 0) this.mobaRespawnHero(meta, e);
+      }
+    }
+    const coreA = this.entities.get(match.coreA);
+    const coreB = this.entities.get(match.coreB);
+    const winner = mobaWinner(!!coreA && !coreA.dead, !!coreB && !coreB.dead);
+    if (winner) {
+      match.winner = winner;
+      match.phase = 'ended';
+      this.emit(winner === 'A' ? { type: 'log', text: 'Team A wins the Clash!', color: '#ffd100' } : { type: 'log', text: 'Team B wins the Clash!', color: '#ffd100' });
+    }
+  }
+
+  // Spawn one minion wave from a team's base, tagged with the team and marching lane.
+  private spawnMobaWave(team: MobaTeam, match: MobaMatch): void {
+    const inst = this.instances.find((i) => i.dungeonId === 'moba_lane' && i.slot === match.slot);
+    if (!inst) return;
+    const origin = this.instanceOriginOf(inst);
+    const spawn = mobaMinionSpawn(team);
+    const comp = mobaWaveComposition(match.waveIndex);
+    let i = 0;
+    for (const mobId of comp) {
+      const template = MOBS[mobId];
+      if (!template) { i++; continue; }
+      const offX = ((i % 3) - 1) * 2;
+      const offZ = (team === 'A' ? -1 : 1) * i * 1.5;
+      const m = createMob(this.nextId++, template, template.minLevel, this.groundPos(origin.x + spawn.x + offX, origin.z + spawn.z + offZ));
+      m.mobaTeam = team;
+      m.facing = team === 'A' ? 0 : Math.PI;
+      m.prevFacing = m.facing;
+      this.addEntity(m);
+      inst.mobIds.push(m.id);
+      match.minionIds.add(m.id);
+      i++;
+    }
+  }
+
+  // AI for a lane unit. Towers/cores are stationary and auto-attack the nearest enemy
+  // in range; minions march toward the enemy core, stopping to fight enemies in range.
+  private updateMobaUnit(mob: Entity): void {
+    mob.combatTimer += DT;
+    if (mob.swingTimer > 0) mob.swingTimer -= DT;
+    const detectRadius = MOBS[mob.templateId]?.aggroRadius ?? 12;
+    const target = this.mobaNearestEnemy(mob, detectRadius);
+    const role = this.mobaRoleOf(mob);
+    if (role === 'tower' || role === 'core') {
+      if (target) {
+        mob.aiState = 'attack';
+        mob.facing = angleTo(mob.pos, target.pos);
+        mob.inCombat = true;
+        mob.aggroTargetId = target.id;
+        if (mob.swingTimer <= 0) { this.mobSwing(mob, target); mob.swingTimer = mob.weapon.speed * this.swingIntervalMult(mob); }
+      } else {
+        mob.aiState = 'idle';
+        mob.inCombat = false;
+        mob.aggroTargetId = null;
+      }
+      return;
+    }
+    // minion
+    if (target) {
+      mob.aggroTargetId = target.id;
+      mob.inCombat = true;
+      const mr = this.mobEffectiveMeleeRange(mob, target);
+      if (dist2d(mob.pos, target.pos) > mr) {
+        mob.aiState = 'chase';
+        this.moveToward(mob, target.pos, mob.moveSpeed);
+      } else {
+        mob.aiState = 'attack';
+        mob.facing = angleTo(mob.pos, target.pos);
+        if (mob.swingTimer <= 0) { this.mobSwing(mob, target); mob.swingTimer = mob.weapon.speed * this.swingIntervalMult(mob); }
+      }
+      return;
+    }
+    // no enemy in range: advance the lane toward the enemy core
+    mob.aggroTargetId = null;
+    mob.inCombat = false;
+    mob.aiState = 'chase';
+    const inst = this.instances.find((i) => i.dungeonId === 'moba_lane' && i.mobIds.includes(mob.id));
+    const origin = inst ? this.instanceOriginOf(inst) : { x: 0, z: 0 };
+    const core = mobaEnemyCore((mob.mobaTeam as MobaTeam) ?? 'A');
+    this.moveToward(mob, this.groundPos(origin.x + core.x, origin.z + core.z), mob.moveSpeed);
+  }
+
+  // Nearest hostile (opposite-team) living unit within radius; skips an invulnerable core.
+  private mobaNearestEnemy(mob: Entity, radius: number): Entity | null {
+    let best: Entity | null = null;
+    let bestD = Infinity;
+    this.grid.forEachInRadius(mob.pos.x, mob.pos.z, radius, (e, d2) => {
+      if (e.dead || e.id === mob.id) return;
+      if (e.kind === 'object' || e.kind === 'npc') return;
+      if (!this.isHostileTo(mob, e)) return;
+      if (this.mobaRoleOf(e) === 'core' && this.mobaCoreInvulnerable(e)) return;
+      if (d2 < bestD) { bestD = d2; best = e; }
+    });
+    return best;
+  }
+
   isHostileTo(attacker: Entity, target: Entity): boolean {
     if (target.spectator) return false; // crawl-mode spectators are untargetable
+    // The Clash (MOBA): units on opposite teams are enemies; same team (including
+    // one's own minions and towers) are friendly. Decided before anything else so a
+    // minion/tower/core never registers as hostile to its own side.
+    if (this.cfg.mobaMode) {
+      const at = this.mobaTeamOf(attacker);
+      const tt = this.mobaTeamOf(target);
+      if (at !== null && tt !== null) return at !== tt;
+    }
     if (target.kind === 'mob') {
       if (target.templateId.startsWith('vision_')) return false;
       if (target.ownerId !== null) {
@@ -8905,6 +9204,23 @@ export class Sim {
       return !!owner && owner.kind === 'player' && !this.isHostileTo(caster, owner);
     }
     return false;
+  }
+
+  // The Clash (MOBA): the team a unit fights for. Heroes (players) carry it directly;
+  // minions/towers/cores carry it on the entity; a pet inherits its owner's team.
+  private mobaTeamOf(e: Entity): MobaTeam | null {
+    if (e.mobaTeam === 'A' || e.mobaTeam === 'B') return e.mobaTeam;
+    if (e.kind === 'mob' && e.ownerId !== null) {
+      const owner = this.entities.get(e.ownerId);
+      return owner ? this.mobaTeamOf(owner) : null;
+    }
+    return null;
+  }
+
+  // The Clash: a unit's lane role ('tower'|'core'|'minion') from its template, or
+  // undefined for heroes and every non-MOBA entity.
+  private mobaRoleOf(e: Entity): 'tower' | 'core' | 'minion' | undefined {
+    return e.kind === 'mob' ? MOBS[e.templateId]?.mobaRole : undefined;
   }
 
   // -------------------------------------------------------------------------
@@ -11186,6 +11502,12 @@ export class Sim {
       const level = this.rng.int(template.minLevel, template.maxLevel);
       const mob = createMob(this.nextId++, template, level, this.groundPos(origin.x + spawn.x, origin.z + spawn.z));
       mob.facing = Math.PI; // face the entrance
+      // The Clash: tag lane structures with their team (by which half of the lane
+      // they sit in) and face them down-lane toward the enemy base.
+      if (this.cfg.mobaMode && template.mobaRole) {
+        mob.mobaTeam = mobaTeamForZ(spawn.z);
+        mob.facing = mob.mobaTeam === 'A' ? 0 : Math.PI;
+      }
       mob.prevFacing = mob.facing;
       this.addEntity(mob);
       inst.mobIds.push(mob.id);
