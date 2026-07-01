@@ -4750,6 +4750,18 @@ export const en: EnTranslations = {
       "crawl_boss_showrunner": {
         "name": "The Showrunner"
       },
+      "moba_minion_melee": {
+        "name": "Lane Footman"
+      },
+      "moba_minion_ranged": {
+        "name": "Lane Caster"
+      },
+      "moba_tower": {
+        "name": "Guard Tower"
+      },
+      "moba_core": {
+        "name": "Nexus Core"
+      },
       "elder_bristleback": {
         "name": "Elder Bristleback"
       },
@@ -6067,6 +6079,11 @@ export const en: EnTranslations = {
         "name": "Nythraxis Raid Arena",
         "enterText": "You pass through the sealed royal door.",
         "leaveText": "You return to the cold air of Thornpeak."
+      },
+      "moba_lane": {
+        "name": "The Clash: Ironhold Lane",
+        "enterText": "Welcome to the Clash. Push the lane, take their towers, and shatter the enemy core before they shatter yours.",
+        "leaveText": "You withdraw from the lane."
       },
       "drowned_temple": {
         "name": "The Drowned Temple",

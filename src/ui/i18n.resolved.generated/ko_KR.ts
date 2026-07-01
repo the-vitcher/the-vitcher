@@ -4750,6 +4750,18 @@ export const ko_KR: EnTranslations = {
       "crawl_boss_showrunner": {
         "name": "쇼러너"
       },
+      "moba_minion_melee": {
+        "name": "라인 보병"
+      },
+      "moba_minion_ranged": {
+        "name": "라인 마법사"
+      },
+      "moba_tower": {
+        "name": "방어 타워"
+      },
+      "moba_core": {
+        "name": "넥서스 코어"
+      },
       "elder_bristleback": {
         "name": "늙은 뻣센등뼈"
       },
@@ -6067,6 +6079,11 @@ export const ko_KR: EnTranslations = {
         "name": "니트락시스 공격대 투기장",
         "enterText": "봉인된 왕실 문을 지나갑니다.",
         "leaveText": "쏜피크의 차가운 공기 속으로 돌아옵니다."
+      },
+      "moba_lane": {
+        "name": "클래시: 아이언홀드 라인",
+        "enterText": "클래시에 오신 것을 환영합니다. 라인을 밀어붙이고, 적의 타워를 파괴하고, 상대가 당신의 코어를 부수기 전에 적의 코어를 부수세요.",
+        "leaveText": "당신은 라인에서 후퇴합니다."
       },
       "drowned_temple": {
         "name": "익사한 신전",

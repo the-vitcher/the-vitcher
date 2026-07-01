@@ -232,6 +232,11 @@ export interface MobTemplate {
   color: number; // render hint
   boss?: boolean;
   rare?: boolean;
+  // MOBA mode: this mob is a lane structure or minion. 'tower'/'core' are stationary
+  // (never move or leash, auto-attack the nearest enemy in range); 'minion' walks the
+  // lane toward the enemy core, fighting enemies in range. The unit's team comes from
+  // Entity.mobaTeam, set at spawn. Undefined for all normal mobs.
+  mobaRole?: 'tower' | 'core' | 'minion';
   // Elite scaling, vanilla-style: ~2.3x health, ~1.5x damage, double XP.
   elite?: boolean;
   // Rare/miniboss controls.
@@ -706,6 +711,21 @@ export interface DungeonDef {
   leaveText: string;
 }
 
+// MOBA mode: a bespoke playable hero. Each hero maps to an underlying base class
+// (for resource type, GCD, and stat scaffolding) but presents its OWN ability kit
+// (bespoke AbilityDef ids), replacing the class kit while mobaMode is on. Purely
+// declarative; the Sim reads this to build the player's known-ability list.
+export interface MobaHeroDef {
+  id: string;
+  name: string;
+  title: string;
+  role: 'mage' | 'bruiser' | 'assassin' | 'marksman' | 'support';
+  baseClass: PlayerClass; // resource type + GCD + base stat scaffolding
+  abilities: string[]; // bespoke ability ids, in action-bar order
+  color: number; // render/UI hint
+  blurb: string; // one-line hero-select description (player-visible English)
+}
+
 export type BiomeId = 'vale' | 'marsh' | 'peaks';
 
 export interface ZoneDef {
@@ -956,6 +976,11 @@ export interface Entity {
   // Crawl PvP: this player has killed another player this run and wears the red
   // player-killer skull by their name. Set only in crawlMode; cleared each run.
   playerKiller?: boolean;
+  // MOBA mode: which team (A or B) this unit fights for. Set on heroes, minions,
+  // towers, and cores; null for everything else. Drives hostility (opposite teams
+  // are enemies; same team, incl. minions/towers, are friendly). Only ever set when
+  // SimConfig.mobaMode is on, so normal play is unaffected.
+  mobaTeam?: 'A' | 'B' | null;
   scale: number;
   color: number;
   skinCatalog: SkinCatalog; // player appearance catalog: class texture set or cosmetic body.
@@ -1112,6 +1137,13 @@ export interface SimConfig {
   // rest of the run (see handleDeath); the host starts a fresh run each hour via
   // Sim.startCrawlRun(). Off by default, so the normal MMO is unaffected.
   crawlMode?: boolean;
+  // MOBA mode ("The Clash"): a single-lane team battle. Players pick a bespoke
+  // hero, push a lane past enemy towers with minion waves, and win by destroying
+  // the enemy core. Off by default, so the normal MMO is unaffected.
+  mobaMode?: boolean;
+  // MOBA team size (heroes per side, 1..5). Empty slots fill with bots on the
+  // authoritative host. Ignored unless mobaMode is on.
+  mobaTeamSize?: number;
 }
 
 export function emptyMoveInput(): MoveInput {

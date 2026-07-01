@@ -4750,6 +4750,18 @@ export const en_XA: EnTranslations = {
       "crawl_boss_showrunner": {
         "name": "[Ţĥé Šĥóŵŕúññéŕ]"
       },
+      "moba_minion_melee": {
+        "name": "[Ļáñé Ƒóóţɱáñ]"
+      },
+      "moba_minion_ranged": {
+        "name": "[Ļáñé Çášţéŕ]"
+      },
+      "moba_tower": {
+        "name": "[Ĝúáŕð Ţóŵéŕ]"
+      },
+      "moba_core": {
+        "name": "[Ñéẋúš Çóŕé]"
+      },
       "elder_bristleback": {
         "name": "[Éļðéŕ Ɓŕíšţļéƀáçķ]"
       },
@@ -6067,6 +6079,11 @@ export const en_XA: EnTranslations = {
         "name": "[Ñýţĥŕáẋíš Ŕáíð Áŕéñá]",
         "enterText": "[Ýóú þášš ţĥŕóúĝĥ ţĥé šéáļéð ŕóýáļ ðóóŕ.]",
         "leaveText": "[Ýóú ŕéţúŕñ ţó ţĥé çóļð áíŕ óƒ Ţĥóŕñþéáķ.]"
+      },
+      "moba_lane": {
+        "name": "[Ţĥé Çļášĥ: Íŕóñĥóļð Ļáñé]",
+        "enterText": "[Ŵéļçóɱé ţó ţĥé Çļášĥ. Þúšĥ ţĥé ļáñé, ţáķé ţĥéíŕ ţóŵéŕš, áñð šĥáţţéŕ ţĥé éñéɱý çóŕé ƀéƒóŕé ţĥéý šĥáţţéŕ ýóúŕš.]",
+        "leaveText": "[Ýóú ŵíţĥðŕáŵ ƒŕóɱ ţĥé ļáñé.]"
       },
       "drowned_temple": {
         "name": "[Ţĥé Ðŕóŵñéð Ţéɱþļé]",

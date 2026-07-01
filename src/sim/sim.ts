@@ -832,6 +832,8 @@ export class Sim {
       devCommands: this.devCommands,
       lockoutNowMs: cfg.lockoutNowMs ?? (() => Math.floor(this.time * 1000)),
       crawlMode: cfg.crawlMode ?? false,
+      mobaMode: cfg.mobaMode ?? false,
+      mobaTeamSize: cfg.mobaTeamSize ?? 5,
     };
     this.rng = new Rng(cfg.seed);
 

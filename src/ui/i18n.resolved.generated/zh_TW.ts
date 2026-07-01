@@ -4750,6 +4750,18 @@ export const zh_TW: EnTranslations = {
       "crawl_boss_showrunner": {
         "name": "節目總監"
       },
+      "moba_minion_melee": {
+        "name": "兵線步兵"
+      },
+      "moba_minion_ranged": {
+        "name": "兵線術士"
+      },
+      "moba_tower": {
+        "name": "防禦塔"
+      },
+      "moba_core": {
+        "name": "樞紐核心"
+      },
       "elder_bristleback": {
         "name": "年長硬鬃"
       },
@@ -6067,6 +6079,11 @@ export const zh_TW: EnTranslations = {
         "name": "尼思拉克西斯團隊競技場",
         "enterText": "你穿過封印的王室之門。",
         "leaveText": "你回到荊峰的寒冷空氣中。"
+      },
+      "moba_lane": {
+        "name": "對決：鐵壁兵線",
+        "enterText": "歡迎來到對決。推進兵線，摧毀敵方防禦塔，在對手擊碎你的核心之前先擊碎他們的核心。",
+        "leaveText": "你從兵線上撤退。"
       },
       "drowned_temple": {
         "name": "溺亡神殿",

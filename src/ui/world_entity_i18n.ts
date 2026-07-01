@@ -41,6 +41,8 @@ const MOB_IDS = [
   'crawl_chrome_zealot', 'crawl_ratings_horror',
   'crawl_boss_gnasher', 'crawl_boss_vurmix', 'crawl_boss_producers_pet', 'crawl_boss_mortdecai',
   'crawl_boss_mist_anchor', 'crawl_boss_kordeth', 'crawl_boss_showrunner',
+  // The Clash (MOBA, src/sim/content/moba.ts): lane minions + structures
+  'moba_minion_melee', 'moba_minion_ranged', 'moba_tower', 'moba_core',
 ] as const;
 
 const NPC_IDS = [
@@ -75,7 +77,7 @@ const QUEST_IDS = [
 ] as const;
 
 const ZONE_IDS = ['eastbrook_vale', 'mirefen_marsh', 'thornpeak_heights'] as const;
-const DUNGEON_IDS = ['hollow_crypt', 'sunken_bastion', 'gravewyrm_sanctum', 'nythraxis_crypt', 'nythraxis_boss_arena'] as const;
+const DUNGEON_IDS = ['hollow_crypt', 'sunken_bastion', 'gravewyrm_sanctum', 'nythraxis_crypt', 'nythraxis_boss_arena', 'moba_lane'] as const;
 
 type MobId = typeof MOB_IDS[number];
 type NpcId = typeof NPC_IDS[number];

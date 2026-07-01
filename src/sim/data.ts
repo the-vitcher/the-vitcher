@@ -31,6 +31,7 @@ import {
   TEMPLE_NPCS, TEMPLE_OBJECTS, TEMPLE_PROPS, TEMPLE_QUEST_ORDER, TEMPLE_QUESTS,
 } from './content/temple';
 import { THE_CRAWL_DUNGEON_DEFS, THE_CRAWL_ITEMS, THE_CRAWL_MOBS, THE_CRAWL_NPCS } from './content/the_crawl';
+import { MOBA_DUNGEON_DEFS, MOBA_MOBS } from './content/moba';
 
 function mergeItems(...parts: Record<string, ItemDef>[]): Record<string, ItemDef> {
   const merged = Object.assign({}, ...parts);
@@ -44,6 +45,11 @@ function mergeItems(...parts: Record<string, ItemDef>[]): Record<string, ItemDef
 
 export { CLASSES, ABILITIES, abilitiesKnownAt } from './content/classes';
 export type { ClassDef } from './content/classes';
+// Bespoke MOBA hero abilities live in their OWN table (not the global class ABILITIES):
+// the Sim builds a hero's known-ability list directly from these, so they never need to
+// enter the class ability surface (icons, tooltips, talent trees) the way class kits do.
+export { MOBA_ABILITIES, MOBA_HEROES } from './content/moba';
+export type { MobaHeroDef } from './types';
 // Re-export content shapes so existing `from './data'` imports keep working.
 export type {
   BiomeId, CampDef, DungeonDef, DungeonSpawn, GroundObjectDef, NpcDef, ZoneDef, ZonePropsDef,
@@ -57,7 +63,7 @@ export const ITEMS: Record<string, ItemDef> = mergeItems(BASE_ITEMS, ZONE2_ITEMS
 
 export const MOBS: Record<string, MobTemplate> = {
   ...ZONE1_MOBS, ...ZONE2_MOBS, ...ZONE3_MOBS, ...DUNGEON_MOBS,
-  ...WARLOCK_PET_MOBS, ...TEMPLE_MOBS, ...TEMPLE_DUNGEON_MOBS, ...THE_CRAWL_MOBS,
+  ...WARLOCK_PET_MOBS, ...TEMPLE_MOBS, ...TEMPLE_DUNGEON_MOBS, ...THE_CRAWL_MOBS, ...MOBA_MOBS,
 };
 
 export const NPCS: Record<string, NpcDef> = {
@@ -176,10 +182,11 @@ export function instanceOrigin(dungeonIndex: number, slot: number): { x: number;
   return { x: 900 + dungeonIndex * 600, z: -1250 + slot * 500 };
 }
 
-// The Crawl floors take instance x-bands at index 6..12 (instanceOrigin x
-// 4500..8100); the arena band (ARENA_X) sits beyond them so dungeonAt never
-// reads a Crawl instance as an arena.
-export const DUNGEONS: Record<string, DungeonDef> = { ...DUNGEON_DEFS, ...TEMPLE_DUNGEON_DEFS, ...THE_CRAWL_DUNGEON_DEFS };
+// The Crawl floors take instance x-bands at index 6..13 (instanceOrigin x
+// 4500..8400); The Clash (MOBA) lane takes index 14 (x 9300); the arena band
+// (ARENA_X) sits beyond them all so dungeonAt never reads a Crawl/Clash instance
+// as an arena.
+export const DUNGEONS: Record<string, DungeonDef> = { ...DUNGEON_DEFS, ...TEMPLE_DUNGEON_DEFS, ...THE_CRAWL_DUNGEON_DEFS, ...MOBA_DUNGEON_DEFS };
 
 export const DUNGEON_LIST: DungeonDef[] = Object.values(DUNGEONS).sort((a, b) => a.index - b.index);
 
@@ -202,9 +209,10 @@ export function dungeonAt(x: number): DungeonDef | null {
 // ---------------------------------------------------------------------------
 
 // Arena band sits beyond the last dungeon instance x-band. Dungeons occupy
-// index 0..12 (The Crawl's deepest floor is index 12 at instanceOrigin x 8100),
-// so the arena starts well past that to keep dungeonAt's x-band test unambiguous.
-export const ARENA_X = 9000; // arena instances share this x; slots stack along z
+// index 0..14 (The Crawl guide room is index 13 at x 8400; The Clash lane is
+// index 14 at x 9300), so the arena starts well past that to keep dungeonAt's
+// x-band test unambiguous.
+export const ARENA_X = 12000; // arena instances share this x; slots stack along z
 export const ARENA_X_MIN = ARENA_X; // x at/after this = an arena instance, not a dungeon
 export const ARENA_SLOT_COUNT = 4; // concurrent 1v1 matches the world can host
 const ARENA_Z0 = -1250;

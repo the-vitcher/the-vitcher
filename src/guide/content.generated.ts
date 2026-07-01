@@ -1307,6 +1307,14 @@ export const GUIDE_DUNGEONS: GuideDungeon[] = [
     "name": "The Drowned Temple"
   },
   {
+    "id": "moba_lane",
+    "isRaid": false,
+    "suggestedPlayers": 5,
+    "min": 18,
+    "max": 20,
+    "name": "The Clash: Ironhold Lane"
+  },
+  {
     "id": "gravewyrm_sanctum",
     "isRaid": false,
     "suggestedPlayers": 5,

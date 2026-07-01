@@ -4750,6 +4750,18 @@ export const es: EnTranslations = {
       "crawl_boss_showrunner": {
         "name": "The Showrunner"
       },
+      "moba_minion_melee": {
+        "name": "Lane Footman"
+      },
+      "moba_minion_ranged": {
+        "name": "Lane Caster"
+      },
+      "moba_tower": {
+        "name": "Guard Tower"
+      },
+      "moba_core": {
+        "name": "Nexus Core"
+      },
       "elder_bristleback": {
         "name": "Viejo Bristleback"
       },
@@ -6067,6 +6079,11 @@ export const es: EnTranslations = {
         "name": "Arena de banda de Nythraxis",
         "enterText": "Cruzas la puerta real sellada.",
         "leaveText": "Regresas al aire frío de Thornpeak."
+      },
+      "moba_lane": {
+        "name": "The Clash: Ironhold Lane",
+        "enterText": "Welcome to the Clash. Push the lane, take their towers, and shatter the enemy core before they shatter yours.",
+        "leaveText": "You withdraw from the lane."
       },
       "drowned_temple": {
         "name": "El Templo Ahogado",

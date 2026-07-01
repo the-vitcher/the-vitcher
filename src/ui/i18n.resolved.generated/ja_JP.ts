@@ -4750,6 +4750,18 @@ export const ja_JP: EnTranslations = {
       "crawl_boss_showrunner": {
         "name": "ショーランナー"
       },
+      "moba_minion_melee": {
+        "name": "レーンの歩兵"
+      },
+      "moba_minion_ranged": {
+        "name": "レーンの術士"
+      },
+      "moba_tower": {
+        "name": "防衛タワー"
+      },
+      "moba_core": {
+        "name": "ネクサスコア"
+      },
       "elder_bristleback": {
         "name": "老ブリストルバック"
       },
@@ -6067,6 +6079,11 @@ export const ja_JP: EnTranslations = {
         "name": "ナイスラクシスのレイドアリーナ",
         "enterText": "封印された王家の扉を通り抜けます。",
         "leaveText": "ソーンピークの冷たい空気へ戻ります。"
+      },
+      "moba_lane": {
+        "name": "クラッシュ：アイアンホールド・レーン",
+        "enterText": "クラッシュへようこそ。レーンを押し上げ、敵のタワーを破壊し、相手より先に敵のコアを打ち砕け。",
+        "leaveText": "あなたはレーンから撤退した。"
       },
       "drowned_temple": {
         "name": "溺れし神殿",

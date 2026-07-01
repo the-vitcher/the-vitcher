@@ -4750,6 +4750,18 @@ export const it_IT: EnTranslations = {
       "crawl_boss_showrunner": {
         "name": "The Showrunner"
       },
+      "moba_minion_melee": {
+        "name": "Lane Footman"
+      },
+      "moba_minion_ranged": {
+        "name": "Lane Caster"
+      },
+      "moba_tower": {
+        "name": "Guard Tower"
+      },
+      "moba_core": {
+        "name": "Nexus Core"
+      },
       "elder_bristleback": {
         "name": "Bristleback anziano"
       },
@@ -6067,6 +6079,11 @@ export const it_IT: EnTranslations = {
         "name": "Arena d'incursione di Nythraxis",
         "enterText": "Oltrepassi la porta reale sigillata.",
         "leaveText": "Torni nell'aria fredda di Thornpeak."
+      },
+      "moba_lane": {
+        "name": "The Clash: Ironhold Lane",
+        "enterText": "Welcome to the Clash. Push the lane, take their towers, and shatter the enemy core before they shatter yours.",
+        "leaveText": "You withdraw from the lane."
       },
       "drowned_temple": {
         "name": "Il Tempio Annegato",
