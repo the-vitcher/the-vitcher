@@ -307,6 +307,13 @@ export interface IWorld {
   spectatePrev(): void;
   // Seconds before the current floor collapses, or null when not on a timed floor.
   floorTimeLeft(): number | null;
+  // Name of the live crawler this spectator is watching, or null (drives the
+  // "Now watching" overlay). Usually null offline (single player).
+  spectateTargetName(): string | null;
+  // The Crawl season clock: the current run-of-day (1-based), the runs-per-day
+  // total, and seconds before the hourly reset. Null when not in a live Crawl
+  // season (the offline Sim has no hourly rotation, so it reports null).
+  crawlRun(): { run: number; total: number; secondsLeft: number } | null;
   chat(text: string): void;
   playEmote(emoteId: OverheadEmoteId): void;
   abandonPet(): void;

@@ -169,6 +169,62 @@
   }
   @keyframes floorTimerPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
   @media (prefers-reduced-motion: reduce) { #floor-timer.urgent { animation: none; } }
+  /* The Crawl season clock: run-of-day + time before the hourly reset. Sits just
+     below the floor-collapse timer (both can be visible inside a timed floor). */
+  #crawl-run {
+    position: fixed;
+    top: 44px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 40;
+    padding: 3px 12px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 209, 0, 0.4);
+    background: rgba(18, 14, 4, 0.72);
+    color: #ffe08a;
+    font: 600 13px/1.2 system-ui, sans-serif;
+    letter-spacing: 0.02em;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  #crawl-run[hidden] { display: none; }
+  /* Spectator bar: shown after death in a Crawl run. Names the crawler being
+     watched and lets the spectator cycle through the survivors. */
+  #spectator-bar {
+    position: fixed;
+    bottom: 96px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 41;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(150, 120, 200, 0.5);
+    background: rgba(14, 10, 22, 0.82);
+    color: #d8ccf0;
+    font: 600 13px/1.2 system-ui, sans-serif;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+    max-width: min(92vw, 460px);
+  }
+  #spectator-bar[hidden] { display: none; }
+  #spectator-bar .spec-label { opacity: 0.85; }
+  #spectator-bar .spec-name { color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #spectator-bar button {
+    min-width: 40px;
+    min-height: 40px;
+    padding: 0 12px;
+    border-radius: 6px;
+    border: 1px solid rgba(150, 120, 200, 0.6);
+    background: rgba(40, 30, 60, 0.9);
+    color: #e6ddff;
+    font: 700 16px/1 system-ui, sans-serif;
+    cursor: pointer;
+  }
+  #spectator-bar button:hover { background: rgba(60, 45, 90, 0.95); }
+  #spectator-bar button:focus-visible { outline: 2px solid #b9a3ff; outline-offset: 2px; }
   :root {
     --gold: #ffd100;
     --gold-dim: #c8a838;
@@ -8012,6 +8068,13 @@
     <div id="swingbar"><div class="fill"></div><div class="label"></div></div>
 
     <div id="floor-timer" role="status" aria-live="polite" hidden></div>
+    <div id="crawl-run" role="status" aria-live="polite" hidden></div>
+    <div id="spectator-bar" role="group" hidden>
+      <button id="spec-prev" type="button" data-i18n-aria="hudChrome.spectator.prev" aria-label="Previous crawler">&#8249;</button>
+      <span class="spec-label" data-i18n="hudChrome.spectator.watching">Now watching</span>
+      <span class="spec-name" id="spec-name"></span>
+      <button id="spec-next" type="button" data-i18n-aria="hudChrome.spectator.next" aria-label="Next crawler">&#8250;</button>
+    </div>
 
     <div id="minimap-wrap">
       <div id="zone-label" data-i18n="entities.zones.eastbrook_vale.name">Eastbrook Vale</div>

@@ -210,6 +210,13 @@ export const de_DE: EnTranslations = {
       "toggleHaptics": "Haptik umschalten"
     },
     "floorTimer": "Floor collapses in {time}",
+    "crawlRun": "Run {run} of {total}, resets in {time}",
+    "spectator": {
+      "watching": "Now watching",
+      "prev": "Previous crawler",
+      "next": "Next crawler",
+      "none": "No live crawlers"
+    },
     "widgets": {
       "clockTitle": "Ortszeit - klicken, um zwischen 12-/24-Stunden zu wechseln",
       "worldCoordinates": "Weltkoordinaten",

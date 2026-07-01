@@ -210,6 +210,13 @@ export const zh_CN: EnTranslations = {
       "toggleHaptics": "切换震动反馈"
     },
     "floorTimer": "楼层将在 {time} 后坍塌",
+    "crawlRun": "第 {run}/{total} 轮，{time} 后重置",
+    "spectator": {
+      "watching": "正在观战",
+      "prev": "上一位爬行者",
+      "next": "下一位爬行者",
+      "none": "没有存活的爬行者"
+    },
     "widgets": {
       "clockTitle": "本地时间 - 点击切换 12/24 小时制",
       "worldCoordinates": "世界坐标",

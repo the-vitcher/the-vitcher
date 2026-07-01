@@ -477,6 +477,9 @@ export class Hud {
   private buffBarEl = $('#buff-bar');
   private targetFrameEl = $('#target-frame');
   private floorTimerEl = $('#floor-timer');
+  private crawlRunEl = $('#crawl-run');
+  private spectatorBarEl = $('#spectator-bar');
+  private specNameEl = $('#spec-name');
   private targetEliteTagEl = $('#tf-elite-tag');
   private targetNameEl = $('#tf-name');
   private targetLevelEl = $('#tf-level');
@@ -765,6 +768,9 @@ export class Hud {
     });
     $('#mm-char').addEventListener('click', () => this.toggleChar());
     $('#mm-spell').addEventListener('click', () => this.toggleSpellbook());
+    // Crawl spectator: cycle through the surviving crawlers.
+    $('#spec-prev')?.addEventListener('click', () => this.sim.spectatePrev());
+    $('#spec-next')?.addEventListener('click', () => this.sim.spectateNext());
     $('#mm-talents')?.addEventListener('click', () => this.toggleTalents());
     $('#mm-quest').addEventListener('click', () => this.toggleQuestLog());
     // Collapse/expand the on-screen quest tracker by clicking its header. The
@@ -2648,6 +2654,29 @@ export class Hud {
     el.classList.add('active');
   }
 
+  // The Crawl season clock (run-of-day + reset countdown) and spectator bar
+  // ("Now watching: X" with prev/next). Both hide outside a live Crawl run.
+  private updateCrawlOverlays(): void {
+    const sim = this.sim;
+    const run = sim.crawlRun();
+    if (run === null) {
+      if (!this.crawlRunEl.hidden) this.crawlRunEl.hidden = true;
+    } else {
+      const s = Math.max(0, run.secondsLeft);
+      const mmss = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+      const txt = t('hudChrome.crawlRun', { run: formatNumber(run.run), total: formatNumber(run.total), time: mmss });
+      if (this.crawlRunEl.textContent !== txt) this.crawlRunEl.textContent = txt;
+      if (this.crawlRunEl.hidden) this.crawlRunEl.hidden = false;
+    }
+    if (!sim.isSpectator()) {
+      if (!this.spectatorBarEl.hidden) this.spectatorBarEl.hidden = true;
+    } else {
+      const shown = sim.spectateTargetName() ?? t('hudChrome.spectator.none');
+      if (this.specNameEl.textContent !== shown) this.specNameEl.textContent = shown;
+      if (this.spectatorBarEl.hidden) this.spectatorBarEl.hidden = false;
+    }
+  }
+
   update(): void {
     const sim = this.sim;
     const p = sim.player;
@@ -2662,6 +2691,7 @@ export class Hud {
       if (this.floorTimerEl.hidden) this.floorTimerEl.hidden = false;
       this.floorTimerEl.classList.toggle('urgent', ftl <= 30);
     }
+    this.updateCrawlOverlays();
     const now = performance.now();
     const fastHud = now - this.lastHudFastAt >= 100;
     if (fastHud) { this.lastHudFastAt = now; this.reconcileSfx(); }

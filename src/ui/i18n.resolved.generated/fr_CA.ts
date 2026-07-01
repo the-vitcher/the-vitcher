@@ -210,6 +210,13 @@ export const fr_CA: EnTranslations = {
       "toggleHaptics": "Activer/désactiver les vibrations"
     },
     "floorTimer": "Floor collapses in {time}",
+    "crawlRun": "Run {run} of {total}, resets in {time}",
+    "spectator": {
+      "watching": "Now watching",
+      "prev": "Previous crawler",
+      "next": "Next crawler",
+      "none": "No live crawlers"
+    },
     "widgets": {
       "clockTitle": "Heure locale - cliquez pour basculer 12/24 heures",
       "worldCoordinates": "Coordonnées du monde",

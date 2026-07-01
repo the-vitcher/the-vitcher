@@ -210,6 +210,13 @@ export const ko_KR: EnTranslations = {
       "toggleHaptics": "진동 전환"
     },
     "floorTimer": "{time} 후 층이 붕괴됩니다",
+    "crawlRun": "{total}판 중 {run}판, {time} 후 초기화",
+    "spectator": {
+      "watching": "관전 중",
+      "prev": "이전 크롤러",
+      "next": "다음 크롤러",
+      "none": "생존한 크롤러 없음"
+    },
     "widgets": {
       "clockTitle": "현지 시각 - 클릭하면 12/24시간제 전환",
       "worldCoordinates": "세계 좌표",

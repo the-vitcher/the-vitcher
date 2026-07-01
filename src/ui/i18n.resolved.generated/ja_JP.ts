@@ -210,6 +210,13 @@ export const ja_JP: EnTranslations = {
       "toggleHaptics": "振動を切り替え"
     },
     "floorTimer": "フロアは {time} 後に崩落する",
+    "crawlRun": "{total}回中{run}回目、{time}後にリセット",
+    "spectator": {
+      "watching": "観戦中",
+      "prev": "前のクロウラー",
+      "next": "次のクロウラー",
+      "none": "生存中のクロウラーがいません"
+    },
     "widgets": {
       "clockTitle": "現地時刻 - クリックで12/24時間表記を切り替え",
       "worldCoordinates": "ワールド座標",

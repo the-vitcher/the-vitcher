@@ -8795,6 +8795,21 @@ export class Sim {
     return Math.max(0, Math.ceil(inst.floorDeadline - this.time));
   }
 
+  // Name of the live crawler a spectator is currently watching, or null. Drives the
+  // "Now watching" HUD overlay.
+  spectateTargetName(pid?: number): string | null {
+    const r = this.resolve(pid);
+    if (!r || !r.e.spectator || r.e.spectateTargetId === null) return null;
+    return this.entities.get(r.e.spectateTargetId)?.name ?? null;
+  }
+
+  // The Crawl season clock is wall-clock driven and lives on the server (see
+  // crawl_run.ts + server/game.ts). The offline Sim has no hourly rotation, so it
+  // reports no live season here; ClientWorld surfaces the server's clock instead.
+  crawlRun(): { run: number; total: number; secondsLeft: number } | null {
+    return null;
+  }
+
   // Live crawlers a spectator can watch: players still in the run (alive, not yet
   // spectating). Sorted by id so cycling is deterministic and stable across ticks.
   private liveCrawlerIds(): number[] {

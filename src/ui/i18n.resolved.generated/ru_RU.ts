@@ -210,6 +210,13 @@ export const ru_RU: EnTranslations = {
       "toggleHaptics": "Вкл/выкл вибрацию"
     },
     "floorTimer": "Этаж обрушится через {time}",
+    "crawlRun": "Заход {run} из {total}, сброс через {time}",
+    "spectator": {
+      "watching": "Наблюдение",
+      "prev": "Предыдущий краулер",
+      "next": "Следующий краулер",
+      "none": "Нет живых краулеров"
+    },
     "widgets": {
       "clockTitle": "Местное время — нажмите для переключения 12/24-часового формата",
       "worldCoordinates": "Координаты мира",

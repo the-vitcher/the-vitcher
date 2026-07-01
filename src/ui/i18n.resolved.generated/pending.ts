@@ -54,7 +54,12 @@ export const pending: Record<string, readonly string[]> = {
     "entities.npcs.crawl_guide_sotreel.greeting",
     "entities.npcs.crawl_guide_sotreel.name",
     "entities.npcs.crawl_guide_sotreel.title",
-    "hudChrome.floorTimer"
+    "hudChrome.crawlRun",
+    "hudChrome.floorTimer",
+    "hudChrome.spectator.next",
+    "hudChrome.spectator.none",
+    "hudChrome.spectator.prev",
+    "hudChrome.spectator.watching"
   ],
   "es_ES": [
     "entities.dungeons.crawl_floor_1.enterText",
@@ -101,7 +106,12 @@ export const pending: Record<string, readonly string[]> = {
     "entities.npcs.crawl_guide_sotreel.greeting",
     "entities.npcs.crawl_guide_sotreel.name",
     "entities.npcs.crawl_guide_sotreel.title",
-    "hudChrome.floorTimer"
+    "hudChrome.crawlRun",
+    "hudChrome.floorTimer",
+    "hudChrome.spectator.next",
+    "hudChrome.spectator.none",
+    "hudChrome.spectator.prev",
+    "hudChrome.spectator.watching"
   ],
   "fr_FR": [
     "entities.dungeons.crawl_floor_1.enterText",
@@ -148,7 +158,12 @@ export const pending: Record<string, readonly string[]> = {
     "entities.npcs.crawl_guide_sotreel.greeting",
     "entities.npcs.crawl_guide_sotreel.name",
     "entities.npcs.crawl_guide_sotreel.title",
-    "hudChrome.floorTimer"
+    "hudChrome.crawlRun",
+    "hudChrome.floorTimer",
+    "hudChrome.spectator.next",
+    "hudChrome.spectator.none",
+    "hudChrome.spectator.prev",
+    "hudChrome.spectator.watching"
   ],
   "fr_CA": [
     "entities.dungeons.crawl_floor_1.enterText",
@@ -195,7 +210,12 @@ export const pending: Record<string, readonly string[]> = {
     "entities.npcs.crawl_guide_sotreel.greeting",
     "entities.npcs.crawl_guide_sotreel.name",
     "entities.npcs.crawl_guide_sotreel.title",
-    "hudChrome.floorTimer"
+    "hudChrome.crawlRun",
+    "hudChrome.floorTimer",
+    "hudChrome.spectator.next",
+    "hudChrome.spectator.none",
+    "hudChrome.spectator.prev",
+    "hudChrome.spectator.watching"
   ],
   "en_CA": [],
   "it_IT": [
@@ -243,7 +263,12 @@ export const pending: Record<string, readonly string[]> = {
     "entities.npcs.crawl_guide_sotreel.greeting",
     "entities.npcs.crawl_guide_sotreel.name",
     "entities.npcs.crawl_guide_sotreel.title",
-    "hudChrome.floorTimer"
+    "hudChrome.crawlRun",
+    "hudChrome.floorTimer",
+    "hudChrome.spectator.next",
+    "hudChrome.spectator.none",
+    "hudChrome.spectator.prev",
+    "hudChrome.spectator.watching"
   ],
   "de_DE": [
     "entities.dungeons.crawl_floor_1.enterText",
@@ -290,7 +315,12 @@ export const pending: Record<string, readonly string[]> = {
     "entities.npcs.crawl_guide_sotreel.greeting",
     "entities.npcs.crawl_guide_sotreel.name",
     "entities.npcs.crawl_guide_sotreel.title",
-    "hudChrome.floorTimer"
+    "hudChrome.crawlRun",
+    "hudChrome.floorTimer",
+    "hudChrome.spectator.next",
+    "hudChrome.spectator.none",
+    "hudChrome.spectator.prev",
+    "hudChrome.spectator.watching"
   ],
   "zh_CN": [],
   "zh_TW": [],
@@ -341,7 +371,12 @@ export const pending: Record<string, readonly string[]> = {
     "entities.npcs.crawl_guide_sotreel.greeting",
     "entities.npcs.crawl_guide_sotreel.name",
     "entities.npcs.crawl_guide_sotreel.title",
-    "hudChrome.floorTimer"
+    "hudChrome.crawlRun",
+    "hudChrome.floorTimer",
+    "hudChrome.spectator.next",
+    "hudChrome.spectator.none",
+    "hudChrome.spectator.prev",
+    "hudChrome.spectator.watching"
   ],
   "ru_RU": []
 };

@@ -802,3 +802,30 @@ describe("server restart-countdown announcements are localized (broadcastSystem 
     setLanguage("en");
   });
 });
+
+// The Crawl hourly run-reset banner is emitted via broadcastSystem(`The Crawl resets.
+// Run ${n} of ${RUNS_PER_DAY} begins.`) in server/game.ts - a VARIABLE-routed emit the
+// S3 source scanner cannot see. It is covered instead by the crawl.runReset RULE in
+// server_i18n.ts; this guard pins that the server still emits it verbatim and that the
+// matcher localizes it in every locale.
+describe("The Crawl run-reset banner is localized (broadcastSystem blind spot)", () => {
+  const serverSrc = fs.readFileSync(path.resolve(process.cwd(), "server/game.ts"), "utf8");
+
+  it("server/game.ts still emits the run-reset banner template", () => {
+    expect(serverSrc.includes("The Crawl resets. Run ${n} of ${RUNS_PER_DAY} begins."),
+      "server no longer emits the Crawl run-reset banner").toBe(true);
+  });
+
+  it("the concrete banner is recognized and not left English in any locale", () => {
+    const sample = "The Crawl resets. Run 14 of 24 begins.";
+    for (const lang of supportedLanguages) {
+      setLanguage(lang);
+      const out = localizeServerText(sample);
+      expect(out, `${lang}: "${sample}" should be recognized`).not.toBeNull();
+      expect(out, `${lang}: keeps the run number`).toContain("14");
+      expect(out, `${lang}: keeps the total`).toContain("24");
+      if (lang !== "en" && lang !== "en_CA") expect(out, `${lang}: stayed English`).not.toBe(sample);
+    }
+    setLanguage("en");
+  });
+});

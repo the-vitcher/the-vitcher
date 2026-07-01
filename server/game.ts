@@ -23,6 +23,7 @@ import { SocialService } from './social';
 import type { Presence, PresenceStatus, SocialActor, SocialEvent, SocialTransport } from './social';
 import { PgSocialDb } from './social_db';
 import { REALM } from './realm';
+import { runIndexAt, runOfDay, secondsLeftInRun, RUNS_PER_DAY } from '../src/sim/crawl_run';
 import { isOverheadEmoteId } from '../src/world_api';
 import { createBotDetector } from '#bot-detector';
 import type { BotDetector, BotTrackingContext } from './bot_detector/contract';
@@ -388,12 +389,18 @@ export class GameServer {
   private peakOnline = 0;
   private tickMsAvg = 0;
   private readonly ipSessionCounts = new Map<string, number>();
+  // The Crawl: this realm runs the hourly rotating dungeon season when CRAWL_MODE=1.
+  private readonly crawlMode = process.env.CRAWL_MODE === '1';
+  // Absolute run index (wall-clock hour) the sim is currently playing; a change
+  // means the hour rolled over and we start a fresh run. Seeded lazily on first tick.
+  private crawlRunIndex: number | null = null;
 
   constructor() {
     this.sim = new Sim({
       seed: WORLD_SEED,
       playerClass: 'warrior',
       noPlayer: true,
+      crawlMode: process.env.CRAWL_MODE === '1',
       devCommands: process.env.ALLOW_DEV_COMMANDS === '1',
       lockoutNowMs: () => Date.now(),
     });
@@ -521,6 +528,7 @@ export class GameServer {
         this.runAntibotTick();
         acc -= DT;
       }
+      if (this.crawlMode) this.rotateCrawlRun();
       this.broadcastSnapshots();
       this.socialPosTimer += dt;
       if (this.socialPosTimer >= 1) {
@@ -1650,6 +1658,12 @@ export class GameServer {
       drk: p.drinking ? { remaining: round2(p.drinking.remaining) } : null,
       opUntil: p.overpowerUntil > this.sim.time ? 1 : 0,
       ftl: this.sim.floorTimeLeft(p.id), // Crawl floor-collapse countdown (or null)
+      // Crawl season clock + spectator target (CRAWL_MODE realms only; omitted otherwise,
+      // so normal realms are byte-identical). rn = run-of-day (1-based), rl = seconds
+      // until the hourly reset, sw = name of the crawler a spectator is watching.
+      rn: this.crawlMode ? runOfDay(Date.now() / 1000) + 1 : undefined,
+      rl: this.crawlMode ? Math.ceil(secondsLeftInRun(Date.now() / 1000)) : undefined,
+      sw: this.crawlMode && p.spectator ? this.sim.spectateTargetName(p.id) ?? undefined : undefined,
       ack: session.lastInputSeq,
     });
     const json = JSON.stringify(self);
@@ -2039,6 +2053,21 @@ export class GameServer {
     if (viewer.blockedIds.has(candidate.characterId)) return false;
     if (candidate.characterId !== viewer.characterId && candidate.blockedIds.has(viewer.characterId)) return false;
     return true;
+  }
+
+  // The Crawl season clock (CRAWL_MODE only). The sim never reads wall-clock time,
+  // so the server decides when the hour rolls over and tells the sim to start a fresh
+  // run. On the first tick we adopt the current hour silently (no banner); every later
+  // rollover resets every crawler (spectators back to live, floors cleared) and
+  // announces the new run. Called once per loop iteration, off the fixed-step ticks.
+  private rotateCrawlRun(): void {
+    const idx = runIndexAt(Date.now() / 1000);
+    if (this.crawlRunIndex === null) { this.crawlRunIndex = idx; return; }
+    if (idx === this.crawlRunIndex) return;
+    this.crawlRunIndex = idx;
+    this.sim.startCrawlRun();
+    const n = runOfDay(Date.now() / 1000) + 1; // 1..24 for display
+    this.broadcastSystem(`The Crawl resets. Run ${n} of ${RUNS_PER_DAY} begins.`);
   }
 
   private broadcastSystem(text: string): void {

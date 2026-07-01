@@ -210,6 +210,13 @@ export const en_XA: EnTranslations = {
       "toggleHaptics": "[Ţóĝĝļé ĥáþţíçš]"
     },
     "floorTimer": "[Ƒļóóŕ çóļļáþšéš íñ {time}]",
+    "crawlRun": "[Ŕúñ {run} óƒ {total}, ŕéšéţš íñ {time}]",
+    "spectator": {
+      "watching": "[Ñóŵ ŵáţçĥíñĝ]",
+      "prev": "[Þŕéʋíóúš çŕáŵļéŕ]",
+      "next": "[Ñéẋţ çŕáŵļéŕ]",
+      "none": "[Ñó ļíʋé çŕáŵļéŕš]"
+    },
     "widgets": {
       "clockTitle": "[Ļóçáļ ţíɱé - çļíçķ ţó ţóĝĝļé 12/24-ĥóúŕ]",
       "worldCoordinates": "[Ŵóŕļð çóóŕðíñáţéš]",
