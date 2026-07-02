@@ -9245,9 +9245,27 @@ export class Sim {
       skillRanks: r ? Object.fromEntries(r.meta.mobaSkillRanks) : {},
       towersA: this.mobaStandingTowers('A'),
       towersB: this.mobaStandingTowers('B'),
+      towersAliveA: this.mobaTowersAlive('A'),
+      towersAliveB: this.mobaTowersAlive('B'),
+      coreAliveA: this.mobaEntityAlive(match.coreA),
+      coreAliveB: this.mobaEntityAlive(match.coreB),
       winner: match.winner,
       elapsed: Math.floor(match.elapsed),
     };
+  }
+
+  private mobaEntityAlive(id: number): boolean {
+    const e = this.entities.get(id);
+    return !!e && !e.dead;
+  }
+
+  // Per-tower liveness for the minimap, [lane][tier] in registration
+  // (= mobaTowerPoints) order.
+  private mobaTowersAlive(team: MobaTeam): boolean[][] {
+    const match = this.mobaMatch;
+    if (!match) return [[], [], []];
+    const lanes = team === 'A' ? match.towersA : match.towersB;
+    return lanes.map((laneIds) => laneIds.map((id) => this.mobaEntityAlive(id)));
   }
 
   // Standing-tower count for a team (drives the HUD objective readout).

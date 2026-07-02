@@ -668,3 +668,36 @@ describe('The Clash: standalone world', () => {
     expect(census().length).toBeGreaterThan(100);
   });
 });
+
+describe('The Clash: minimap structure view', () => {
+  it('mobaState reports per-tower and per-core liveness that tracks deaths', () => {
+    const sim = makeMobaSim();
+    const pid = sim.addPlayer('warrior', 'Scout');
+    sim.startMobaMatch([pid]);
+    const match = sim.mobaMatch!;
+    const allUp = [[true, true, true], [true, true, true], [true, true, true]];
+    const st0 = sim.mobaState(pid)!;
+    expect(st0.towersAliveA).toEqual(allUp);
+    expect(st0.towersAliveB).toEqual(allUp);
+    expect(st0.coreAliveA).toBe(true);
+    expect(st0.coreAliveB).toBe(true);
+
+    // razing B mid's outer tower flips exactly that flag (tier order =
+    // registration order = mobaTowerPoints order, outermost first)
+    const hero = entOf(sim, pid);
+    kill(sim, entOf(sim, match.towersB[1][0]), hero);
+    const st1 = sim.mobaState(pid)!;
+    expect(st1.towersAliveB[1]).toEqual([false, true, true]);
+    expect(st1.towersAliveA).toEqual(allUp);
+    expect(st1.towersB).toBe(8);
+
+    // razing the rest of the lane and the core marks the core dead
+    kill(sim, entOf(sim, match.towersB[1][1]), hero);
+    kill(sim, entOf(sim, match.towersB[1][2]), hero);
+    kill(sim, entOf(sim, match.coreB), hero);
+    const st2 = sim.mobaState(pid)!;
+    expect(st2.coreAliveB).toBe(false);
+    expect(st2.coreAliveA).toBe(true);
+    expect(st2.towersAliveB[1]).toEqual([false, false, false]);
+  });
+});

@@ -38,6 +38,14 @@ export interface MobaStateView {
   skillRanks: Record<string, number>; // chosen rank per hero ability id
   towersA: number; // standing towers per team (of 9: 3 per lane)
   towersB: number;
+  // Per-structure liveness for the minimap: [lane][tier] tower flags in
+  // mobaTowerPoints order (outermost tier first), plus each team's core. The
+  // minimap MUST read these, never the entity list: online interest scope is
+  // ~120 yd and the map shows all 20 structures.
+  towersAliveA: boolean[][];
+  towersAliveB: boolean[][];
+  coreAliveA: boolean;
+  coreAliveB: boolean;
   winner: 'A' | 'B' | null;
   elapsed: number; // match seconds
 }

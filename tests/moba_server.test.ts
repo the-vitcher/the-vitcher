@@ -98,12 +98,19 @@ describe('The Clash online: CLASH_MODE realm', () => {
     expect(snap.self.mst).toBeTruthy();
     expect(snap.self.mst.phase).toBe('warmup');
     expect(snap.self.mst.towersA).toBe(9);
+    // the minimap's per-structure liveness rides the same view
+    const allUp = [[true, true, true], [true, true, true], [true, true, true]];
+    expect(snap.self.mst.towersAliveA).toEqual(allUp);
+    expect(snap.self.mst.towersAliveB).toEqual(allUp);
+    expect(snap.self.mst.coreAliveA).toBe(true);
     expect(snap.self.mt).toBe('A');
     // decode through the real client
     const client = bareClient(session.pid);
     (client as any).applySnapshot(snap);
     expect(client.mobaState()?.myTeam).toBe('A');
     expect(client.mobaState()?.towersB).toBe(9);
+    expect(client.mobaState()?.towersAliveB).toEqual(allUp);
+    expect(client.mobaState()?.coreAliveB).toBe(true);
     expect(client.entities.get(session.pid)?.mobaTeam).toBe('A');
   });
 

@@ -9,10 +9,11 @@ import { skinCount } from '../render/characters/manifest';
 import { preloadMechAssets } from '../render/characters/assets';
 import { emoteIconUrl } from './emote_icons';
 import {
-  ABILITIES, CLASSES, DUNGEON_LIST, DUNGEON_X_THRESHOLD, ITEMS, MOBS, NPCS, PROPS, QUESTS,
-  WORLD_MAX_X, WORLD_MAX_Z, WORLD_MIN_X, WORLD_MIN_Z, ZONES, dungeonAt, questRewardItem, zoneAt,
-  zoneWelcomeText,
+  ABILITIES, CLASSES, DUNGEON_LIST, DUNGEON_X_THRESHOLD, DUNGEONS, ITEMS, MOBS, NPCS, PROPS, QUESTS,
+  WORLD_MAX_X, WORLD_MAX_Z, WORLD_MIN_X, WORLD_MIN_Z, ZONES, dungeonAt, instanceOrigin, questRewardItem,
+  zoneAt, zoneWelcomeText,
 } from '../sim/data';
+import { CLASH_MAP_EXTENT, clashStructureDots, paintClashMapPixels } from './clash_map';
 import type { ZoneDef } from '../sim/data';
 import type { AbilityDef, EquipSlot, InvSlot, LootRollChoice, PetMode, PlayerClass, ResourceType, SkinRank, Stats } from '../sim/types';
 import { EVENT_SKIN_TIERS, MECH_CHROMAS, SKIN_RANKS, skinRankOrder, type SkinTier } from '../sim/content/skins';
@@ -694,7 +695,11 @@ export class Hud {
     });
     const mm = $('#minimap') as unknown as HTMLCanvasElement;
     this.minimapCtx = mm.getContext('2d')!;
-    this.minimapBg = this.renderTerrainCanvas(140, { minX: WORLD_MIN_X, maxX: WORLD_MAX_X, minZ: WORLD_MIN_Z, maxZ: WORLD_MAX_Z });
+    // The Clash: the minimap bg is the battleground map (painted once from the
+    // shared sim classifier), not the overworld terrain strip.
+    this.minimapBg = this.sim.cfg.mobaMode
+      ? this.renderClashMapCanvas(256)
+      : this.renderTerrainCanvas(140, { minX: WORLD_MIN_X, maxX: WORLD_MAX_X, minZ: WORLD_MIN_Z, maxZ: WORLD_MAX_Z });
     mm.style.cursor = 'var(--cursor-point)';
     mm.title = t('controls.worldMap');
     mm.addEventListener('click', () => this.toggleMap());
@@ -3422,6 +3427,7 @@ export class Hud {
   }
 
   private updateMinimap(): void {
+    if (this.sim.cfg.mobaMode) { this.updateClashMinimap(); return; }
     const ctx = this.minimapCtx;
     const S = 162;
     const p = this.sim.player;
@@ -3538,6 +3544,120 @@ export class Hud {
       }
     }
     ctx.translate(S / 2, S / 2);
+    ctx.rotate(-p.facing); // canvas rotates clockwise; facing increases turning left
+    ctx.fillStyle = '#fff';
+    ctx.strokeStyle = '#000';
+    ctx.beginPath();
+    ctx.moveTo(0, -7); ctx.lineTo(4.5, 5.5); ctx.lineTo(-4.5, 5.5);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // -------------------------------------------------------------------------
+  // The Clash minimap: whole-map view. The bg canvas is painted once from the
+  // shared classifier (clash_map.ts); per frame it is a blit plus live dots.
+  // Structure liveness comes from mobaState(), never the entity list (online
+  // interest scope is ~120 yd; the map shows all 20 structures).
+  // -------------------------------------------------------------------------
+
+  private renderClashMapCanvas(sizePx: number): HTMLCanvasElement {
+    const canvas = document.createElement('canvas');
+    canvas.width = sizePx;
+    canvas.height = sizePx;
+    const ctx = canvas.getContext('2d')!;
+    const img = ctx.createImageData(sizePx, sizePx);
+    paintClashMapPixels(img);
+    ctx.putImageData(img, 0, 0);
+    return canvas;
+  }
+
+  private updateClashMinimap(): void {
+    const ctx = this.minimapCtx;
+    const S = 162;
+    const p = this.sim.player;
+    $('#zone-label').textContent = dungeonDisplayName('moba_lane');
+    ctx.clearRect(0, 0, S, S);
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(S / 2, S / 2, S / 2 - 2, 0, Math.PI * 2);
+    ctx.clip();
+    // A MOBA minimap shows every objective at once, so the square map sits
+    // whole inside the round frame: fitted by its diagonal so the corner
+    // fountains stay inside the circle.
+    const mapPx = Math.floor((S - 4) / Math.SQRT2);
+    const m0 = (S - mapPx) / 2;
+    ctx.fillStyle = '#10140e';
+    ctx.fillRect(0, 0, S, S);
+    ctx.imageSmoothingEnabled = true;
+    ctx.drawImage(this.minimapBg, m0, m0, mapPx, mapPx);
+    // Instance-local transform (mirrored like the overworld minimap: +X left,
+    // +Z up). The battleground origin is the moba_lane slot the player is in.
+    const def = DUNGEONS.moba_lane;
+    const slot0 = instanceOrigin(def.index, 0);
+    const slotSpacing = instanceOrigin(def.index, 1).z - slot0.z;
+    const slot = Math.max(0, Math.round((p.pos.z - slot0.z) / slotSpacing));
+    const origin = instanceOrigin(def.index, slot);
+    const E = CLASH_MAP_EXTENT;
+    const toMap = (wx: number, wz: number): { x: number; y: number } => ({
+      x: m0 + ((E - (wx - origin.x)) / (2 * E)) * mapPx,
+      y: m0 + ((E - (wz - origin.z)) / (2 * E)) * mapPx,
+    });
+    // Live units in interest range: heroes as team discs, minions/creeps as
+    // small squares (towers/cores skipped here; drawn from the match view).
+    for (const e of this.sim.entities.values()) {
+      if (e.id === p.id || e.dead) continue;
+      const m = toMap(e.pos.x, e.pos.z);
+      if (e.kind === 'player') {
+        ctx.fillStyle = e.mobaTeam === 'B' ? '#ff5a4a' : '#4a7dff';
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.arc(m.x, m.y, 3.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+      } else if (e.kind === 'mob') {
+        if (e.templateId === 'moba_tower' || e.templateId === 'moba_core') continue;
+        ctx.fillStyle = e.mobaTeam === 'A' ? '#7d9cff' : e.mobaTeam === 'B' ? '#ff8a76' : '#e8c860';
+        ctx.fillRect(m.x - 1.5, m.y - 1.5, 3, 3);
+      } else if (e.kind === 'npc') {
+        ctx.fillStyle = '#ffd100';
+        ctx.beginPath();
+        ctx.arc(m.x, m.y, 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+    // Objectives: all 18 towers + 2 cores from geometry + match-view liveness.
+    const st = this.sim.mobaState();
+    if (st) {
+      for (const dot of clashStructureDots(st)) {
+        const m = toMap(origin.x + dot.x, origin.z + dot.z);
+        const teamColor = dot.team === 'A' ? '#4a7dff' : '#ff5a4a';
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 1;
+        if (dot.kind === 'tower') {
+          ctx.fillStyle = dot.alive ? teamColor : '#4a4a4a';
+          ctx.fillRect(m.x - 2.5, m.y - 2.5, 5, 5);
+          ctx.strokeRect(m.x - 2.5, m.y - 2.5, 5, 5);
+        } else {
+          ctx.fillStyle = dot.alive ? teamColor : '#4a4a4a';
+          ctx.beginPath();
+          ctx.arc(m.x, m.y, 4, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+          if (dot.alive) {
+            ctx.fillStyle = '#ffffffcc';
+            ctx.beginPath();
+            ctx.arc(m.x, m.y, 1.6, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+      }
+    }
+    // Self: the classic facing arrow, at the map-local position.
+    const mp = toMap(p.pos.x, p.pos.z);
+    ctx.translate(mp.x, mp.y);
     ctx.rotate(-p.facing); // canvas rotates clockwise; facing increases turning left
     ctx.fillStyle = '#fff';
     ctx.strokeStyle = '#000';
