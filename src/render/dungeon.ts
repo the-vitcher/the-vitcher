@@ -19,7 +19,7 @@ import { radialGlowTexture } from './textures';
 import { sharedUniforms } from './gfx';
 import { instanceOrigin } from '../sim/data';
 import {
-  ARENA_LAYOUT, CRYPT_LAYOUT, SANCTUM_LAYOUT, TEMPLE_LAYOUT, DUNGEON_WALL_X, TOMB_HD,
+  ARENA_LAYOUT, CLASH_LAYOUT, CRYPT_LAYOUT, SANCTUM_LAYOUT, TEMPLE_LAYOUT, DUNGEON_WALL_X, TOMB_HD,
   DUNGEON_END_WALL_HW, DUNGEON_WALL_HEIGHT, DUNGEON_WALL_HW, NYTHRAXIS_LAYOUT,
   DungeonLayout, GridPoint, WallStub,
 } from '../sim/dungeon_layout';
@@ -386,7 +386,8 @@ export class DungeonInteriors {
     const layout = interior === 'sanctum' ? SANCTUM_LAYOUT
       : interior === 'temple' ? TEMPLE_LAYOUT
         : interior === 'arena' ? ARENA_LAYOUT
-          : interior === 'nythraxis' ? NYTHRAXIS_LAYOUT : CRYPT_LAYOUT;
+          : interior === 'nythraxis' ? NYTHRAXIS_LAYOUT
+            : interior === 'clash' ? CLASH_LAYOUT : CRYPT_LAYOUT;
     const variant = this.variantFor(interior, ox);
     const group = new THREE.Group();
     const p = new Placements();
@@ -538,6 +539,9 @@ export class DungeonInteriors {
     if (interior === 'nythraxis') return 'nythraxis';
     if (interior === 'sanctum') return 'sanctum';
     if (interior === 'temple') return 'temple';
+    // The Clash battleground reuses the Sunken Bastion fortress dressing (teal
+    // flame, cargo, banners) — a war-camp look with no new variant machinery.
+    if (interior === 'clash') return 'bastion';
     const bastionX = instanceOrigin(1, 0).x;
     if (Math.abs(ox - bastionX) < 250) return 'bastion';
     return 'crypt';

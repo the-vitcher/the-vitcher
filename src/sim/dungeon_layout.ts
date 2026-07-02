@@ -149,6 +149,31 @@ export const TEMPLE_LAYOUT: DungeonLayout = (() => {
   };
 })();
 
+// The Clash (interior 'clash'): the three-lane MOBA battleground. One oversized,
+// fully-enclosed hall (the same wallX oversize contract as NYTHRAXIS_LAYOUT):
+// lanes run along z at x = -45 / 0 / +45, cores sit at each end of mid, and two
+// broken pillar rows at x = +-22 divide the lanes while leaving wide gank gaps.
+// Open floor otherwise, so heroes can rotate freely between lanes.
+export const CLASH_LAYOUT: DungeonLayout = (() => {
+  const pillars: GridPoint[] = [];
+  for (const z of [30, 46, 62, 78, 94, 110]) {
+    for (const x of [-22, 22]) pillars.push({ x, z });
+  }
+  return {
+    zMin: -10,
+    zMax: 150,
+    sideWallZ: 70,
+    sideWallHd: 80,
+    wallX: 70,
+    endWallHw: 71,
+    floorHalfX: 68,
+    pillars,
+    tombs: [],
+    stubs: [],
+    dais: { x: 0, z: 70, r: 9 }, // centre-field glow; walkable, no collider
+  };
+})();
+
 // The Ashen Coliseum (interior 'arena'): a compact, fully-enclosed square pit
 // — no door, no aisle (combatants are teleported in by matchmaking). Side
 // walls at |x|=23 like the crypt so the KayKit wall modules fit unchanged;

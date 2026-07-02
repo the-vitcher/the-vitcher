@@ -1,10 +1,13 @@
 import { describe, it, expect } from 'vitest';
 import {
-  assignMobaTeams, mobaBotFill, mobaTeamForZ, mobaEnemyTeam, mobaEnemyCore, mobaHeroSpawn,
-  mobaMinionSpawn, mobaRespawnSeconds, mobaWaveComposition, mobaCoreVulnerable, mobaWinner,
-  mobaHeroKillGold, MOBA_LANE, MOBA_RESPAWN_MIN, MOBA_RESPAWN_MAX,
-  MOBA_MINION_MELEE_ID, MOBA_MINION_RANGED_ID,
+  assignMobaTeams, mobaBotFill, mobaTeamForZ, mobaLaneForX, mobaEnemyTeam, mobaEnemyCore, mobaHeroSpawn,
+  mobaMinionSpawn, mobaMinionMarchTarget, mobaTowerPoints, mobaRespawnSeconds, mobaWaveComposition,
+  mobaCoreVulnerable, mobaWinner, mobaHeroKillGold, MOBA_MAP, MOBA_LANE_XS, MOBA_RESPAWN_MIN,
+  MOBA_RESPAWN_MAX, MOBA_MINION_MELEE_ID, MOBA_MINION_RANGED_ID, type MobaLaneIndex, type MobaTeam,
 } from '../src/sim/moba';
+
+const LANES: MobaLaneIndex[] = [0, 1, 2];
+const TEAMS: MobaTeam[] = ['A', 'B'];
 
 describe('MOBA pure core: team assignment', () => {
   it('splits players into two balanced sides in input order', () => {
@@ -44,30 +47,65 @@ describe('MOBA pure core: team assignment', () => {
   });
 });
 
-describe('MOBA pure core: lane geometry', () => {
-  it('assigns team by which half of the lane a z sits in', () => {
-    expect(mobaTeamForZ(MOBA_LANE.coreA.z)).toBe('A');
-    expect(mobaTeamForZ(MOBA_LANE.coreB.z)).toBe('B');
-    expect(mobaTeamForZ(MOBA_LANE.midZ - 1)).toBe('A');
-    expect(mobaTeamForZ(MOBA_LANE.midZ + 1)).toBe('B');
+describe('MOBA pure core: three-lane geometry', () => {
+  it('assigns team by which half of the map a z sits in', () => {
+    expect(mobaTeamForZ(MOBA_MAP.coreA.z)).toBe('A');
+    expect(mobaTeamForZ(MOBA_MAP.coreB.z)).toBe('B');
+    expect(mobaTeamForZ(MOBA_MAP.midZ - 1)).toBe('A');
+    expect(mobaTeamForZ(MOBA_MAP.midZ + 1)).toBe('B');
+  });
+
+  it('resolves the nearest lane from an x position', () => {
+    for (const lane of LANES) expect(mobaLaneForX(MOBA_LANE_XS[lane])).toBe(lane);
+    expect(mobaLaneForX(-60)).toBe(0);
+    expect(mobaLaneForX(-10)).toBe(1);
+    expect(mobaLaneForX(60)).toBe(2);
   });
 
   it('points each team at the enemy core', () => {
     expect(mobaEnemyTeam('A')).toBe('B');
-    expect(mobaEnemyCore('A')).toEqual(MOBA_LANE.coreB);
-    expect(mobaEnemyCore('B')).toEqual(MOBA_LANE.coreA);
+    expect(mobaEnemyCore('A')).toEqual(MOBA_MAP.coreB);
+    expect(mobaEnemyCore('B')).toEqual(MOBA_MAP.coreA);
   });
 
-  it('spawns heroes and minions on the correct side', () => {
-    expect(mobaHeroSpawn('A')).toEqual(MOBA_LANE.coreA);
-    expect(mobaHeroSpawn('B')).toEqual(MOBA_LANE.coreB);
-    expect(mobaTeamForZ(mobaMinionSpawn('A').z)).toBe('A');
-    expect(mobaTeamForZ(mobaMinionSpawn('B').z)).toBe('B');
+  it('spawns heroes behind their own core and minions on their own half, per lane', () => {
+    expect(mobaTeamForZ(mobaHeroSpawn('A').z)).toBe('A');
+    expect(mobaTeamForZ(mobaHeroSpawn('B').z)).toBe('B');
+    for (const team of TEAMS) {
+      for (const lane of LANES) {
+        const s = mobaMinionSpawn(team, lane);
+        expect(s.x).toBe(MOBA_LANE_XS[lane]);
+        expect(mobaTeamForZ(s.z)).toBe(team);
+      }
+    }
   });
 
-  it('lays team A structures below mid and team B above it', () => {
-    for (const p of [MOBA_LANE.coreA, ...MOBA_LANE.towersA]) expect(p.z).toBeLessThan(MOBA_LANE.midZ);
-    for (const p of [MOBA_LANE.coreB, ...MOBA_LANE.towersB]) expect(p.z).toBeGreaterThan(MOBA_LANE.midZ);
+  it('places two towers per lane per team, on the owning half, at the lane x', () => {
+    for (const team of TEAMS) {
+      for (const lane of LANES) {
+        const points = mobaTowerPoints(team, lane);
+        expect(points.length).toBe(2);
+        for (const p of points) {
+          expect(p.x).toBe(MOBA_LANE_XS[lane]);
+          expect(mobaTeamForZ(p.z)).toBe(team);
+        }
+      }
+    }
+  });
+
+  it('marches minions down their lane, then swings them into the enemy core', () => {
+    // A team-A top-laner far from the enemy end holds the lane centreline...
+    const early = mobaMinionMarchTarget('A', 0, 40);
+    expect(early.x).toBe(MOBA_LANE_XS[0]);
+    expect(early.z).toBe(MOBA_MAP.laneTurnZB);
+    // ...and swings toward the core once past the turn point.
+    const late = mobaMinionMarchTarget('A', 0, MOBA_MAP.laneTurnZB + 1);
+    expect(late).toEqual(MOBA_MAP.coreB);
+    // Mirror for team B.
+    const earlyB = mobaMinionMarchTarget('B', 2, 100);
+    expect(earlyB.x).toBe(MOBA_LANE_XS[2]);
+    expect(earlyB.z).toBe(MOBA_MAP.laneTurnZA);
+    expect(mobaMinionMarchTarget('B', 2, MOBA_MAP.laneTurnZA - 1)).toEqual(MOBA_MAP.coreA);
   });
 });
 
@@ -104,10 +142,11 @@ describe('MOBA pure core: wave composition', () => {
 });
 
 describe('MOBA pure core: objectives + bounties', () => {
-  it('core is vulnerable only once all towers are down', () => {
-    expect(mobaCoreVulnerable(2)).toBe(false);
-    expect(mobaCoreVulnerable(1)).toBe(false);
-    expect(mobaCoreVulnerable(0)).toBe(true);
+  it('core opens up only once one lane of towers is fully down', () => {
+    expect(mobaCoreVulnerable([2, 2, 2])).toBe(false);
+    expect(mobaCoreVulnerable([1, 1, 1])).toBe(false);
+    expect(mobaCoreVulnerable([2, 0, 2])).toBe(true); // mid lane cleared
+    expect(mobaCoreVulnerable([0, 2, 2])).toBe(true); // top lane cleared
   });
 
   it('declares a winner only when exactly one core has fallen', () => {

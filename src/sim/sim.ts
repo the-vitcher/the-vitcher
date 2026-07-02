@@ -7,9 +7,9 @@ import {
 } from './data';
 import { ARENA_SPAWN_A, ARENA_SPAWN_B, ARENA_SPAWNS_A_2v2, ARENA_SPAWNS_B_2v2 } from './dungeon_layout';
 import {
-  assignMobaTeams, mobaTeamForZ, mobaEnemyCore, mobaHeroSpawn, mobaMinionSpawn, mobaRespawnSeconds,
-  mobaWaveComposition, mobaCoreVulnerable, mobaWinner, MOBA_FIRST_WAVE_SEC, MOBA_WAVE_INTERVAL_SEC,
-  MOBA_MATCH_WARMUP_SEC, MOBA_HERO_LEVEL, type MobaTeam,
+  assignMobaTeams, mobaTeamForZ, mobaLaneForX, mobaHeroSpawn, mobaMinionSpawn, mobaMinionMarchTarget,
+  mobaRespawnSeconds, mobaWaveComposition, mobaCoreVulnerable, mobaWinner, MOBA_FIRST_WAVE_SEC,
+  MOBA_WAVE_INTERVAL_SEC, MOBA_MATCH_WARMUP_SEC, MOBA_HERO_LEVEL, type MobaLaneIndex, type MobaTeam,
 } from './moba';
 import { MOBA_ABILITIES, MOBA_HEROES } from './content/moba';
 import { lineOfSightClear, resolveMovement, resolvePosition } from './colliders';
@@ -404,15 +404,16 @@ export interface ArenaMatch {
   fiesta?: FiestaState; // present only for format === 'fiesta'
 }
 
-// The Clash (MOBA) match state. One lane instance, two teams, structures + minion
-// waves. Lives on the Sim (one match per Sim in v1); torn down on end/reset.
+// The Clash (MOBA) match state. One battleground instance, two teams, structures +
+// minion waves down three lanes. Lives on the Sim (one match per Sim in v1); torn
+// down on end/reset.
 export interface MobaMatch {
   slot: number; // moba_lane instance slot
   teams: Map<number, MobaTeam>; // pid -> team
   coreA: number; coreB: number; // core entity ids
-  towersA: number[]; towersB: number[]; // tower entity ids per team
+  towersA: number[][]; towersB: number[][]; // tower entity ids per team, indexed by lane (0 top, 1 mid, 2 bot)
   minionIds: Set<number>; // live wave minions
-  waveTimer: number; // seconds until the next wave from each base
+  waveTimer: number; // seconds until the next wave down every lane
   waveIndex: number; // waves spawned so far
   elapsed: number; // match seconds since start
   phase: 'warmup' | 'playing' | 'ended';
@@ -8953,9 +8954,10 @@ export class Sim {
       if (!inst) return;
       this.claimInstance(inst, 'moba');
     }
+    const origin = this.instanceOriginOf(inst);
     const match: MobaMatch = {
       slot: inst.slot, teams: assignMobaTeams(roster, this.cfg.mobaTeamSize ?? 5),
-      coreA: -1, coreB: -1, towersA: [], towersB: [], minionIds: new Set(),
+      coreA: -1, coreB: -1, towersA: [[], [], []], towersB: [[], [], []], minionIds: new Set(),
       waveTimer: MOBA_FIRST_WAVE_SEC, waveIndex: 0, elapsed: 0,
       phase: 'warmup', winner: null,
     };
@@ -8964,7 +8966,10 @@ export class Sim {
       if (!m) continue;
       const role = this.mobaRoleOf(m);
       if (role === 'core') { if (m.mobaTeam === 'A') match.coreA = id; else match.coreB = id; }
-      else if (role === 'tower') (m.mobaTeam === 'A' ? match.towersA : match.towersB).push(id);
+      else if (role === 'tower') {
+        const lane = mobaLaneForX(m.pos.x - origin.x);
+        (m.mobaTeam === 'A' ? match.towersA : match.towersB)[lane].push(id);
+      }
     }
     this.mobaMatch = match;
     for (const [pid, team] of match.teams) {
@@ -9030,14 +9035,29 @@ export class Sim {
     meta.mobaRespawnLeft = 0;
   }
 
-  // A core is invulnerable while any of its team's towers still stand.
+  // A core is invulnerable until at least one of its lanes has lost every tower.
   private mobaCoreInvulnerable(core: Entity): boolean {
     const match = this.mobaMatch;
     if (!match) return false;
-    const towers = core.mobaTeam === 'A' ? match.towersA : match.towersB;
+    const lanes = core.mobaTeam === 'A' ? match.towersA : match.towersB;
+    const standingPerLane = lanes.map((laneIds) => {
+      let standing = 0;
+      for (const id of laneIds) { const t = this.entities.get(id); if (t && !t.dead) standing++; }
+      return standing;
+    });
+    return !mobaCoreVulnerable(standingPerLane);
+  }
+
+  // Standing-tower count for a team (drives the HUD objective readout).
+  mobaStandingTowers(team: MobaTeam): number {
+    const match = this.mobaMatch;
+    if (!match) return 0;
+    const lanes = team === 'A' ? match.towersA : match.towersB;
     let standing = 0;
-    for (const id of towers) { const t = this.entities.get(id); if (t && !t.dead) standing++; }
-    return !mobaCoreVulnerable(standing);
+    for (const laneIds of lanes) {
+      for (const id of laneIds) { const t = this.entities.get(id); if (t && !t.dead) standing++; }
+    }
+    return standing;
   }
 
   // Per-tick match driver: warmup, minion waves, hero respawns, and the win check.
@@ -9075,27 +9095,31 @@ export class Sim {
     }
   }
 
-  // Spawn one minion wave from a team's base, tagged with the team and marching lane.
+  // Spawn one minion wave from a team's base down EVERY lane, each minion tagged
+  // with its team and marching lane.
   private spawnMobaWave(team: MobaTeam, match: MobaMatch): void {
     const inst = this.instances.find((i) => i.dungeonId === 'moba_lane' && i.slot === match.slot);
     if (!inst) return;
     const origin = this.instanceOriginOf(inst);
-    const spawn = mobaMinionSpawn(team);
     const comp = mobaWaveComposition(match.waveIndex);
-    let i = 0;
-    for (const mobId of comp) {
-      const template = MOBS[mobId];
-      if (!template) { i++; continue; }
-      const offX = ((i % 3) - 1) * 2;
-      const offZ = (team === 'A' ? -1 : 1) * i * 1.5;
-      const m = createMob(this.nextId++, template, template.minLevel, this.groundPos(origin.x + spawn.x + offX, origin.z + spawn.z + offZ));
-      m.mobaTeam = team;
-      m.facing = team === 'A' ? 0 : Math.PI;
-      m.prevFacing = m.facing;
-      this.addEntity(m);
-      inst.mobIds.push(m.id);
-      match.minionIds.add(m.id);
-      i++;
+    for (const lane of [0, 1, 2] as MobaLaneIndex[]) {
+      const spawn = mobaMinionSpawn(team, lane);
+      let i = 0;
+      for (const mobId of comp) {
+        const template = MOBS[mobId];
+        if (!template) { i++; continue; }
+        const offX = ((i % 3) - 1) * 2;
+        const offZ = (team === 'A' ? -1 : 1) * i * 1.5;
+        const m = createMob(this.nextId++, template, template.minLevel, this.groundPos(origin.x + spawn.x + offX, origin.z + spawn.z + offZ));
+        m.mobaTeam = team;
+        m.mobaLane = lane;
+        m.facing = team === 'A' ? 0 : Math.PI;
+        m.prevFacing = m.facing;
+        this.addEntity(m);
+        inst.mobIds.push(m.id);
+        match.minionIds.add(m.id);
+        i++;
+      }
     }
   }
 
@@ -9136,14 +9160,17 @@ export class Sim {
       }
       return;
     }
-    // no enemy in range: advance the lane toward the enemy core
+    // no enemy in range: march the lane toward the enemy core (two segments —
+    // hold the lane centreline, then swing to the core; see mobaMinionMarchTarget)
     mob.aggroTargetId = null;
     mob.inCombat = false;
     mob.aiState = 'chase';
     const inst = this.instances.find((i) => i.dungeonId === 'moba_lane' && i.mobIds.includes(mob.id));
     const origin = inst ? this.instanceOriginOf(inst) : { x: 0, z: 0 };
-    const core = mobaEnemyCore((mob.mobaTeam as MobaTeam) ?? 'A');
-    this.moveToward(mob, this.groundPos(origin.x + core.x, origin.z + core.z), mob.moveSpeed);
+    const team: MobaTeam = mob.mobaTeam === 'B' ? 'B' : 'A';
+    const lane = (mob.mobaLane ?? mobaLaneForX(mob.pos.x - origin.x)) as MobaLaneIndex;
+    const step = mobaMinionMarchTarget(team, lane, mob.pos.z - origin.z);
+    this.moveToward(mob, this.groundPos(origin.x + step.x, origin.z + step.z), mob.moveSpeed);
   }
 
   // Nearest hostile (opposite-team) living unit within radius; skips an invulnerable core.

@@ -6081,7 +6081,7 @@ export const en_CA: EnTranslations = {
         "leaveText": "You return to the cold air of Thornpeak."
       },
       "moba_lane": {
-        "name": "The Clash: Ironhold Lane",
+        "name": "The Clash: Ironhold Fields",
         "enterText": "Welcome to the Clash. Push the lane, take their towers, and shatter the enemy core before they shatter yours.",
         "leaveText": "You withdraw from the lane."
       },

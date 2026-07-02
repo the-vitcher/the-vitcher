@@ -1312,7 +1312,7 @@ export const GUIDE_DUNGEONS: GuideDungeon[] = [
     "suggestedPlayers": 5,
     "min": 18,
     "max": 20,
-    "name": "The Clash: Ironhold Lane"
+    "name": "The Clash: Ironhold Fields"
   },
   {
     "id": "gravewyrm_sanctum",

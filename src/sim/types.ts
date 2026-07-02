@@ -702,7 +702,7 @@ export interface DungeonDef {
   // NPCs spawned into the instance when a party claims it (positions are
   // instance-local, like spawns/objects). Used for safe-room guides, etc.
   npcs?: { npcId: string; x: number; z: number }[];
-  interior: 'crypt' | 'sanctum' | 'temple' | 'nythraxis'; // renderer + collider interior builder key
+  interior: 'crypt' | 'sanctum' | 'temple' | 'nythraxis' | 'clash'; // renderer + collider interior builder key
   // Crawl floors: seconds a party has to reach the stairs down before the floor
   // collapses (catching anyone still inside). Omitted = no timer (e.g. safe rooms).
   floorTimeSec?: number;
@@ -981,6 +981,9 @@ export interface Entity {
   // are enemies; same team, incl. minions/towers, are friendly). Only ever set when
   // SimConfig.mobaMode is on, so normal play is unaffected.
   mobaTeam?: 'A' | 'B' | null;
+  // MOBA mode: which of the three lanes (0 top, 1 mid, 2 bot) this minion marches
+  // down, assigned at wave spawn. Null for everything that is not a lane minion.
+  mobaLane?: number | null;
   scale: number;
   color: number;
   skinCatalog: SkinCatalog; // player appearance catalog: class texture set or cosmetic body.

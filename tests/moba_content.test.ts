@@ -4,14 +4,53 @@ import { ABILITIES, MOBS, DUNGEONS, CLASSES, dungeonAt, instanceOrigin } from '.
 // table (the Sim builds hero kits from MOBA_ABILITIES directly), so they must NOT leak
 // into the class ability surface that drives icons/tooltips/talents.
 import { MOBA_ABILITIES, MOBA_HEROES, MOBA_HERO_IDS, MOBA_MOBS, MOBA_DUNGEON_DEFS } from '../src/sim/content/moba';
-import { mobaWaveComposition } from '../src/sim/moba';
+import { mobaWaveComposition, mobaTeamForZ, mobaLaneForX, MOBA_MAP } from '../src/sim/moba';
+import { CLASH_LAYOUT } from '../src/sim/dungeon_layout';
+import type { MobaHeroDef } from '../src/sim/types';
 
-describe('MOBA content: heroes', () => {
-  it('every hero references only defined abilities', () => {
+describe('MOBA content: the ten heroes', () => {
+  it('ships exactly ten heroes with unique ids and names', () => {
+    expect(MOBA_HERO_IDS.length).toBe(10);
+    expect(new Set(MOBA_HERO_IDS).size).toBe(10);
+    const names = Object.values(MOBA_HEROES).map((h) => h.name);
+    expect(new Set(names).size).toBe(10);
+  });
+
+  it('every hero has a unique 4-ability kit referencing only defined abilities', () => {
+    const seen = new Set<string>();
     for (const hero of Object.values(MOBA_HEROES)) {
-      expect(hero.abilities.length).toBeGreaterThan(0);
+      expect(hero.abilities.length, `hero ${hero.id} kit size`).toBe(4);
       for (const id of hero.abilities) {
         expect(MOBA_ABILITIES[id], `hero ${hero.id} references missing ability ${id}`).toBeDefined();
+        expect(seen.has(id), `ability ${id} shared between heroes (kits must be unique)`).toBe(false);
+        seen.add(id);
+      }
+    }
+    // every authored ability belongs to some hero (no orphans)
+    expect(seen.size).toBe(Object.keys(MOBA_ABILITIES).length);
+  });
+
+  it('covers the roles and spreads across base classes', () => {
+    const roles = new Set(Object.values(MOBA_HEROES).map((h) => h.role));
+    for (const role of ['bruiser', 'assassin', 'marksman', 'mage', 'support'] as MobaHeroDef['role'][]) {
+      expect(roles.has(role), `no hero fills the ${role} role`).toBe(true);
+    }
+    const classes = new Set(Object.values(MOBA_HEROES).map((h) => h.baseClass));
+    expect(classes.size).toBeGreaterThanOrEqual(8); // near-full class spread => every resource type
+    for (const hero of Object.values(MOBA_HEROES)) {
+      expect(CLASSES[hero.baseClass], `hero ${hero.id} bad baseClass ${hero.baseClass}`).toBeDefined();
+    }
+  });
+
+  it('bespoke abilities declare the base class they belong to and carry player-facing copy', () => {
+    for (const hero of Object.values(MOBA_HEROES)) {
+      expect(hero.blurb.length, `hero ${hero.id} blurb`).toBeGreaterThan(20);
+      for (const id of hero.abilities) {
+        const ab = MOBA_ABILITIES[id];
+        expect(ab.class).toBe(hero.baseClass);
+        expect(ab.effects.length).toBeGreaterThan(0);
+        expect(ab.name.length).toBeGreaterThan(0);
+        expect(ab.description.length).toBeGreaterThan(10);
       }
     }
   });
@@ -20,29 +59,6 @@ describe('MOBA content: heroes', () => {
     for (const id of Object.keys(MOBA_ABILITIES)) {
       expect(ABILITIES[id], `MOBA ability ${id} leaked into the class ABILITIES surface`).toBeUndefined();
     }
-  });
-
-  it('every hero maps to a real base class', () => {
-    for (const hero of Object.values(MOBA_HEROES)) {
-      expect(CLASSES[hero.baseClass], `hero ${hero.id} bad baseClass ${hero.baseClass}`).toBeDefined();
-    }
-  });
-
-  it('bespoke abilities declare the base class they belong to and are self-consistent', () => {
-    for (const hero of Object.values(MOBA_HEROES)) {
-      for (const id of hero.abilities) {
-        const ab = MOBA_ABILITIES[id];
-        expect(ab.class).toBe(hero.baseClass);
-        expect(ab.effects.length).toBeGreaterThan(0);
-        expect(ab.name.length).toBeGreaterThan(0);
-        expect(ab.description.length).toBeGreaterThan(0);
-      }
-    }
-  });
-
-  it('exposes a non-empty hero id list', () => {
-    expect(MOBA_HERO_IDS.length).toBeGreaterThanOrEqual(3);
-    expect(new Set(MOBA_HERO_IDS).size).toBe(MOBA_HERO_IDS.length); // no dup ids
   });
 });
 
@@ -69,29 +85,43 @@ describe('MOBA content: structures and minions', () => {
   });
 });
 
-describe('MOBA content: the lane instance', () => {
-  it('registers moba_lane in DUNGEONS at a unique x-band', () => {
+describe('MOBA content: the three-lane battleground', () => {
+  it('registers moba_lane in DUNGEONS at a unique x-band with the clash interior', () => {
     expect(DUNGEONS.moba_lane).toBeDefined();
+    expect(DUNGEONS.moba_lane.interior).toBe('clash');
     expect(MOBA_DUNGEON_DEFS.moba_lane.index).toBe(14);
-    // No other dungeon shares this index.
     const shared = Object.values(DUNGEONS).filter((d) => d.index === 14);
     expect(shared.length).toBe(1);
   });
 
-  it('resolves the lane by its instance x-band (not as an arena)', () => {
+  it('resolves the battleground by its instance x-band (not as an arena)', () => {
     const o = instanceOrigin(14, 0);
     expect(dungeonAt(o.x)?.id).toBe('moba_lane');
   });
 
-  it('spawns two towers and one core per team, all referencing real mobs', () => {
+  it('spawns 2 cores and 12 towers (2 per lane per team), split evenly by half', () => {
     const spawns = DUNGEONS.moba_lane.spawns;
-    expect(spawns.length).toBe(6);
-    for (const s of spawns) expect(MOBS[s.mobId], `spawn ${s.mobId} not in MOBS`).toBeDefined();
     expect(spawns.filter((s) => s.mobId === 'moba_core').length).toBe(2);
-    expect(spawns.filter((s) => s.mobId === 'moba_tower').length).toBe(4);
+    const towers = spawns.filter((s) => s.mobId === 'moba_tower');
+    expect(towers.length).toBe(12);
+    for (const team of ['A', 'B'] as const) {
+      const side = towers.filter((s) => mobaTeamForZ(s.z) === team);
+      expect(side.length, `team ${team} towers`).toBe(6);
+      for (const lane of [0, 1, 2] as const) {
+        expect(side.filter((s) => mobaLaneForX(s.x) === lane).length, `team ${team} lane ${lane}`).toBe(2);
+      }
+    }
+    for (const s of spawns) expect(MOBS[s.mobId], `spawn ${s.mobId} not in MOBS`).toBeDefined();
   });
 
-  it('reuses the crypt interior for the lane', () => {
-    expect(DUNGEONS.moba_lane.interior).toBe('crypt');
+  it('keeps every structure and spawn point inside the clash room', () => {
+    const inX = (x: number) => Math.abs(x) < (CLASH_LAYOUT.wallX ?? 23);
+    const inZ = (z: number) => z > CLASH_LAYOUT.zMin && z < CLASH_LAYOUT.zMax;
+    for (const s of DUNGEONS.moba_lane.spawns) {
+      expect(inX(s.x) && inZ(s.z), `spawn ${s.mobId} at (${s.x},${s.z}) outside the room`).toBe(true);
+    }
+    for (const p of [MOBA_MAP.coreA, MOBA_MAP.coreB, MOBA_MAP.heroSpawnA, MOBA_MAP.heroSpawnB]) {
+      expect(inX(p.x) && inZ(p.z)).toBe(true);
+    }
   });
 });

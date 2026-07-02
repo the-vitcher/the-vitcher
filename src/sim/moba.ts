@@ -1,48 +1,63 @@
 // The Clash: MOBA-mode pure core.
 //
-// Host-agnostic, DOM/Sim-free helpers for the single-lane MOBA mode ("The Clash").
-// This module owns the lane GEOMETRY (bases, towers, spawn/aim points) and the
-// deterministic PROGRESSION MATH (team assignment, wave composition, respawn curve,
-// gold/XP bounties, core-vulnerability and win rules). The Sim orchestrates entities
-// and combat around these numbers; keeping them here (like threat.ts / pathfind.ts)
-// makes the mode reproducible and unit-testable without a live world.
+// Host-agnostic, DOM/Sim-free helpers for the three-lane MOBA mode ("The Clash").
+// This module owns the battleground GEOMETRY (lanes, bases, towers, spawn and march
+// points) and the deterministic PROGRESSION MATH (team assignment, wave composition,
+// respawn curve, gold/XP bounties, core-vulnerability and win rules). The Sim
+// orchestrates entities and combat around these numbers; keeping them here (like
+// threat.ts / pathfind.ts) makes the mode reproducible and unit-testable without a
+// live world.
 //
-// Coordinates are INSTANCE-LOCAL. The lane runs down the central aisle of the shared
-// 'crypt' interior (x = 0, pillars/tombs sit at |x| = 14/19, so the aisle is clear).
-// Team A holds the low-z end, Team B the high-z end; A pushes toward +z, B toward -z.
+// Coordinates are INSTANCE-LOCAL, inside the oversized 'clash' interior
+// (sim/dungeon_layout CLASH_LAYOUT: z -10..150, |x| < 70). Three lanes run along z
+// at x = -45 / 0 / +45, divided by broken pillar rows at |x| = 22. Team A holds the
+// low-z end, Team B the high-z end; A pushes toward +z, B toward -z.
 
 export type MobaTeam = 'A' | 'B';
+export type MobaLaneIndex = 0 | 1 | 2; // 0 = top (x -45), 1 = mid (x 0), 2 = bot (x +45)
 
 export interface LanePoint { x: number; z: number }
 
-// --- Lane geometry (instance-local; fits the crypt nave z ~ -19..112, |x| < 23) ---
-export const MOBA_LANE = {
+// --- Battleground geometry (instance-local; fits CLASH_LAYOUT) ---
+export const MOBA_LANE_XS: readonly number[] = [-45, 0, 45];
+export const MOBA_MAP = {
   // Core / nexus per team (destroying the enemy core wins the match).
-  coreA: { x: 0, z: 8 } as LanePoint,
-  coreB: { x: 0, z: 102 } as LanePoint,
-  // Two towers per team, guarding the approach to their core. Inner sits closer to
-  // the core, outer closer to mid; the core is invulnerable until BOTH are down.
-  towersA: [{ x: 0, z: 26 }, { x: 0, z: 44 }] as LanePoint[], // [inner, outer]
-  towersB: [{ x: 0, z: 84 }, { x: 0, z: 66 }] as LanePoint[], // [inner, outer]
-  // Minion spawn points (just in front of each core) and lane midpoint.
-  spawnA: { x: 0, z: 12 } as LanePoint,
-  spawnB: { x: 0, z: 98 } as LanePoint,
-  midZ: 55,
+  coreA: { x: 0, z: 12 } as LanePoint,
+  coreB: { x: 0, z: 128 } as LanePoint,
+  // Hero (re)spawn pads, tucked behind each core.
+  heroSpawnA: { x: 0, z: 6 } as LanePoint,
+  heroSpawnB: { x: 0, z: 134 } as LanePoint,
+  // Tower z per team, [inner, outer]; each lane gets one tower at each z.
+  towerZA: [34, 54] as readonly number[],
+  towerZB: [106, 86] as readonly number[],
+  // Minion spawn z per team (waves fan out to each lane's x at this z).
+  minionSpawnZA: 20,
+  minionSpawnZB: 120,
+  // Where a marching minion swings out of its lane toward the enemy core.
+  laneTurnZA: 26, // B minions marching toward core A turn here
+  laneTurnZB: 114, // A minions marching toward core B turn here
+  midZ: 70,
 } as const;
 
-// Hero (re)spawn point for a team: at the foot of its own core.
+// Hero (re)spawn point for a team: the pad behind its own core.
 export function mobaHeroSpawn(team: MobaTeam): LanePoint {
-  return team === 'A' ? { ...MOBA_LANE.coreA } : { ...MOBA_LANE.coreB };
+  return team === 'A' ? { ...MOBA_MAP.heroSpawnA } : { ...MOBA_MAP.heroSpawnB };
 }
 
-// Minion spawn point for a team.
-export function mobaMinionSpawn(team: MobaTeam): LanePoint {
-  return team === 'A' ? { ...MOBA_LANE.spawnA } : { ...MOBA_LANE.spawnB };
+// Minion spawn point for a team and lane.
+export function mobaMinionSpawn(team: MobaTeam, lane: MobaLaneIndex): LanePoint {
+  return { x: MOBA_LANE_XS[lane], z: team === 'A' ? MOBA_MAP.minionSpawnZA : MOBA_MAP.minionSpawnZB };
 }
 
-// The point a team's minions march toward (the enemy core).
+// Tower positions for a team and lane, [inner, outer].
+export function mobaTowerPoints(team: MobaTeam, lane: MobaLaneIndex): LanePoint[] {
+  const zs = team === 'A' ? MOBA_MAP.towerZA : MOBA_MAP.towerZB;
+  return zs.map((z) => ({ x: MOBA_LANE_XS[lane], z }));
+}
+
+// The enemy core a team is trying to destroy.
 export function mobaEnemyCore(team: MobaTeam): LanePoint {
-  return team === 'A' ? { ...MOBA_LANE.coreB } : { ...MOBA_LANE.coreA };
+  return team === 'A' ? { ...MOBA_MAP.coreB } : { ...MOBA_MAP.coreA };
 }
 
 export function mobaEnemyTeam(team: MobaTeam): MobaTeam {
@@ -51,12 +66,35 @@ export function mobaEnemyTeam(team: MobaTeam): MobaTeam {
 
 // Which team a structure at instance-local z belongs to (low-z half = A).
 export function mobaTeamForZ(z: number): MobaTeam {
-  return z < MOBA_LANE.midZ ? 'A' : 'B';
+  return z < MOBA_MAP.midZ ? 'A' : 'B';
+}
+
+// Which lane an instance-local x belongs to (nearest lane centreline).
+export function mobaLaneForX(x: number): MobaLaneIndex {
+  let best: MobaLaneIndex = 0;
+  let bestD = Infinity;
+  for (let i = 0; i < MOBA_LANE_XS.length; i++) {
+    const d = Math.abs(x - MOBA_LANE_XS[i]);
+    if (d < bestD) { bestD = d; best = i as MobaLaneIndex; }
+  }
+  return best;
+}
+
+// The point a marching minion heads for, given its team, lane, and current
+// instance-local z. Two segments: hold the lane centreline until the far turn
+// point, then swing toward the enemy core.
+export function mobaMinionMarchTarget(team: MobaTeam, lane: MobaLaneIndex, localZ: number): LanePoint {
+  if (team === 'A') {
+    if (localZ < MOBA_MAP.laneTurnZB) return { x: MOBA_LANE_XS[lane], z: MOBA_MAP.laneTurnZB };
+    return { ...MOBA_MAP.coreB };
+  }
+  if (localZ > MOBA_MAP.laneTurnZA) return { x: MOBA_LANE_XS[lane], z: MOBA_MAP.laneTurnZA };
+  return { ...MOBA_MAP.coreA };
 }
 
 // --- Timing / wave constants ---
 export const MOBA_FIRST_WAVE_SEC = 15; // first minion wave after match start
-export const MOBA_WAVE_INTERVAL_SEC = 30; // a wave from each base every 30s
+export const MOBA_WAVE_INTERVAL_SEC = 30; // a wave down every lane every 30s
 export const MOBA_MATCH_WARMUP_SEC = 5; // pre-match countdown before waves/combat
 
 // --- Structure / minion levels (drive HP/damage via the mob templates) ---
@@ -123,9 +161,10 @@ export function mobaWaveComposition(waveIndex: number): string[] {
 }
 
 // --- Objective rules ---
-// A team's core is only vulnerable once all of that team's towers are destroyed.
-export function mobaCoreVulnerable(standingTowers: number): boolean {
-  return standingTowers <= 0;
+// A team's core opens up once ANY one lane of its towers is fully destroyed
+// (standingPerLane holds that team's standing-tower count per lane).
+export function mobaCoreVulnerable(standingPerLane: number[]): boolean {
+  return standingPerLane.some((n) => n <= 0);
 }
 
 // The winner, given whether each core still stands. Null while both stand.
