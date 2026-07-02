@@ -117,6 +117,33 @@ export const MOBA_FOUNTAIN = {
   resourcePctPerSec: 0.10,
 };
 
+// The boss: a single powerful neutral in the river pit. Killing it pays the
+// last-hitter its loot gold, every teammate the team share, and buffs the
+// whole team for a window - the comeback/objective lever.
+export const MOBA_BOSS_BALANCE = {
+  level: 12,
+  hpBase: 3200, hpPerLevel: 0, dmgBase: 90, dmgPerLevel: 0,
+  attackSpeed: 2.2, armorPerLevel: 30, moveSpeed: 5, aggroRadius: 10,
+};
+
+export const MOBA_OBJECTIVES = {
+  bossGold: 250, // last-hitter loot
+  bossTeamGold: 200, // every OTHER hero on the killing team
+  bossXpPct: 0.9, // fraction of a level per participant
+  bossRespawnSec: 240,
+  bossBuffSec: 90,
+  bossBuffAp: 40, // buff_ap on the whole killing team
+  bossBuffHaste: 1.15, // buff_haste multiplier
+  // River runes spawn at the hidden fords every 4 minutes (user-specified) and
+  // grant one of three cycling 45 s buffs on pickup.
+  runeRespawnSec: 240,
+  runeBuffSec: 45,
+  runeSpeed: 1.35, // buff_speed multiplier (haste rune)
+  runeAp: 50, // buff_ap (power rune)
+  runeHotPctPer2s: 0.04, // hot tick = this fraction of max hp every 2 s (regrowth rune)
+  runePickupRadius: 1.8,
+};
+
 // Soft unit separation: Clash mobs push each other apart so a wave never
 // stacks into one untargetable blob. Radius scales with the template's visual
 // scale; the per-tick displacement is capped so it reads as shuffling, not

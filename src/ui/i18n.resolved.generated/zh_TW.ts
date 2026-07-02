@@ -4863,6 +4863,9 @@ export const zh_TW: EnTranslations = {
       "moba_creep_vendbot": {
         "name": "自動販賣魔"
       },
+      "moba_boss": {
+        "name": "垃圾箱烈焰"
+      },
       "elder_bristleback": {
         "name": "年長硬鬃"
       },

@@ -2459,6 +2459,7 @@ export const zh_TW: Partial<Record<TranslationKey, string>> = {
   "entities.mobs.moba_minion_ranged.name": "兵線術士",
   "entities.mobs.moba_tower.name": "防禦塔",
   "entities.mobs.moba_core.name": "樞紐核心",
+  "entities.mobs.moba_boss.name": "垃圾箱烈焰",
   "entities.mobs.moba_creep_raccoon.name": "垃圾箱浣熊",
   "entities.mobs.moba_creep_goose.name": "工會大鵝",
   "entities.mobs.moba_creep_goose_foreman.name": "鵝工頭",

@@ -4863,6 +4863,9 @@ export const ru_RU: EnTranslations = {
       "moba_creep_vendbot": {
         "name": "Вендотрон"
       },
+      "moba_boss": {
+        "name": "Мусорный Пожар"
+      },
       "elder_bristleback": {
         "name": "Старый Щетиноспин"
       },

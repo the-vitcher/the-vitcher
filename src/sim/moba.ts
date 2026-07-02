@@ -540,7 +540,7 @@ export const MOBA_MATCH_WARMUP_SEC = MOBA_TIMERS.warmupSec;
 // cancels it, and a fresh attempt waits out the cooldown (stamped at START, so a
 // cancelled recall cannot be spammed). ---
 export const MOBA_RECALL_CHANNEL_SEC = MOBA_TIMERS.recallChannelSec;
-export { MOBA_FOUNTAIN, MOBA_SEPARATION } from './content/moba_balance';
+export { MOBA_FOUNTAIN, MOBA_SEPARATION, MOBA_OBJECTIVES } from './content/moba_balance';
 
 // --- Soft unit separation (pure vector math; the sim applies the result) ---
 

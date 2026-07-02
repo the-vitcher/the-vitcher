@@ -4863,6 +4863,9 @@ export const ko_KR: EnTranslations = {
       "moba_creep_vendbot": {
         "name": "벤드오트론"
       },
+      "moba_boss": {
+        "name": "덤스터 파이어"
+      },
       "elder_bristleback": {
         "name": "늙은 뻣센등뼈"
       },

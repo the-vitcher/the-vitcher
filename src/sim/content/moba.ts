@@ -27,7 +27,7 @@ import {
   MOBA_CORE_LEVEL, MOBA_MAP, MOBA_MINION_GOLD, MOBA_MINION_LEVEL, MOBA_TOWER_GOLD, MOBA_TOWER_LEVEL,
   mobaTowerPoints, type MobaLaneIndex, type MobaTeam,
 } from '../moba';
-import { MOBA_MINION_BALANCE, MOBA_TOWER_BALANCE, MOBA_CORE_BALANCE, MOBA_ECONOMY } from './moba_balance';
+import { MOBA_MINION_BALANCE, MOBA_TOWER_BALANCE, MOBA_CORE_BALANCE, MOBA_ECONOMY , MOBA_BOSS_BALANCE, MOBA_OBJECTIVES } from './moba_balance';
 
 // ---------------------------------------------------------------------------
 // Bespoke hero ability kits. Built from AbilityEffect primitives; `class` is the
@@ -530,6 +530,19 @@ export const MOBA_MOBS: Record<string, MobTemplate> = {
     stoneskin: { amount: 60, every: 12, duration: 6, name: 'Exact Change Only' },
     loot: [{ copper: MOBA_ECONOMY.campGold.vendbot, chance: 1 }],
     scale: 1.3, color: 0xcc4444,
+  },
+  // The river-pit boss: every dumpster raccoon's origin story. Neutral (no
+  // mobaTeam, no mobaRole: minions and towers ignore it), slain for team gold
+  // and a team-wide buff; the match driver respawns it (MOBA_OBJECTIVES).
+  moba_boss: {
+    id: 'moba_boss', name: 'The Dumpster Fire', minLevel: MOBA_BOSS_BALANCE.level, maxLevel: MOBA_BOSS_BALANCE.level,
+    family: 'elemental', boss: true,
+    hpBase: MOBA_BOSS_BALANCE.hpBase, hpPerLevel: MOBA_BOSS_BALANCE.hpPerLevel,
+    dmgBase: MOBA_BOSS_BALANCE.dmgBase, dmgPerLevel: MOBA_BOSS_BALANCE.dmgPerLevel,
+    attackSpeed: MOBA_BOSS_BALANCE.attackSpeed, armorPerLevel: MOBA_BOSS_BALANCE.armorPerLevel,
+    moveSpeed: MOBA_BOSS_BALANCE.moveSpeed, aggroRadius: MOBA_BOSS_BALANCE.aggroRadius,
+    loot: [{ copper: MOBA_OBJECTIVES.bossGold, chance: 1 }],
+    scale: 2.6, color: 0xff7733,
   },
 };
 

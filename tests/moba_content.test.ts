@@ -65,8 +65,8 @@ describe('MOBA content: structures and minions', () => {
   it('tags lane units with a mobaRole (neutral creeps deliberately have none) and merges all into MOBS', () => {
     for (const [id, tpl] of Object.entries(MOBA_MOBS)) {
       expect(MOBS[id], `mob ${id} not merged into MOBS`).toBeDefined();
-      if (id.startsWith('moba_creep_')) {
-        expect(tpl.mobaRole, `neutral creep ${id} must NOT carry a mobaRole`).toBeUndefined();
+      if (id.startsWith('moba_creep_') || id === 'moba_boss') {
+        expect(tpl.mobaRole, `neutral ${id} must NOT carry a mobaRole`).toBeUndefined();
       } else {
         expect(tpl.mobaRole, `lane unit ${id} missing mobaRole`).toBeDefined();
       }

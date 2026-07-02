@@ -4863,6 +4863,9 @@ export const ja_JP: EnTranslations = {
       "moba_creep_vendbot": {
         "name": "ベンド・オ・トロン"
       },
+      "moba_boss": {
+        "name": "ダンプスター・ファイア"
+      },
       "elder_bristleback": {
         "name": "老ブリストルバック"
       },

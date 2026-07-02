@@ -13,7 +13,8 @@ import {
   MOBA_RECALL_CHANNEL_SEC, MOBA_RECALL_CD_SEC, MOBA_MAX_ABILITY_RANK, MOBA_ULT_RANKS,
   MOBA_ULT_HERO_LEVEL, MOBA_MINION_XP_PCT, MOBA_TOWER_XP_PCT, MOBA_HERO_KILL_XP_PCT,
   MOBA_CAMP_XP_PCT, MOBA_TOWER_TEAM_GOLD, MOBA_JUNGLE_CAMPS, MOBA_CAMP_RESPAWN_SEC,
-  MOBA_FOUNTAIN, MOBA_SEPARATION, mobaSeparationStep, type MobaBody,
+  MOBA_FOUNTAIN, MOBA_SEPARATION, MOBA_OBJECTIVES, MOBA_BOSS_PIT, MOBA_RUNE_POINTS,
+  mobaSeparationStep, type MobaBody,
   mobaScaleEffectForRank, type MobaLaneIndex, type MobaTeam,
 } from './moba';
 import { MOBA_ABILITIES, MOBA_HEROES } from './content/moba';
@@ -424,6 +425,12 @@ export interface MobaMatch {
   // Jungle camps (Dota-style neutral packs, one entry per MOBA_JUNGLE_CAMPS spot):
   // live creep ids, plus the respawn countdown once the camp is fully cleared.
   camps: { ids: number[]; respawnLeft: number }[];
+  // The river-pit boss: its live entity id (-1 when down) and respawn countdown.
+  boss: { id: number; respawnLeft: number };
+  // River runes, one entry per MOBA_RUNE_POINTS: live pickup entity id (null
+  // when claimed) and the respawn countdown. runeCycle picks the next buff.
+  runes: { id: number | null; respawnLeft: number }[];
+  runeCycle: number;
   elapsed: number; // match seconds since start
   phase: 'warmup' | 'playing' | 'ended';
   winner: MobaTeam | null;
@@ -4569,7 +4576,8 @@ export class Sim {
         const clashXpPct = !isClashUnit ? 0
           : mobaRole === 'minion' ? MOBA_MINION_XP_PCT
             : mobaRole === 'tower' ? MOBA_TOWER_XP_PCT
-              : e.templateId.startsWith('moba_creep_') ? MOBA_CAMP_XP_PCT : 0;
+              : e.templateId === 'moba_boss' ? MOBA_OBJECTIVES.bossXpPct
+                : e.templateId.startsWith('moba_creep_') ? MOBA_CAMP_XP_PCT : 0;
         for (const member of eligible) {
           const mE = this.entities.get(member.entityId);
           if (!mE) continue;
@@ -4600,6 +4608,33 @@ export class Sim {
               if (team !== creditEntity.mobaTeam || pid === meta.entityId) continue;
               const mate = this.players.get(pid);
               if (mate) this.grantLootCopper(mate, MOBA_TOWER_TEAM_GOLD);
+            }
+          }
+          // The boss pays the whole killing team (gold for the mates, a timed
+          // buff for everyone including the last-hitter).
+          if (e.templateId === 'moba_boss' && this.mobaMatch && creditEntity.mobaTeam) {
+            for (const [pid, team] of this.mobaMatch.teams) {
+              if (team !== creditEntity.mobaTeam) continue;
+              const mateE = this.entities.get(pid);
+              if (pid !== meta.entityId) {
+                const mate = this.players.get(pid);
+                if (mate) this.grantLootCopper(mate, MOBA_OBJECTIVES.bossTeamGold);
+              }
+              if (mateE && !mateE.dead) {
+                mateE.auras = mateE.auras.filter((a) => a.id !== 'moba_boss_buff' && a.id !== 'moba_boss_buff_haste');
+                mateE.auras.push({
+                  id: 'moba_boss_buff', name: 'Might of the Dumpster', kind: 'buff_ap',
+                  value: MOBA_OBJECTIVES.bossBuffAp,
+                  remaining: MOBA_OBJECTIVES.bossBuffSec, duration: MOBA_OBJECTIVES.bossBuffSec,
+                  sourceId: meta.entityId, school: 'fire',
+                });
+                mateE.auras.push({
+                  id: 'moba_boss_buff_haste', name: 'Might of the Dumpster', kind: 'buff_haste',
+                  value: MOBA_OBJECTIVES.bossBuffHaste,
+                  remaining: MOBA_OBJECTIVES.bossBuffSec, duration: MOBA_OBJECTIVES.bossBuffSec,
+                  sourceId: meta.entityId, school: 'fire',
+                });
+              }
             }
           }
         } else {
@@ -9167,9 +9202,14 @@ export class Sim {
       coreA: -1, coreB: -1, towersA: [[], [], []], towersB: [[], [], []], minionIds: new Set(),
       waveTimer: MOBA_FIRST_WAVE_SEC, waveIndex: 0, elapsed: 0,
       camps: MOBA_JUNGLE_CAMPS.map(() => ({ ids: [], respawnLeft: 0 })),
+      boss: { id: -1, respawnLeft: 0 },
+      runes: MOBA_RUNE_POINTS.map(() => ({ id: null, respawnLeft: 0 })),
+      runeCycle: 0,
       phase: 'warmup', winner: null,
     };
     for (let i = 0; i < MOBA_JUNGLE_CAMPS.length; i++) this.spawnMobaCamp(match, i, inst);
+    this.spawnMobaBoss(match, inst);
+    for (let i = 0; i < MOBA_RUNE_POINTS.length; i++) this.spawnMobaRune(match, i, inst);
     for (const id of inst.mobIds) {
       const m = this.entities.get(id);
       if (!m) continue;
@@ -9400,6 +9440,7 @@ export class Sim {
       towersAliveB: this.mobaTowersAlive('B'),
       coreAliveA: this.mobaEntityAlive(match.coreA),
       coreAliveB: this.mobaEntityAlive(match.coreB),
+      bossAlive: this.mobaEntityAlive(match.boss.id),
       winner: match.winner,
       elapsed: Math.floor(match.elapsed),
     };
@@ -9448,6 +9489,8 @@ export class Sim {
     }
     for (const id of [...match.minionIds]) { const m = this.entities.get(id); if (!m || m.dead) match.minionIds.delete(id); }
     this.updateMobaCamps(match);
+    this.updateMobaBoss(match);
+    this.updateMobaRunes(match);
     this.mobaSeparateUnits();
     for (const pid of match.teams.keys()) {
       const meta = this.players.get(pid);
@@ -9496,6 +9539,98 @@ export class Sim {
       slot.mobIds.push(m.id);
       state.ids.push(m.id);
       i++;
+    }
+  }
+
+  // Spawn (or respawn) the river-pit boss at the pit floor.
+  private spawnMobaBoss(match: MobaMatch, inst?: InstanceSlot): void {
+    const slot = inst ?? this.instances.find((i) => i.dungeonId === 'moba_lane' && i.slot === match.slot);
+    if (!slot) return;
+    const origin = this.instanceOriginOf(slot);
+    const template = MOBS.moba_boss;
+    if (!template) return;
+    const m = createMob(this.nextId++, template, template.minLevel, this.groundPos(origin.x + MOBA_BOSS_PIT.x, origin.z + MOBA_BOSS_PIT.z));
+    m.facing = angleTo(m.pos, { x: origin.x, y: 0, z: origin.z });
+    m.prevFacing = m.facing;
+    this.addEntity(m);
+    slot.mobIds.push(m.id);
+    match.boss.id = m.id;
+    match.boss.respawnLeft = 0;
+  }
+
+  // Boss bookkeeping: once slain, count down and respawn a fresh one in the pit.
+  private updateMobaBoss(match: MobaMatch): void {
+    if (match.boss.respawnLeft > 0) {
+      match.boss.respawnLeft -= DT;
+      if (match.boss.respawnLeft <= 0) {
+        if (this.entities.has(match.boss.id)) this.dropEntity(match.boss.id);
+        this.spawnMobaBoss(match);
+      }
+      return;
+    }
+    const boss = this.entities.get(match.boss.id);
+    if (match.boss.id !== -1 && (!boss || boss.dead)) match.boss.respawnLeft = MOBA_OBJECTIVES.bossRespawnSec;
+  }
+
+  // Spawn a power rune pickup at its hidden-ford spot.
+  private spawnMobaRune(match: MobaMatch, index: number, inst?: InstanceSlot): void {
+    const slot = inst ?? this.instances.find((i) => i.dungeonId === 'moba_lane' && i.slot === match.slot);
+    if (!slot) return;
+    const origin = this.instanceOriginOf(slot);
+    const p = MOBA_RUNE_POINTS[index];
+    const rune = createGroundObject(this.nextId++, '', 'Power Rune', this.groundPos(origin.x + p.x, origin.z + p.z));
+    rune.templateId = 'moba_rune';
+    rune.objectItemId = null;
+    rune.lootable = false;
+    this.addEntity(rune);
+    slot.objectIds.push(rune.id);
+    match.runes[index] = { id: rune.id, respawnLeft: 0 };
+  }
+
+  // Rune bookkeeping: a hero walking over a live rune claims it (first in team
+  // seating order wins a contested touch - deterministic) and gains one of the
+  // three cycling buffs; the spot rearms after the respawn window.
+  private updateMobaRunes(match: MobaMatch): void {
+    for (let i = 0; i < match.runes.length; i++) {
+      const state = match.runes[i];
+      if (state.id === null) {
+        state.respawnLeft -= DT;
+        if (state.respawnLeft <= 0) this.spawnMobaRune(match, i);
+        continue;
+      }
+      const rune = this.entities.get(state.id);
+      if (!rune) { state.id = null; state.respawnLeft = MOBA_OBJECTIVES.runeRespawnSec; continue; }
+      for (const pid of match.teams.keys()) {
+        const hero = this.entities.get(pid);
+        if (!hero || hero.dead) continue;
+        if (dist2d(hero.pos, rune.pos) > MOBA_OBJECTIVES.runePickupRadius) continue;
+        this.mobaGrantRuneBuff(hero, match.runeCycle);
+        match.runeCycle++;
+        this.dropEntity(rune.id);
+        state.id = null;
+        state.respawnLeft = MOBA_OBJECTIVES.runeRespawnSec;
+        break;
+      }
+    }
+  }
+
+  // The three rune buffs, cycling per pickup: haste (move speed), power
+  // (attack power), regrowth (a hot). All ride the standard aura kinds the
+  // engine already resolves, so no new combat paths.
+  private mobaGrantRuneBuff(hero: Entity, cycle: number): void {
+    const kind = cycle % 3;
+    const base = { remaining: MOBA_OBJECTIVES.runeBuffSec, duration: MOBA_OBJECTIVES.runeBuffSec, sourceId: hero.id, school: 'nature' as const };
+    hero.auras = hero.auras.filter((a) => a.id !== 'moba_rune_buff');
+    if (kind === 0) {
+      hero.auras.push({ id: 'moba_rune_buff', name: 'Haste Rune', kind: 'buff_speed', value: MOBA_OBJECTIVES.runeSpeed, ...base });
+    } else if (kind === 1) {
+      hero.auras.push({ id: 'moba_rune_buff', name: 'Power Rune', kind: 'buff_ap', value: MOBA_OBJECTIVES.runeAp, ...base });
+    } else {
+      hero.auras.push({
+        id: 'moba_rune_buff', name: 'Regrowth Rune', kind: 'hot',
+        value: Math.max(1, Math.round(hero.maxHp * MOBA_OBJECTIVES.runeHotPctPer2s)),
+        tickInterval: 2, tickTimer: 2, ...base,
+      });
     }
   }
 

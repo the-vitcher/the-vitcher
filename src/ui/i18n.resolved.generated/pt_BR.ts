@@ -4863,6 +4863,9 @@ export const pt_BR: EnTranslations = {
       "moba_creep_vendbot": {
         "name": "Vend-O-Tron"
       },
+      "moba_boss": {
+        "name": "The Dumpster Fire"
+      },
       "elder_bristleback": {
         "name": "Bristleback ancião"
       },

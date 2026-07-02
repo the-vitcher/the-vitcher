@@ -2459,6 +2459,7 @@ export const ja_JP: Partial<Record<TranslationKey, string>> = {
   "entities.mobs.moba_minion_ranged.name": "レーンの術士",
   "entities.mobs.moba_tower.name": "防衛タワー",
   "entities.mobs.moba_core.name": "ネクサスコア",
+  "entities.mobs.moba_boss.name": "ダンプスター・ファイア",
   "entities.mobs.moba_creep_raccoon.name": "ゴミ箱アライグマ",
   "entities.mobs.moba_creep_goose.name": "労組ガチョウ",
   "entities.mobs.moba_creep_goose_foreman.name": "ガチョウ現場監督",

@@ -2459,6 +2459,7 @@ export const ru_RU: Partial<Record<TranslationKey, string>> = {
   "entities.mobs.moba_minion_ranged.name": "Заклинатель линии",
   "entities.mobs.moba_tower.name": "Защитная башня",
   "entities.mobs.moba_core.name": "Ядро нексуса",
+  "entities.mobs.moba_boss.name": "Мусорный Пожар",
   "entities.mobs.moba_creep_raccoon.name": "Помоечный енот",
   "entities.mobs.moba_creep_goose.name": "Профсоюзный гусь",
   "entities.mobs.moba_creep_goose_foreman.name": "Гусь-бригадир",

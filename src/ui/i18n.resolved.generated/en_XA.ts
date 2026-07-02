@@ -4863,6 +4863,9 @@ export const en_XA: EnTranslations = {
       "moba_creep_vendbot": {
         "name": "[Ʋéñð-Ó-Ţŕóñ]"
       },
+      "moba_boss": {
+        "name": "[Ţĥé Ðúɱþšţéŕ Ƒíŕé]"
+      },
       "elder_bristleback": {
         "name": "[Éļðéŕ Ɓŕíšţļéƀáçķ]"
       },

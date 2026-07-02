@@ -8,7 +8,7 @@ import { resolvePosition } from '../src/sim/colliders';
 import { MOBA_HEROES } from '../src/sim/content/moba';
 import {
   MOBA_HERO_LEVEL, MOBA_MATCH_WARMUP_SEC, MOBA_FIRST_WAVE_SEC, MOBA_MINION_XP_PCT, MOBA_JUNGLE_CAMPS,
-  MOBA_PLATEAUS, MOBA_WALL_SEGMENTS, MOBA_LANE_ENTRANCES, MOBA_MAP,
+  MOBA_PLATEAUS, MOBA_WALL_SEGMENTS, MOBA_LANE_ENTRANCES, MOBA_MAP, MOBA_OBJECTIVES, MOBA_BOSS_PIT, MOBA_RUNE_POINTS,
   mobaWaveComposition, mobaHeightAt, mobaLanePath, polylineLength, pointAlongPolyline,
 } from '../src/sim/moba';
 import { xpForLevel } from '../src/sim/types';
@@ -924,5 +924,112 @@ describe('The Clash: the heightfield is live in the world', () => {
       const open = resolvePosition(seed, gx, gz, 0.5);
       expect(Math.hypot(open.x - gx, open.z - gz)).toBeLessThan(0.6);
     }
+  });
+});
+
+describe('The Clash: the river-pit boss', () => {
+  const setup = () => {
+    const sim = makeMobaSim();
+    const a = sim.addPlayer('warrior', 'Slayer');
+    const b = sim.addPlayer('mage', 'Buddy');
+    sim.startMobaMatch([a, b]); // A, B alternate: Slayer=A, Buddy=B... use 3 for same team
+    return { sim, a, b };
+  };
+
+  it('spawns neutral in the pit and reports bossAlive on the match view', () => {
+    const { sim, a } = setup();
+    const match = sim.mobaMatch!;
+    const boss = entOf(sim, match.boss.id);
+    expect(boss.templateId).toBe('moba_boss');
+    expect(boss.mobaTeam ?? null).toBeNull(); // neutral: minions/towers ignore it
+    const origin = instanceOrigin(DUNGEONS.moba_lane.index, match.slot);
+    expect(Math.hypot(boss.pos.x - origin.x - MOBA_BOSS_PIT.x, boss.pos.z - origin.z - MOBA_BOSS_PIT.z)).toBeLessThan(2);
+    expect(sim.mobaState(a)!.bossAlive).toBe(true);
+  });
+
+  it('killing it pays the last-hitter loot, teammates the team share, and buffs the team', () => {
+    const sim = makeMobaSim();
+    const a1 = sim.addPlayer('warrior', 'One');
+    const a2 = sim.addPlayer('mage', 'Two');
+    const a3 = sim.addPlayer('hunter', 'Three');
+    sim.startMobaMatch([a1, a2, a3]); // alternating: One=A, Two=B, Three=A
+    const match = sim.mobaMatch!;
+    const killer = (sim as any).players.get(a1);
+    const mateMeta = (sim as any).players.get(a3);
+    const enemyMeta = (sim as any).players.get(a2);
+    const before = { killer: killer.copper, mate: mateMeta.copper, enemy: enemyMeta.copper };
+    kill(sim, entOf(sim, match.boss.id), entOf(sim, a1));
+    expect(killer.copper - before.killer).toBe(MOBA_OBJECTIVES.bossGold);
+    expect(mateMeta.copper - before.mate).toBe(MOBA_OBJECTIVES.bossTeamGold);
+    expect(enemyMeta.copper - before.enemy).toBe(0);
+    // the whole killing team carries the buff; the enemy does not
+    for (const pid of [a1, a3]) {
+      const auras = entOf(sim, pid).auras.filter((x: any) => x.id.startsWith('moba_boss_buff'));
+      expect(auras.length).toBe(2); // buff_ap + buff_haste
+    }
+    expect(entOf(sim, a2).auras.some((x: any) => x.id.startsWith('moba_boss_buff'))).toBe(false);
+    expect(sim.mobaState(a1)!.bossAlive).toBe(false);
+  });
+
+  it('respawns fresh in the pit after the objective timer', () => {
+    const { sim, a } = setup();
+    const match = sim.mobaMatch!;
+    const firstId = match.boss.id;
+    kill(sim, entOf(sim, firstId), entOf(sim, a));
+    for (let i = 0; i < 5; i++) sim.tick(); // the driver arms the countdown
+    expect(match.boss.respawnLeft).toBeGreaterThan(MOBA_OBJECTIVES.bossRespawnSec - 2);
+    match.boss.respawnLeft = 0.05; // fast-forward the 4-minute wait
+    for (let i = 0; i < 5; i++) sim.tick();
+    expect(match.boss.id).not.toBe(firstId);
+    const boss = entOf(sim, match.boss.id);
+    expect(boss.dead).toBe(false);
+    expect(boss.hp).toBe(boss.maxHp);
+    expect(sim.mobaState(a)!.bossAlive).toBe(true);
+  });
+});
+
+describe('The Clash: river runes', () => {
+  it('spawns a rune pickup at each hidden ford', () => {
+    const sim = makeMobaSim();
+    const pid = sim.addPlayer('warrior', 'Runner');
+    sim.startMobaMatch([pid]);
+    const match = sim.mobaMatch!;
+    expect(match.runes).toHaveLength(MOBA_RUNE_POINTS.length);
+    const origin = instanceOrigin(DUNGEONS.moba_lane.index, match.slot);
+    match.runes.forEach((state, i) => {
+      const rune = entOf(sim, state.id!);
+      expect(rune.templateId).toBe('moba_rune');
+      expect(Math.hypot(rune.pos.x - origin.x - MOBA_RUNE_POINTS[i].x, rune.pos.z - origin.z - MOBA_RUNE_POINTS[i].z)).toBeLessThan(1);
+    });
+  });
+
+  it('walking over a rune claims it, grants the cycling buff, and rearms in 4 minutes', () => {
+    const sim = makeMobaSim();
+    const pid = sim.addPlayer('warrior', 'Runner');
+    sim.startMobaMatch([pid]);
+    const match = sim.mobaMatch!;
+    const hero = entOf(sim, pid);
+    const rune = entOf(sim, match.runes[0].id!);
+    hero.pos = { ...rune.pos };
+    hero.prevPos = { ...hero.pos };
+    sim.tick();
+    // claimed: buff granted (cycle 0 = haste), pickup gone, countdown armed
+    expect(hero.auras.some((a: any) => a.id === 'moba_rune_buff' && a.kind === 'buff_speed')).toBe(true);
+    expect(match.runes[0].id).toBeNull();
+    expect(sim.entities.has(rune.id)).toBe(false);
+    expect(match.runes[0].respawnLeft).toBeGreaterThan(MOBA_OBJECTIVES.runeRespawnSec - 1);
+    // walk away and fast-forward the 4-minute respawn: a fresh rune stands
+    hero.pos.x += 30;
+    hero.prevPos = { ...hero.pos };
+    match.runes[0].respawnLeft = 0.05;
+    for (let i = 0; i < 5; i++) sim.tick();
+    expect(match.runes[0].id).not.toBeNull();
+    expect(entOf(sim, match.runes[0].id!).templateId).toBe('moba_rune');
+    // the SECOND pickup cycles to the next buff kind (power: buff_ap)
+    const hero2 = entOf(sim, pid);
+    hero2.pos = { ...entOf(sim, match.runes[0].id!).pos };
+    hero2.prevPos = { ...hero2.pos };
+    sim.tick();
+    expect(hero2.auras.some((a: any) => a.id === 'moba_rune_buff' && a.kind === 'buff_ap')).toBe(true);
   });
 });

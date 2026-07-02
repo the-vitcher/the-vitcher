@@ -46,6 +46,8 @@ export interface MobaStateView {
   towersAliveB: boolean[][];
   coreAliveA: boolean;
   coreAliveB: boolean;
+  // The river-pit boss (minimap marker + objective callouts).
+  bossAlive: boolean;
   winner: 'A' | 'B' | null;
   elapsed: number; // match seconds
 }

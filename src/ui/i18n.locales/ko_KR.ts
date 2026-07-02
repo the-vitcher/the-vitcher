@@ -2459,6 +2459,7 @@ export const ko_KR: Partial<Record<TranslationKey, string>> = {
   "entities.mobs.moba_minion_ranged.name": "라인 마법사",
   "entities.mobs.moba_tower.name": "방어 타워",
   "entities.mobs.moba_core.name": "넥서스 코어",
+  "entities.mobs.moba_boss.name": "덤스터 파이어",
   "entities.mobs.moba_creep_raccoon.name": "쓰레기통 라쿤",
   "entities.mobs.moba_creep_goose.name": "노조 거위",
   "entities.mobs.moba_creep_goose_foreman.name": "거위 작업반장",
