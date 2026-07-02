@@ -120,7 +120,6 @@ export const hudChromeStrings = {
       rank: "Rank {rank}/{max}",
       notLearned: "Not learned - spend a skill point to unlock",
       nextRank: "Next rank: {value}",
-      ultimate: "Ultimate - unlocks at hero level {level}",
     },
     roles: {
       bruiser: "Bruiser",

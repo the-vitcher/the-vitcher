@@ -2503,7 +2503,6 @@ export const ko_KR: Partial<Record<TranslationKey, string>> = {
   "hudChrome.moba.tooltip.rank": "랭크 {rank}/{max}",
   "hudChrome.moba.tooltip.notLearned": "미습득 - 스킬 포인트를 사용해 해금",
   "hudChrome.moba.tooltip.nextRank": "다음 랭크: {value}",
-  "hudChrome.moba.tooltip.ultimate": "궁극기 - 영웅 레벨 {level}에 해금",
   "hudChrome.moba.roles.bruiser": "브루저",
   "hudChrome.moba.roles.assassin": "암살자",
   "hudChrome.moba.roles.marksman": "원거리 딜러",

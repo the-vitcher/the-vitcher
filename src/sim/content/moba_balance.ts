@@ -95,15 +95,14 @@ export const MOBA_TIMERS = {
   respawnMax: 45,
 };
 
-// Ability rank curves. Authored effect numbers are rank 2; hard-CC durations
-// scale on the gentler curve. The last kit slot is the ultimate (single rank,
-// unlocked at hero level `ultHeroLevel`).
+// Ability rank curves. Every ability (the 4th-slot ultimate included) has four
+// ranks; rank N unlocks at hero level rankHeroLevels[N-1] (1/3/5/7). Authored
+// effect numbers are rank 2; hard-CC durations scale on the gentler curve.
 export const MOBA_RANKS = {
-  maxRank: 3,
-  ultRanks: 1,
-  ultHeroLevel: 6,
-  power: [0.7, 1.0, 1.3] as readonly number[],
-  cc: [1, 1.25, 1.5] as readonly number[],
+  maxRank: 4,
+  rankHeroLevels: [1, 3, 5, 7] as readonly number[],
+  power: [0.7, 1.0, 1.3, 1.6] as readonly number[],
+  cc: [1, 1.25, 1.5, 1.75] as readonly number[],
 };
 
 // Hero seat level (level 1, one skill point, DotA-style).

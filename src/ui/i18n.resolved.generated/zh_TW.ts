@@ -249,8 +249,7 @@ export const zh_TW: EnTranslations = {
       "tooltip": {
         "rank": "等級 {rank}/{max}",
         "notLearned": "尚未學習 - 花費一個技能點解鎖",
-        "nextRank": "下一級：{value}",
-        "ultimate": "終極技能 - 英雄等級 {level} 解鎖"
+        "nextRank": "下一級：{value}"
       },
       "roles": {
         "bruiser": "鬥士",

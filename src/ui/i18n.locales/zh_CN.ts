@@ -2503,7 +2503,6 @@ export const zh_CN: Partial<Record<TranslationKey, string>> = {
   "hudChrome.moba.tooltip.rank": "等级 {rank}/{max}",
   "hudChrome.moba.tooltip.notLearned": "尚未学习 - 花费一个技能点解锁",
   "hudChrome.moba.tooltip.nextRank": "下一级：{value}",
-  "hudChrome.moba.tooltip.ultimate": "终极技能 - 英雄等级 {level} 解锁",
   "hudChrome.moba.roles.bruiser": "斗士",
   "hudChrome.moba.roles.assassin": "刺客",
   "hudChrome.moba.roles.marksman": "射手",

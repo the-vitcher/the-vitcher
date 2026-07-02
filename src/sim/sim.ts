@@ -10,8 +10,8 @@ import {
   assignMobaTeams, mobaTeamForPos, mobaLaneForPos, mobaHeroSpawn, mobaMinionSpawn, mobaMinionMarchTarget,
   mobaEnemyCore, mobaRespawnSeconds, mobaWaveComposition, mobaCoreVulnerable, mobaWinner, mobaHeroKillGold,
   MOBA_FIRST_WAVE_SEC, MOBA_WAVE_INTERVAL_SEC, MOBA_MATCH_WARMUP_SEC, MOBA_HERO_LEVEL,
-  MOBA_RECALL_CHANNEL_SEC, MOBA_RECALL_CD_SEC, MOBA_MAX_ABILITY_RANK, MOBA_ULT_RANKS,
-  MOBA_ULT_HERO_LEVEL, MOBA_MINION_XP_PCT, MOBA_TOWER_XP_PCT, MOBA_HERO_KILL_XP_PCT,
+  MOBA_RECALL_CHANNEL_SEC, MOBA_RECALL_CD_SEC, MOBA_MAX_ABILITY_RANK, MOBA_RANK_HERO_LEVELS,
+  MOBA_MINION_XP_PCT, MOBA_TOWER_XP_PCT, MOBA_HERO_KILL_XP_PCT,
   MOBA_CAMP_XP_PCT, MOBA_TOWER_TEAM_GOLD, MOBA_JUNGLE_CAMPS, MOBA_CAMP_RESPAWN_SEC,
   MOBA_FOUNTAIN, MOBA_SEPARATION, MOBA_OBJECTIVES, MOBA_BOSS_PIT, MOBA_RUNE_POINTS,
   mobaSeparationStep, type MobaBody,
@@ -9259,14 +9259,9 @@ export class Sim {
     return out;
   }
 
-  // The LAST kit slot is the hero's ultimate (single rank, hero level 6+).
-  private mobaIsUltimate(heroId: string, abilityId: string): boolean {
-    const hero = MOBA_HEROES[heroId];
-    return !!hero && hero.abilities[hero.abilities.length - 1] === abilityId;
-  }
-
   // Spend one skill point: learn a new ability in the hero's kit, or upgrade a
-  // learned one (basics to rank 3; the ultimate is single-rank, hero level 6+).
+  // learned one. Every ability has four ranks; rank N additionally requires the
+  // hero level in MOBA_RANK_HERO_LEVELS (1/3/5/7).
   mobaLearnAbility(abilityId: string, pid?: number): void {
     if (!this.cfg.mobaMode) return;
     const r = this.resolve(pid);
@@ -9274,10 +9269,9 @@ export class Sim {
     const hero = MOBA_HEROES[r.meta.mobaHeroId];
     if (!hero || !hero.abilities.includes(abilityId)) return;
     if (r.meta.mobaSkillPoints <= 0) return;
-    const isUlt = this.mobaIsUltimate(r.meta.mobaHeroId, abilityId);
-    if (isUlt && r.e.level < MOBA_ULT_HERO_LEVEL) return;
     const rank = r.meta.mobaSkillRanks.get(abilityId) ?? 0;
-    if (rank >= (isUlt ? MOBA_ULT_RANKS : MOBA_MAX_ABILITY_RANK)) return;
+    if (rank >= MOBA_MAX_ABILITY_RANK) return;
+    if (r.e.level < (MOBA_RANK_HERO_LEVELS[rank] ?? Infinity)) return;
     r.meta.mobaSkillRanks.set(abilityId, rank + 1);
     r.meta.mobaSkillPoints--;
     r.meta.known = this.mobaHeroKnown(r.meta);

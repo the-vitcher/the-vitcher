@@ -2503,7 +2503,6 @@ export const ru_RU: Partial<Record<TranslationKey, string>> = {
   "hudChrome.moba.tooltip.rank": "Ранг {rank}/{max}",
   "hudChrome.moba.tooltip.notLearned": "Не изучено - потратьте очко навыка, чтобы открыть",
   "hudChrome.moba.tooltip.nextRank": "Следующий ранг: {value}",
-  "hudChrome.moba.tooltip.ultimate": "Ультимейт - открывается на уровне героя {level}",
   "hudChrome.moba.roles.bruiser": "Боец",
   "hudChrome.moba.roles.assassin": "Убийца",
   "hudChrome.moba.roles.marksman": "Стрелок",

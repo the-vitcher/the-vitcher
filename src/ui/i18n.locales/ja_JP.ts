@@ -2503,7 +2503,6 @@ export const ja_JP: Partial<Record<TranslationKey, string>> = {
   "hudChrome.moba.tooltip.rank": "ランク {rank}/{max}",
   "hudChrome.moba.tooltip.notLearned": "未習得 - スキルポイントを使って解放",
   "hudChrome.moba.tooltip.nextRank": "次のランク: {value}",
-  "hudChrome.moba.tooltip.ultimate": "アルティメット - ヒーローレベル {level} で解放",
   "hudChrome.moba.roles.bruiser": "ブルーザー",
   "hudChrome.moba.roles.assassin": "アサシン",
   "hudChrome.moba.roles.marksman": "マークスマン",

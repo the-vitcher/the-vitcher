@@ -114,7 +114,7 @@ const tooltip = await page.evaluate(() => {
   };
 });
 check('skill tooltip shows on hover', tooltip.found && tooltip.visible, JSON.stringify({ visible: tooltip.visible }));
-check('tooltip carries rank standing and resolved text', /Rank 1\/3/.test(tooltip.text) && !tooltip.text.includes('$d'), tooltip.text.slice(0, 90));
+check('tooltip carries rank standing and resolved text', /Rank 1\/4/.test(tooltip.text) && !tooltip.text.includes('$d'), tooltip.text.slice(0, 90));
 await page.screenshot({ path: 'tmp/clash_02_learned.png' });
 await page.evaluate(() => {
   document.querySelector('#moba-skills [data-ability]')?.dispatchEvent(new MouseEvent('mouseleave'));

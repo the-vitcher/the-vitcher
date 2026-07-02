@@ -249,8 +249,7 @@ export const ja_JP: EnTranslations = {
       "tooltip": {
         "rank": "ランク {rank}/{max}",
         "notLearned": "未習得 - スキルポイントを使って解放",
-        "nextRank": "次のランク: {value}",
-        "ultimate": "アルティメット - ヒーローレベル {level} で解放"
+        "nextRank": "次のランク: {value}"
       },
       "roles": {
         "bruiser": "ブルーザー",

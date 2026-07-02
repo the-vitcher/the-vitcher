@@ -33,11 +33,14 @@ import { MOBA_MINION_BALANCE, MOBA_TOWER_BALANCE, MOBA_CORE_BALANCE, MOBA_ECONOM
 // Bespoke hero ability kits. Built from AbilityEffect primitives; `class` is the
 // hero's base class (resource type + GCD). learnLevel 1 (heroes are granted their
 // whole kit at once, bypassing the class learn-level gate).
+// Cooldowns sit in a 10-20 second band scaled by power: bread-and-butter pokes
+// at 10 s, utility/CC in the middle, and every 4th-slot ultimate at 20 s
+// (locked by tests/moba_content.test.ts).
 // ---------------------------------------------------------------------------
 export const MOBA_ABILITIES: Record<string, AbilityDef> = {
   // ---- Snacko, the Trash Bandit (warrior / rage): raccoon line cook, bruiser ----
   moba_pan_smash: {
-    id: 'moba_pan_smash', name: 'Pan Smash', class: 'warrior', cost: 15, castTime: 0, cooldown: 0,
+    id: 'moba_pan_smash', name: 'Pan Smash', class: 'warrior', cost: 15, castTime: 0, cooldown: 10,
     range: 0, school: 'physical', requiresTarget: true, learnLevel: 1,
     effects: [{ type: 'weaponStrike', bonus: 22 }],
     description: 'Cast iron solves everything. Strikes for weapon damage plus $d.',
@@ -55,7 +58,7 @@ export const MOBA_ABILITIES: Record<string, AbilityDef> = {
     description: 'The kitchen incident, recreated on purpose. Burns the ground under the target for $d over 4 seconds.',
   },
   moba_five_second_rule: {
-    id: 'moba_five_second_rule', name: 'Five-Second Rule', class: 'warrior', cost: 10, castTime: 0, cooldown: 45,
+    id: 'moba_five_second_rule', name: 'Five-Second Rule', class: 'warrior', cost: 10, castTime: 0, cooldown: 20,
     range: 5, school: 'nature', requiresTarget: true, targetType: 'friendly', learnLevel: 1,
     effects: [{ type: 'heal', min: 120, max: 160 }],
     description: 'Eat something off the floor. It is fine. It is FINE. Restores $d health.',
@@ -63,25 +66,25 @@ export const MOBA_ABILITIES: Record<string, AbilityDef> = {
 
   // ---- Lord Wafflesworth III, the Breakfast Baron (paladin / mana): support-tank ----
   moba_fork_of_justice: {
-    id: 'moba_fork_of_justice', name: 'Fork of Justice', class: 'paladin', cost: 25, castTime: 0, cooldown: 0,
+    id: 'moba_fork_of_justice', name: 'Fork of Justice', class: 'paladin', cost: 25, castTime: 0, cooldown: 10,
     range: 20, school: 'holy', requiresTarget: true, learnLevel: 1,
     effects: [{ type: 'directDamage', min: 40, max: 55 }],
     description: 'Judgement, pronged. Deals $d holy damage.',
   },
   moba_syrup_slick: {
-    id: 'moba_syrup_slick', name: 'Syrup Slick', class: 'paladin', cost: 40, castTime: 0, cooldown: 16,
+    id: 'moba_syrup_slick', name: 'Syrup Slick', class: 'paladin', cost: 40, castTime: 0, cooldown: 15,
     range: 0, school: 'nature', requiresTarget: false, learnLevel: 1,
     effects: [{ type: 'aoeRoot', duration: 2, radius: 8, min: 20, max: 30 }],
     description: 'Nobody leaves brunch. Roots nearby enemies in artisanal syrup for 2 seconds.',
   },
   moba_butter_up: {
-    id: 'moba_butter_up', name: 'Butter Up', class: 'paladin', cost: 35, castTime: 0, cooldown: 10,
+    id: 'moba_butter_up', name: 'Butter Up', class: 'paladin', cost: 35, castTime: 0, cooldown: 12,
     range: 30, school: 'holy', requiresTarget: true, targetType: 'friendly', learnLevel: 1,
     effects: [{ type: 'absorb', amount: 140, duration: 8 }],
     description: 'Slather an ally in protective butter. Absorbs $d damage. Compliments too, but mostly butter.',
   },
   moba_brunch_hour: {
-    id: 'moba_brunch_hour', name: 'Brunch Hour', class: 'paladin', cost: 50, castTime: 0, cooldown: 30,
+    id: 'moba_brunch_hour', name: 'Brunch Hour', class: 'paladin', cost: 50, castTime: 0, cooldown: 20,
     range: 30, school: 'holy', requiresTarget: true, targetType: 'friendly', learnLevel: 1,
     effects: [{ type: 'hot', total: 180, duration: 9, interval: 3 }],
     description: 'Declares brunch. Restores $d health over 9 seconds, because you deserve this.',
@@ -89,7 +92,7 @@ export const MOBA_ABILITIES: Record<string, AbilityDef> = {
 
   // ---- Gerald, Employee of the Month (hunter / mana): cursed accountant, marksman ----
   moba_stapler_shot: {
-    id: 'moba_stapler_shot', name: 'Thrown Stapler', class: 'hunter', cost: 20, castTime: 0, cooldown: 0,
+    id: 'moba_stapler_shot', name: 'Thrown Stapler', class: 'hunter', cost: 20, castTime: 0, cooldown: 10,
     range: 30, school: 'physical', requiresTarget: true, learnLevel: 1,
     effects: [{ type: 'directDamage', min: 38, max: 52 }],
     description: 'The red one. He has been waiting years to do this. Deals $d damage.',
@@ -101,13 +104,13 @@ export const MOBA_ABILITIES: Record<string, AbilityDef> = {
     description: 'Your request is pending. Roots the target in bureaucracy for 2.5 seconds.',
   },
   moba_audit: {
-    id: 'moba_audit', name: 'The Audit', class: 'hunter', cost: 30, castTime: 0, cooldown: 10,
+    id: 'moba_audit', name: 'The Audit', class: 'hunter', cost: 30, castTime: 0, cooldown: 12,
     range: 30, school: 'shadow', requiresTarget: true, learnLevel: 1,
     effects: [{ type: 'dot', total: 90, duration: 9, interval: 3 }],
     description: 'Your receipts are lies and now everyone knows. Deals $d damage over 9 seconds.',
   },
   moba_severance: {
-    id: 'moba_severance', name: 'Severance Package', class: 'hunter', cost: 40, castTime: 0, cooldown: 40,
+    id: 'moba_severance', name: 'Severance Package', class: 'hunter', cost: 40, castTime: 0, cooldown: 20,
     range: 30, school: 'physical', requiresTarget: true, requiresTargetHpBelow: 0.35, learnLevel: 1,
     effects: [{ type: 'directDamage', min: 130, max: 190 }],
     description: 'Effective immediately. Executes an enemy below 35% health for $d damage.',
@@ -115,13 +118,13 @@ export const MOBA_ABILITIES: Record<string, AbilityDef> = {
 
   // ---- Grandma Vex, the Passive-Aggressor (priest / mana): support ----
   moba_cookie_toss: {
-    id: 'moba_cookie_toss', name: 'Cookie Toss', class: 'priest', cost: 30, castTime: 1.0, cooldown: 0,
+    id: 'moba_cookie_toss', name: 'Cookie Toss', class: 'priest', cost: 30, castTime: 1.0, cooldown: 10,
     range: 30, school: 'holy', requiresTarget: true, targetType: 'friendly', learnLevel: 1,
     effects: [{ type: 'heal', min: 70, max: 95 }],
     description: 'A warm cookie, thrown with terrifying accuracy. Restores $d health. You WILL say thank you.',
   },
   moba_itchy_sweater: {
-    id: 'moba_itchy_sweater', name: 'Itchy Sweater', class: 'priest', cost: 30, castTime: 0, cooldown: 8,
+    id: 'moba_itchy_sweater', name: 'Itchy Sweater', class: 'priest', cost: 30, castTime: 0, cooldown: 11,
     range: 30, school: 'holy', requiresTarget: true, targetType: 'friendly', learnLevel: 1,
     effects: [{ type: 'absorb', amount: 120, duration: 10 }],
     description: 'She knitted it herself and you are wearing it. Absorbs $d damage. It itches. Endure.',
@@ -133,7 +136,7 @@ export const MOBA_ABILITIES: Record<string, AbilityDef> = {
     description: 'Not angry, just disappointed. Deals $d psychic damage and saps 30 attack power from everyone nearby who should have known better.',
   },
   moba_naptime: {
-    id: 'moba_naptime', name: 'Naptime', class: 'priest', cost: 45, castTime: 1.2, cooldown: 25,
+    id: 'moba_naptime', name: 'Naptime', class: 'priest', cost: 45, castTime: 1.2, cooldown: 20,
     range: 25, school: 'arcane', requiresTarget: true, learnLevel: 1,
     effects: [{ type: 'polymorph', duration: 5 }],
     description: 'Tucks an enemy in against their will for 5 seconds. Breaks on damage; they wake up refreshed, which is somehow worse.',
@@ -141,25 +144,25 @@ export const MOBA_ABILITIES: Record<string, AbilityDef> = {
 
   // ---- Blorbo, the Unemployed (druid / mana): sentient slime, bruiser ----
   moba_splat: {
-    id: 'moba_splat', name: 'Splat', class: 'druid', cost: 30, castTime: 0, cooldown: 0,
+    id: 'moba_splat', name: 'Splat', class: 'druid', cost: 30, castTime: 0, cooldown: 10,
     range: 0, school: 'nature', requiresTarget: false, learnLevel: 1,
     effects: [{ type: 'aoeDamage', min: 32, max: 44, radius: 7 }],
     description: 'Blorbo falls over. It is devastating. Deals $d damage to everything nearby.',
   },
   moba_engulf: {
-    id: 'moba_engulf', name: 'Engulf', class: 'druid', cost: 35, castTime: 0, cooldown: 18,
+    id: 'moba_engulf', name: 'Engulf', class: 'druid', cost: 35, castTime: 0, cooldown: 16,
     range: 0, school: 'nature', requiresTarget: true, learnLevel: 1,
     effects: [{ type: 'incapacitate', duration: 3 }],
     description: 'You are now inside Blorbo. Blorbo is so sorry. Incapacitates for 3 seconds; breaks on damage.',
   },
   moba_acid_reflux: {
-    id: 'moba_acid_reflux', name: 'Acid Reflux', class: 'druid', cost: 25, castTime: 0, cooldown: 10,
+    id: 'moba_acid_reflux', name: 'Acid Reflux', class: 'druid', cost: 25, castTime: 0, cooldown: 12,
     range: 20, school: 'nature', requiresTarget: true, learnLevel: 1,
     effects: [{ type: 'dot', total: 100, duration: 8, interval: 2 }],
     description: 'Blorbo should not have eaten that mailbox. Deals $d nature damage over 8 seconds.',
   },
   moba_regoo: {
-    id: 'moba_regoo', name: 'Re-goo', class: 'druid', cost: 50, castTime: 0, cooldown: 40,
+    id: 'moba_regoo', name: 'Re-goo', class: 'druid', cost: 50, castTime: 0, cooldown: 20,
     range: 5, school: 'nature', requiresTarget: true, targetType: 'friendly', learnLevel: 1,
     effects: [{ type: 'hot', total: 200, duration: 10, interval: 2 }],
     description: 'Blorbo pulls himself together. Literally. Restores $d health over 10 seconds.',
@@ -167,25 +170,25 @@ export const MOBA_ABILITIES: Record<string, AbilityDef> = {
 
   // ---- Captain Chairleg, the Furniture Pirate (rogue / energy): assassin ----
   moba_splinter_stab: {
-    id: 'moba_splinter_stab', name: 'Splinter Stab', class: 'rogue', cost: 35, castTime: 0, cooldown: 0,
+    id: 'moba_splinter_stab', name: 'Splinter Stab', class: 'rogue', cost: 35, castTime: 0, cooldown: 10,
     range: 0, school: 'physical', requiresTarget: true, awardsCombo: 1, learnLevel: 1,
     effects: [{ type: 'weaponStrike', bonus: 18 }],
     description: 'Stabs with a sharpened chair leg for weapon damage plus $d. Awards 1 combo point. Yes, it counts as a sword.',
   },
   moba_flatpack_ambush: {
-    id: 'moba_flatpack_ambush', name: 'Flatpack Ambush', class: 'rogue', cost: 30, castTime: 0, cooldown: 16,
+    id: 'moba_flatpack_ambush', name: 'Flatpack Ambush', class: 'rogue', cost: 30, castTime: 0, cooldown: 15,
     range: 25, minRange: 8, school: 'physical', requiresTarget: true, offGcd: true, awardsCombo: 1, learnLevel: 1,
     effects: [{ type: 'charge' }, { type: 'weaponStrike', bonus: 28 }],
     description: 'Some assembly required. By your face. Lunges to the target and strikes for weapon damage plus $d.',
   },
   moba_peg_leg_sweep: {
-    id: 'moba_peg_leg_sweep', name: 'Peg-Leg Sweep', class: 'rogue', cost: 40, castTime: 0, cooldown: 12,
+    id: 'moba_peg_leg_sweep', name: 'Peg-Leg Sweep', class: 'rogue', cost: 40, castTime: 0, cooldown: 13,
     range: 0, school: 'physical', requiresTarget: false, learnLevel: 1,
     effects: [{ type: 'aoeDamage', min: 26, max: 38, radius: 6 }],
     description: 'The peg leg is ALSO furniture. Deals $d damage to nearby enemies.',
   },
   moba_warranty_void: {
-    id: 'moba_warranty_void', name: 'Warranty Void', class: 'rogue', cost: 35, castTime: 0, cooldown: 0,
+    id: 'moba_warranty_void', name: 'Warranty Void', class: 'rogue', cost: 35, castTime: 0, cooldown: 20,
     range: 0, school: 'physical', requiresTarget: true, spendsCombo: true, learnLevel: 1,
     effects: [{ type: 'finisherDamage', base: 60, perCombo: 45, variance: 20 }],
     description: 'Finishing move: deals $d damage plus more per combo point. No refunds, no exchanges, no survivors.',
@@ -193,25 +196,25 @@ export const MOBA_ABILITIES: Record<string, AbilityDef> = {
 
   // ---- Professor Zapp, Tenured and Unhinged (mage / mana): mage ----
   moba_pop_quiz: {
-    id: 'moba_pop_quiz', name: 'Pop Quiz', class: 'mage', cost: 25, castTime: 1.0, cooldown: 0,
+    id: 'moba_pop_quiz', name: 'Pop Quiz', class: 'mage', cost: 25, castTime: 1.0, cooldown: 10,
     range: 30, school: 'arcane', requiresTarget: true, learnLevel: 1,
     effects: [{ type: 'directDamage', min: 42, max: 58 }],
     description: 'Nobody is ever prepared. Deals $d arcane damage, worth 40% of your final grade.',
   },
   moba_peer_review: {
-    id: 'moba_peer_review', name: 'Peer Review', class: 'mage', cost: 35, castTime: 0, cooldown: 12,
+    id: 'moba_peer_review', name: 'Peer Review', class: 'mage', cost: 35, castTime: 0, cooldown: 13,
     range: 30, school: 'shadow', requiresTarget: true, learnLevel: 1,
     effects: [{ type: 'dot', total: 110, duration: 10, interval: 2 }],
     description: 'Anonymous. Merciless. Reviewer 2. Deals $d damage over 10 seconds.',
   },
   moba_office_hours: {
-    id: 'moba_office_hours', name: 'Office Hours', class: 'mage', cost: 55, castTime: 0, cooldown: 20,
+    id: 'moba_office_hours', name: 'Office Hours', class: 'mage', cost: 55, castTime: 0, cooldown: 17,
     range: 28, school: 'fire', requiresTarget: true, learnLevel: 1,
     effects: [{ type: 'groundAoE', min: 60, max: 90, radius: 9, duration: 4, interval: 1 }],
     description: 'By appointment only. The appointment is pain. Burns the area for $d over 4 seconds.',
   },
   moba_thesis_defense: {
-    id: 'moba_thesis_defense', name: 'Thesis Defense', class: 'mage', cost: 45, castTime: 0, cooldown: 30,
+    id: 'moba_thesis_defense', name: 'Thesis Defense', class: 'mage', cost: 45, castTime: 0, cooldown: 20,
     range: 30, school: 'arcane', requiresTarget: true, targetType: 'friendly', learnLevel: 1,
     effects: [{ type: 'absorb', amount: 180, duration: 8 }],
     description: 'Seventeen years of research between you and harm. Absorbs $d damage.',
@@ -219,13 +222,13 @@ export const MOBA_ABILITIES: Record<string, AbilityDef> = {
 
   // ---- Doug, the Middle Manager of Darkness (warlock / mana): mage ----
   moba_touch_base: {
-    id: 'moba_touch_base', name: 'Touch Base', class: 'warlock', cost: 25, castTime: 1.0, cooldown: 0,
+    id: 'moba_touch_base', name: 'Touch Base', class: 'warlock', cost: 25, castTime: 1.0, cooldown: 10,
     range: 30, school: 'shadow', requiresTarget: true, learnLevel: 1,
     effects: [{ type: 'directDamage', min: 40, max: 56 }],
     description: 'Just circling back on your continued existence. Deals $d shadow damage.',
   },
   moba_circle_back: {
-    id: 'moba_circle_back', name: 'Circle Back', class: 'warlock', cost: 30, castTime: 0, cooldown: 8,
+    id: 'moba_circle_back', name: 'Circle Back', class: 'warlock', cost: 30, castTime: 0, cooldown: 11,
     range: 30, school: 'shadow', requiresTarget: true, learnLevel: 1,
     effects: [{ type: 'dot', total: 120, duration: 12, interval: 3 }],
     description: 'Puts a recurring meeting on your calendar. The agenda is suffering. Deals $d damage over 12 seconds.',
@@ -238,7 +241,7 @@ export const MOBA_ABILITIES: Record<string, AbilityDef> = {
     description: 'Leverages YOUR core competencies. Channels for 3 seconds, draining $d health per second into Doug.',
   },
   moba_mandatory_meeting: {
-    id: 'moba_mandatory_meeting', name: 'Mandatory Meeting', class: 'warlock', cost: 55, castTime: 0, cooldown: 30,
+    id: 'moba_mandatory_meeting', name: 'Mandatory Meeting', class: 'warlock', cost: 55, castTime: 0, cooldown: 20,
     range: 0, school: 'shadow', requiresTarget: false, learnLevel: 1,
     effects: [{ type: 'aoeRoot', duration: 2.5, radius: 9, min: 24, max: 36 }],
     description: 'This could have been an email. Roots nearby enemies for 2.5 seconds while Doug shares his screen.',
@@ -246,25 +249,25 @@ export const MOBA_ABILITIES: Record<string, AbilityDef> = {
 
   // ---- Tinker Tallulah, OSHA's Final Warning (shaman / mana): support ----
   moba_rocket_wrench: {
-    id: 'moba_rocket_wrench', name: 'Rocket Wrench', class: 'shaman', cost: 25, castTime: 0, cooldown: 0,
+    id: 'moba_rocket_wrench', name: 'Rocket Wrench', class: 'shaman', cost: 25, castTime: 0, cooldown: 10,
     range: 28, school: 'fire', requiresTarget: true, learnLevel: 1,
     effects: [{ type: 'directDamage', min: 40, max: 56 }],
     description: 'It comes back. Usually. Deals $d fire damage.',
   },
   moba_duct_tape: {
-    id: 'moba_duct_tape', name: 'Duct Tape', class: 'shaman', cost: 35, castTime: 0, cooldown: 8,
+    id: 'moba_duct_tape', name: 'Duct Tape', class: 'shaman', cost: 35, castTime: 0, cooldown: 11,
     range: 30, school: 'nature', requiresTarget: true, targetType: 'friendly', learnLevel: 1,
     effects: [{ type: 'heal', min: 80, max: 110 }],
     description: 'Structural. Medical. Emotional. Restores $d health and holds the rest together.',
   },
   moba_jumper_cables: {
-    id: 'moba_jumper_cables', name: 'Jumper Cables', class: 'shaman', cost: 40, castTime: 0, cooldown: 20,
+    id: 'moba_jumper_cables', name: 'Jumper Cables', class: 'shaman', cost: 40, castTime: 0, cooldown: 17,
     range: 10, school: 'nature', requiresTarget: true, learnLevel: 1,
     effects: [{ type: 'directDamage', min: 20, max: 30 }, { type: 'stun', duration: 2 }],
     description: 'CLEAR! Shocks the target for $d damage and stuns them for 2 seconds. Not certified for this. Not certified for anything.',
   },
   moba_untested_prototype: {
-    id: 'moba_untested_prototype', name: 'Untested Prototype', class: 'shaman', cost: 60, castTime: 0, cooldown: 45,
+    id: 'moba_untested_prototype', name: 'Untested Prototype', class: 'shaman', cost: 60, castTime: 0, cooldown: 20,
     range: 0, school: 'fire', requiresTarget: false, learnLevel: 1,
     effects: [{ type: 'aoeDamage', min: 80, max: 120, radius: 9 }],
     description: 'The warranty voids on impact. Deals $d fire damage to everything nearby, including her eyebrows.',
@@ -272,25 +275,25 @@ export const MOBA_ABILITIES: Record<string, AbilityDef> = {
 
   // ---- Moth Larry, Lamp Enthusiast (mage / mana): marksman ----
   moba_wing_slap: {
-    id: 'moba_wing_slap', name: 'Wing Slap', class: 'mage', cost: 20, castTime: 0, cooldown: 0,
+    id: 'moba_wing_slap', name: 'Wing Slap', class: 'mage', cost: 20, castTime: 0, cooldown: 10,
     range: 25, school: 'physical', requiresTarget: true, learnLevel: 1,
     effects: [{ type: 'directDamage', min: 36, max: 50 }],
     description: 'A dusty, surprisingly firm wing to the face. Deals $d damage.',
   },
   moba_dust_gust: {
-    id: 'moba_dust_gust', name: 'Dust Gust', class: 'mage', cost: 30, castTime: 0, cooldown: 12,
+    id: 'moba_dust_gust', name: 'Dust Gust', class: 'mage', cost: 30, castTime: 0, cooldown: 13,
     range: 0, school: 'nature', requiresTarget: false, learnLevel: 1,
     effects: [{ type: 'aoeDamage', min: 18, max: 26, radius: 8 }, { type: 'aoeAttackSpeed', mult: 0.7, duration: 5, radius: 8 }],
     description: 'One good flap. Nearby enemies take $d damage and attack 30% slower while coughing.',
   },
   moba_erratic_flight: {
-    id: 'moba_erratic_flight', name: 'Erratic Flight', class: 'mage', cost: 25, castTime: 0, cooldown: 25,
+    id: 'moba_erratic_flight', name: 'Erratic Flight', class: 'mage', cost: 25, castTime: 0, cooldown: 18,
     range: 0, school: 'arcane', requiresTarget: false, offGcd: true, learnLevel: 1,
     effects: [{ type: 'selfBuff', kind: 'buff_dodge', value: 0.3, duration: 6 }],
     description: 'Nobody can predict the moth. Not even the moth. +30% dodge for 6 seconds.',
   },
   moba_the_lamp: {
-    id: 'moba_the_lamp', name: 'L A M P', class: 'mage', cost: 60, castTime: 1.2, cooldown: 50,
+    id: 'moba_the_lamp', name: 'L A M P', class: 'mage', cost: 60, castTime: 1.2, cooldown: 20,
     range: 30, school: 'holy', requiresTarget: true, learnLevel: 1,
     effects: [{ type: 'groundAoE', min: 90, max: 130, radius: 10, duration: 3, interval: 1 }],
     description: 'He found it. The big one. The beautiful one. Sears the area for $d holy damage over 3 seconds.',

@@ -249,8 +249,7 @@ export const ru_RU: EnTranslations = {
       "tooltip": {
         "rank": "Ранг {rank}/{max}",
         "notLearned": "Не изучено - потратьте очко навыка, чтобы открыть",
-        "nextRank": "Следующий ранг: {value}",
-        "ultimate": "Ультимейт - открывается на уровне героя {level}"
+        "nextRank": "Следующий ранг: {value}"
       },
       "roles": {
         "bruiser": "Боец",

@@ -586,11 +586,11 @@ export const MOBA_CORE_LEVEL = MOBA_CORE_BALANCE.level;
 export const MOBA_HERO_LEVEL = MOBA_HERO_SEAT_LEVEL;
 
 // --- Ability leveling: DotA-style skill points. One point per hero level (one at
-// seat); each point learns a new basic ability or upgrades a learned one. The
-// LAST kit slot is the hero's ultimate: single-rank, locked until hero level 6. ---
+// seat); each point learns a new ability or upgrades a learned one. Every ability
+// has four ranks; rank N additionally requires the hero level in
+// MOBA_RANK_HERO_LEVELS (1/3/5/7). ---
 export const MOBA_MAX_ABILITY_RANK = MOBA_RANKS.maxRank;
-export const MOBA_ULT_RANKS = MOBA_RANKS.ultRanks;
-export const MOBA_ULT_HERO_LEVEL = MOBA_RANKS.ultHeroLevel;
+export const MOBA_RANK_HERO_LEVELS: readonly number[] = MOBA_RANKS.rankHeroLevels;
 // Effect power by rank (authored numbers are rank 2); crowd-control durations
 // grow on their own gentler curve.
 export const MOBA_RANK_POWER: readonly number[] = MOBA_RANKS.power;

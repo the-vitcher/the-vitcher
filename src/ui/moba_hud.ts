@@ -9,7 +9,7 @@
 // backstop (the GROUND_PICKUP_LINES precedent). All chrome goes through t().
 import type { IWorld, MobaStateView } from '../world_api';
 import { CLASSES, MOBA_ABILITIES, MOBA_HEROES } from '../sim/data';
-import { MOBA_MAX_ABILITY_RANK, MOBA_ULT_HERO_LEVEL, mobaScaleEffectForRank } from '../sim/moba';
+import { MOBA_MAX_ABILITY_RANK, MOBA_RANK_HERO_LEVELS, mobaScaleEffectForRank } from '../sim/moba';
 import type { ResourceType } from '../sim/types';
 import {
   abilityCastLine, abilityEffectText, abilityRangeLine, abilityRequirementLines,
@@ -26,16 +26,13 @@ const $ = <T extends HTMLElement = HTMLElement>(sel: string): T => document.quer
 // number slot resolved at the shown rank, a next-rank preview, and the usual
 // requirement lines. Pure HTML builder (Vitest-covered); descriptions are
 // data-English by design (the documented backstop, like hero blurbs).
-export function mobaSkillTooltipHtml(abilityId: string, rank: number, ult: boolean, resourceType: ResourceType | null): string {
+export function mobaSkillTooltipHtml(abilityId: string, rank: number, resourceType: ResourceType | null): string {
   const def = MOBA_ABILITIES[abilityId];
   if (!def) return '';
-  const maxRank = ult ? 1 : MOBA_MAX_ABILITY_RANK;
+  const maxRank = MOBA_MAX_ABILITY_RANK;
   const shownRank = Math.min(maxRank, Math.max(1, rank)); // unlearned previews rank 1
   const damageText = abilityEffectText(def.effects.map((e) => mobaScaleEffectForRank(e, shownRank)));
   let html = `<div class="tt-title">${esc(def.name)}</div>`;
-  if (ult) {
-    html += `<div class="tt-sub">${esc(t('hudChrome.moba.tooltip.ultimate', { level: String(MOBA_ULT_HERO_LEVEL) }))}</div>`;
-  }
   html += `<div class="tt-sub">${esc(rank > 0
     ? t('hudChrome.moba.tooltip.rank', { rank: formatAbilityNumber(rank), max: formatAbilityNumber(maxRank) })
     : t('hudChrome.moba.tooltip.notLearned'))}</div>`;
@@ -149,7 +146,7 @@ export class MobaHud {
 
   // Wire the shared tooltip onto every [data-ability] icon under a rebuilt
   // container (innerHTML re-renders drop listeners, so re-attach after each
-  // rebuild). Rank/ult ride data attributes; the strip re-renders on any rank
+  // rebuild). Rank rides a data attribute; the strip re-renders on any rank
   // change, so the closure always reads current values.
   private attachSkillTooltips(rootEl: HTMLElement): void {
     if (!this.attachTooltip) return;
@@ -157,7 +154,6 @@ export class MobaHud {
       this.attachTooltip(el, () => mobaSkillTooltipHtml(
         el.dataset.ability ?? '',
         Number(el.dataset.rank ?? '0'),
-        el.dataset.ult === '1',
         (el.dataset.res as ResourceType | undefined) ?? this.sim.player?.resourceType ?? null,
       ));
     }
@@ -189,16 +185,20 @@ export class MobaHud {
       if (!def) return '';
       const ult = i === hero.abilities.length - 1;
       const rank = st.skillRanks[id] ?? 0;
-      const maxRank = ult ? 1 : MOBA_MAX_ABILITY_RANK;
-      const locked = ult && level < MOBA_ULT_HERO_LEVEL;
+      const maxRank = MOBA_MAX_ABILITY_RANK;
+      // Rank N unlocks at hero level MOBA_RANK_HERO_LEVELS[N-1] (1/3/5/7); the
+      // lock note only shows while an unspent point is blocked by the gate.
+      const nextLevel = MOBA_RANK_HERO_LEVELS[rank] ?? Infinity;
+      const locked = rank < maxRank && level < nextLevel;
       const canLearn = st.skillPoints > 0 && rank < maxRank && !locked;
+      const showLock = st.skillPoints > 0 && rank < maxRank && locked;
       const pips = Array.from({ length: maxRank }, (_, p) => `<i class="pip${p < rank ? ' on' : ''}"></i>`).join('');
       const learnLabel = rank === 0 ? t('hudChrome.moba.learn') : t('hudChrome.moba.upgrade');
       return `<div class="mskill${rank === 0 ? ' unlearned' : ''}${ult ? ' ult' : ''}">
         <span class="mskill-core">
           <img src="${iconDataUrl('ability', id, 34)}" alt="${esc(def.name)}" tabindex="0" data-ability="${esc(id)}" data-rank="${rank}" data-ult="${ult ? 1 : 0}">
           <span class="pips" aria-hidden="true">${pips}</span>
-          ${locked ? `<span class="mskill-lock">${esc(t('hudChrome.moba.ultLocked', { level: String(MOBA_ULT_HERO_LEVEL) }))}</span>` : ''}
+          ${showLock ? `<span class="mskill-lock">${esc(t('hudChrome.moba.ultLocked', { level: String(nextLevel) }))}</span>` : ''}
         </span>
         ${canLearn ? `<button type="button" class="mskill-learn" data-learn="${esc(id)}" data-ability="${esc(id)}" data-rank="${rank}" data-ult="${ult ? 1 : 0}" aria-label="${esc(learnLabel)} ${esc(def.name)}">+</button>` : ''}
       </div>`;

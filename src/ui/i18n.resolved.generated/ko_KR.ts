@@ -249,8 +249,7 @@ export const ko_KR: EnTranslations = {
       "tooltip": {
         "rank": "랭크 {rank}/{max}",
         "notLearned": "미습득 - 스킬 포인트를 사용해 해금",
-        "nextRank": "다음 랭크: {value}",
-        "ultimate": "궁극기 - 영웅 레벨 {level}에 해금"
+        "nextRank": "다음 랭크: {value}"
       },
       "roles": {
         "bruiser": "브루저",

@@ -249,8 +249,7 @@ export const en_XA: EnTranslations = {
       "tooltip": {
         "rank": "[Ŕáñķ {rank}/{max}]",
         "notLearned": "[Ñóţ ļéáŕñéð - šþéñð á šķíļļ þóíñţ ţó úñļóçķ]",
-        "nextRank": "[Ñéẋţ ŕáñķ: {value}]",
-        "ultimate": "[Úļţíɱáţé - úñļóçķš áţ ĥéŕó ļéʋéļ {level}]"
+        "nextRank": "[Ñéẋţ ŕáñķ: {value}]"
       },
       "roles": {
         "bruiser": "[Ɓŕúíšéŕ]",

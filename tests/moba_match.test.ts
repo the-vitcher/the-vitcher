@@ -86,35 +86,52 @@ describe('The Clash: DotA-style ability leveling', () => {
     expect(meta.known.length).toBe(1);
   });
 
-  it('upgrading a rank makes the ability measurably stronger, capped at rank 3', () => {
-    const { sim, pid, meta } = seat('zapp');
+  it('upgrading a rank makes the ability measurably stronger, capped at rank 4', () => {
+    const { sim, pid, meta, hero } = seat('zapp');
     const quiz = 'moba_pop_quiz';
-    meta.mobaSkillPoints = 5;
+    meta.mobaSkillPoints = 6;
+    hero.level = 7; // past every rank gate (1/3/5/7)
     sim.mobaLearnAbility(quiz, pid);
     const r1 = meta.known.find((k: any) => k.def.id === quiz)!.effects[0];
     sim.mobaLearnAbility(quiz, pid);
     const r2 = meta.known.find((k: any) => k.def.id === quiz)!.effects[0];
     sim.mobaLearnAbility(quiz, pid);
     const r3 = meta.known.find((k: any) => k.def.id === quiz)!.effects[0];
+    sim.mobaLearnAbility(quiz, pid);
+    const r4 = meta.known.find((k: any) => k.def.id === quiz)!.effects[0];
     expect(r2.min).toBeGreaterThan(r1.min);
     expect(r3.min).toBeGreaterThan(r2.min);
-    expect(meta.known.find((k: any) => k.def.id === quiz)!.rank).toBe(3);
-    sim.mobaLearnAbility(quiz, pid); // rank 3 is the cap
-    expect(meta.known.find((k: any) => k.def.id === quiz)!.rank).toBe(3);
+    expect(r4.min).toBeGreaterThan(r3.min);
+    expect(meta.known.find((k: any) => k.def.id === quiz)!.rank).toBe(4);
+    sim.mobaLearnAbility(quiz, pid); // rank 4 is the cap
+    expect(meta.known.find((k: any) => k.def.id === quiz)!.rank).toBe(4);
     expect(meta.mobaSkillPoints).toBe(2); // capped attempt spent nothing
   });
 
-  it('locks the ultimate until hero level 6', () => {
+  it('gates each rank on hero level: rank 2 at 3, rank 3 at 5, rank 4 at 7', () => {
     const { sim, pid, meta, hero } = seat('moth_larry');
-    const ult = MOBA_HEROES.moth_larry.abilities[3]; // L A M P
-    meta.mobaSkillPoints = 3;
+    const ult = MOBA_HEROES.moth_larry.abilities[3]; // L A M P: same ladder as the basics
+    meta.mobaSkillPoints = 6;
+    const rankOf = () => meta.known.find((k: any) => k.def.id === ult)?.rank ?? 0;
+    sim.mobaLearnAbility(ult, pid); // rank 1 has no gate beyond level 1
+    expect(rankOf()).toBe(1);
+    sim.mobaLearnAbility(ult, pid); // rank 2 needs level 3
+    expect(rankOf()).toBe(1);
+    hero.level = 3;
     sim.mobaLearnAbility(ult, pid);
-    expect(meta.known.length).toBe(0); // too low level
-    hero.level = 6;
+    expect(rankOf()).toBe(2);
+    sim.mobaLearnAbility(ult, pid); // rank 3 needs level 5
+    expect(rankOf()).toBe(2);
+    hero.level = 5;
     sim.mobaLearnAbility(ult, pid);
-    expect(meta.known.map((k: any) => k.def.id)).toEqual([ult]);
-    sim.mobaLearnAbility(ult, pid); // single-rank ultimate
-    expect(meta.known.find((k: any) => k.def.id === ult)!.rank).toBe(1);
+    expect(rankOf()).toBe(3);
+    hero.level = 6; // still short of the rank-4 gate
+    sim.mobaLearnAbility(ult, pid);
+    expect(rankOf()).toBe(3);
+    hero.level = 7;
+    sim.mobaLearnAbility(ult, pid);
+    expect(rankOf()).toBe(4);
+    expect(meta.mobaSkillPoints).toBe(2); // only the four successful learns spent
   });
 
   it('leveling up grants a skill point and keeps learned ranks', () => {
@@ -151,7 +168,7 @@ describe('The Clash: every hero kit casts', () => {
       sim.pickMobaHero(hero.id, pid);
       const p = entOf(sim, pid);
       const meta = (sim as any).players.get(pid);
-      // learn the full kit (level to 6 for the ultimate, grant enough points)
+      // learn the full kit at rank 1 (every rank-1 gate is level 1)
       p.level = 6;
       meta.mobaSkillPoints = hero.abilities.length;
       for (const abilityId of hero.abilities) sim.mobaLearnAbility(abilityId, pid);

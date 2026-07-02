@@ -54,6 +54,18 @@ describe('MOBA content: the ten heroes', () => {
     }
   });
 
+  it('keeps every ability cooldown in the 10-20 second band, ultimates at 20', () => {
+    for (const hero of Object.values(MOBA_HEROES)) {
+      for (const id of hero.abilities) {
+        const cd = MOBA_ABILITIES[id].cooldown;
+        expect(cd, `${id} cooldown below the band`).toBeGreaterThanOrEqual(10);
+        expect(cd, `${id} cooldown above the band`).toBeLessThanOrEqual(20);
+      }
+      const ult = hero.abilities[hero.abilities.length - 1];
+      expect(MOBA_ABILITIES[ult].cooldown, `${ult} is the ultimate: top of the band`).toBe(20);
+    }
+  });
+
   it('keeps bespoke abilities OUT of the global class ability table', () => {
     for (const id of Object.keys(MOBA_ABILITIES)) {
       expect(ABILITIES[id], `MOBA ability ${id} leaked into the class ABILITIES surface`).toBeUndefined();

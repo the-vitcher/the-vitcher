@@ -249,8 +249,7 @@ export const fr_CA: EnTranslations = {
       "tooltip": {
         "rank": "Rank {rank}/{max}",
         "notLearned": "Not learned - spend a skill point to unlock",
-        "nextRank": "Next rank: {value}",
-        "ultimate": "Ultimate - unlocks at hero level {level}"
+        "nextRank": "Next rank: {value}"
       },
       "roles": {
         "bruiser": "Bruiser",

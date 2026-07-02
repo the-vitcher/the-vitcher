@@ -496,10 +496,10 @@ describe('MOBA pure core: ability rank scaling', () => {
     expect(mobaScaleEffectForRank(slow, 3)).toEqual(slow);
   });
 
-  it('clamps out-of-range ranks into 1..3', () => {
+  it('clamps out-of-range ranks into 1..4', () => {
     const src = { type: 'heal', min: 100, max: 100 } as const;
     expect(mobaScaleEffectForRank(src, 0)).toEqual(mobaScaleEffectForRank(src, 1));
-    expect(mobaScaleEffectForRank(src, 9)).toEqual(mobaScaleEffectForRank(src, 3));
+    expect(mobaScaleEffectForRank(src, 9)).toEqual(mobaScaleEffectForRank(src, 4));
   });
 });
 
