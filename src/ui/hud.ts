@@ -3633,10 +3633,19 @@ export class Hud {
     if (st) {
       for (const dot of clashStructureDots(st)) {
         const m = toMap(origin.x + dot.x, origin.z + dot.z);
-        const teamColor = dot.team === 'A' ? '#4a7dff' : '#ff5a4a';
+        const teamColor = dot.team === 'A' ? '#4a7dff' : dot.team === 'B' ? '#ff5a4a' : '#ff9a3a';
         ctx.strokeStyle = '#000';
         ctx.lineWidth = 1;
-        if (dot.kind === 'tower') {
+        if (dot.kind === 'boss') {
+          // neutral objective: an orange diamond while the boss stands
+          ctx.fillStyle = dot.alive ? '#ff9a3a' : '#4a4a4a';
+          ctx.save();
+          ctx.translate(m.x, m.y);
+          ctx.rotate(Math.PI / 4);
+          ctx.fillRect(-3, -3, 6, 6);
+          ctx.strokeRect(-3, -3, 6, 6);
+          ctx.restore();
+        } else if (dot.kind === 'tower') {
           ctx.fillStyle = dot.alive ? teamColor : '#4a4a4a';
           ctx.fillRect(m.x - 2.5, m.y - 2.5, 5, 5);
           ctx.strokeRect(m.x - 2.5, m.y - 2.5, 5, 5);

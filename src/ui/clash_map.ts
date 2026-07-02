@@ -6,8 +6,8 @@
 // scope is ~120 yd, the map must show all 20 structures) into drawable dots.
 // hud.ts is the thin canvas consumer.
 import {
-  MOBA_MAP, MOBA_JUNGLE_CAMPS, MOBA_JUNGLE_TREES, mobaSurfaceAt, mobaTeamForPos,
-  mobaTowerPoints, type MobaTeam, type MobaLaneIndex,
+  MOBA_MAP, MOBA_JUNGLE_CAMPS, MOBA_JUNGLE_TREES, MOBA_BOSS_PIT, MOBA_RUNE_POINTS,
+  mobaSurfaceAt, mobaTeamForPos, mobaTowerPoints, mobaHeightAt, type MobaTeam, type MobaLaneIndex,
 } from '../sim/moba';
 import type { MobaStateView } from '../world_api';
 
@@ -26,11 +26,15 @@ export interface ClashMapImage {
 export const CLASH_MAP_COLORS = {
   field: [64, 104, 56],
   lane: [158, 132, 92],
+  ford: [176, 156, 108],
   river: [56, 104, 124],
+  pit: [70, 52, 46],
+  cliff: [110, 102, 92],
   baseA: [72, 92, 164],
   baseB: [164, 82, 72],
   tree: [38, 66, 36],
   camp: [222, 184, 88],
+  rune: [240, 214, 90],
   border: [24, 28, 22],
 } as const;
 
@@ -71,6 +75,7 @@ function stamp(img: ClashMapImage, lx: number, lz: number, c: readonly number[],
 export function paintClashMapPixels(img: ClashMapImage): void {
   const e = CLASH_MAP_EXTENT;
   const half = MOBA_MAP.half;
+  const pxYards = (2 * e) / (img.width - 1);
   for (let py = 0; py < img.height; py++) {
     for (let px = 0; px < img.width; px++) {
       const lx = e - (px / (img.width - 1)) * 2 * e;
@@ -78,31 +83,42 @@ export function paintClashMapPixels(img: ClashMapImage): void {
       let c: readonly number[];
       if (Math.abs(lx) > half || Math.abs(lz) > half) {
         c = CLASH_MAP_COLORS.border;
-      } else {
-        const s = mobaSurfaceAt(lx, lz);
-        if (s === 'base') c = mobaTeamForPos(lx, lz) === 'A' ? CLASH_MAP_COLORS.baseA : CLASH_MAP_COLORS.baseB;
-        else if (s === 'lane') c = CLASH_MAP_COLORS.lane;
-        else if (s === 'river') c = CLASH_MAP_COLORS.river;
-        else c = CLASH_MAP_COLORS.field;
+        put(img, px, py, c);
+        continue;
       }
-      put(img, px, py, c);
+      const s = mobaSurfaceAt(lx, lz);
+      if (s === 'base') c = mobaTeamForPos(lx, lz) === 'A' ? CLASH_MAP_COLORS.baseA : CLASH_MAP_COLORS.baseB;
+      else if (s === 'lane') c = CLASH_MAP_COLORS.lane;
+      else if (s === 'ford') c = CLASH_MAP_COLORS.ford;
+      else if (s === 'river') c = CLASH_MAP_COLORS.river;
+      else if (s === 'pit') c = CLASH_MAP_COLORS.pit;
+      else c = CLASH_MAP_COLORS.field;
+      // elevation shading straight from the shared heightfield: cliffs read as
+      // rock, high ground brightens, the channel darkens
+      const h = mobaHeightAt(lx, lz);
+      const hx = mobaHeightAt(lx - pxYards, lz);
+      const slope = Math.abs(hx - h) / pxYards;
+      if (slope > 1.2 && s !== 'pit') c = CLASH_MAP_COLORS.cliff;
+      const lift = 1 + Math.max(-0.28, Math.min(0.25, h * 0.1));
+      put(img, px, py, [c[0] * lift, c[1] * lift, c[2] * lift]);
     }
   }
   const treePx = Math.max(1, Math.round(img.width / 140));
   for (const t of MOBA_JUNGLE_TREES) stamp(img, t.x, t.z, CLASH_MAP_COLORS.tree, treePx);
   for (const camp of MOBA_JUNGLE_CAMPS) stamp(img, camp.x, camp.z, CLASH_MAP_COLORS.camp, treePx + 1);
+  for (const r of MOBA_RUNE_POINTS) stamp(img, r.x, r.z, CLASH_MAP_COLORS.rune, treePx + 1);
 }
 
 // One drawable objective marker: fixed geometry position + live match state.
 export interface ClashStructureDot {
   x: number; // map-local yards
   z: number;
-  team: MobaTeam;
-  kind: 'tower' | 'core';
+  team: MobaTeam | null; // null: neutral objective (the boss)
+  kind: 'tower' | 'core' | 'boss';
   alive: boolean;
 }
 
-type ClashLiveness = Pick<MobaStateView, 'towersAliveA' | 'towersAliveB' | 'coreAliveA' | 'coreAliveB'>;
+type ClashLiveness = Pick<MobaStateView, 'towersAliveA' | 'towersAliveB' | 'coreAliveA' | 'coreAliveB' | 'bossAlive'>;
 
 // Positions come from the shared lane geometry (tier order = MOBA_TOWER_FRACS,
 // outermost first, matching the sim's tower registration); liveness comes from
@@ -120,5 +136,6 @@ export function clashStructureDots(view: ClashLiveness): ClashStructureDot[] {
     const core = team === 'A' ? MOBA_MAP.coreA : MOBA_MAP.coreB;
     out.push({ x: core.x, z: core.z, team, kind: 'core', alive: (team === 'A' ? view.coreAliveA : view.coreAliveB) ?? true });
   }
+  out.push({ x: MOBA_BOSS_PIT.x, z: MOBA_BOSS_PIT.z, team: null, kind: 'boss', alive: view.bossAlive ?? true });
   return out;
 }

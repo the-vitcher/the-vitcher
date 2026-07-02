@@ -16,6 +16,9 @@ function pixelAt(img: ClashMapImage, lx: number, lz: number): number[] {
 }
 
 const rgb = (c: readonly number[]): number[] => [c[0], c[1], c[2]];
+// elevation shading lifts/darkens the base palette slightly; compare with slack
+const near = (px: number[], c: readonly number[], tol = 16): boolean =>
+  Math.abs(px[0] - c[0]) <= tol && Math.abs(px[1] - c[1]) <= tol && Math.abs(px[2] - c[2]) <= tol;
 
 describe('The Clash minimap painter (pure, shared classifier)', () => {
   const img = makeImage(139);
@@ -35,12 +38,12 @@ describe('The Clash minimap painter (pure, shared classifier)', () => {
 
   it('paints the mid-lane crossing at map center as lane dirt', () => {
     expect(mobaSurfaceAt(0, 0)).toBe('lane');
-    expect(pixelAt(img, 0, 0).slice(0, 3)).toEqual(rgb(CLASH_MAP_COLORS.lane));
+    expect(near(pixelAt(img, 0, 0), CLASH_MAP_COLORS.lane)).toBe(true);
   });
 
-  it('paints the river off the mid crossing', () => {
+  it('paints the river off the mid crossing (darkened by the sunken channel)', () => {
     expect(mobaSurfaceAt(20, -20)).toBe('river');
-    expect(pixelAt(img, 20, -20).slice(0, 3)).toEqual(rgb(CLASH_MAP_COLORS.river));
+    expect(near(pixelAt(img, 20, -20), CLASH_MAP_COLORS.river, 34)).toBe(true);
   });
 
   it('paints open field as grass (or a stamped jungle tree)', () => {
@@ -71,13 +74,16 @@ describe('The Clash minimap structure dots (liveness from the match view)', () =
     towersAliveB: [[true, true, true], [true, true, true], [true, true, true]],
     coreAliveA: true,
     coreAliveB: true,
+    bossAlive: true,
   };
 
-  it('yields all 18 towers plus both cores, inside the map', () => {
+  it('yields all 18 towers, both cores, and the boss, inside the map', () => {
     const dots = clashStructureDots(allAlive);
-    expect(dots).toHaveLength(20);
+    expect(dots).toHaveLength(21);
     expect(dots.filter((d) => d.kind === 'tower')).toHaveLength(18);
     expect(dots.filter((d) => d.kind === 'core')).toHaveLength(2);
+    const boss = dots.find((d) => d.kind === 'boss');
+    expect(boss).toMatchObject({ team: null, alive: true });
     for (const d of dots) {
       expect(Math.abs(d.x)).toBeLessThanOrEqual(MOBA_MAP.half);
       expect(Math.abs(d.z)).toBeLessThanOrEqual(MOBA_MAP.half);
@@ -106,7 +112,12 @@ describe('The Clash minimap structure dots (liveness from the match view)', () =
   });
 
   it('defaults to alive when the view carries no per-tower data yet', () => {
-    const dots = clashStructureDots({ towersAliveA: [], towersAliveB: [], coreAliveA: true, coreAliveB: true });
+    const dots = clashStructureDots({ towersAliveA: [], towersAliveB: [], coreAliveA: true, coreAliveB: true, bossAlive: true });
     expect(dots.filter((d) => d.kind === 'tower').every((d) => d.alive)).toBe(true);
+  });
+
+  it('marks a slain boss dead', () => {
+    const dots = clashStructureDots({ ...allAlive, bossAlive: false });
+    expect(dots.find((d) => d.kind === 'boss')?.alive).toBe(false);
   });
 });

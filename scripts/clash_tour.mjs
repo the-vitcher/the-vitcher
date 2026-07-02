@@ -137,6 +137,16 @@ check('both teams spawning', wave.teams.length === 2, JSON.stringify(wave.teams)
 check('shopkeepers at both bases', wave.shopkeepers === 2);
 check('match playing', wave.phase === 'playing');
 
+// --- Map 2.0 objectives: the pit boss and the river runes stand ---
+const objectives = await page.evaluate(() => {
+  const sim = window.__game.sim;
+  const boss = [...sim.entities.values()].find((e) => e.templateId === 'moba_boss');
+  const runes = [...sim.entities.values()].filter((e) => e.templateId === 'moba_rune');
+  return { boss: !!boss && !boss.dead, bossAlive: sim.mobaState()?.bossAlive, runes: runes.length };
+});
+check('the pit boss stands and rides the match view', objectives.boss && objectives.bossAlive === true, JSON.stringify(objectives));
+check('a rune pickup stands at each hidden ford', objectives.runes === 2, `${objectives.runes}`);
+
 // --- Last-hit a minion for instant gold ---
 const gold = await page.evaluate(() => {
   const sim = window.__game.sim;

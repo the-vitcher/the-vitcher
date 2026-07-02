@@ -132,6 +132,7 @@ describe('The Clash online: CLASH_MODE realm', () => {
     expect(snap.self.mst.towersAliveA).toEqual(allUp);
     expect(snap.self.mst.towersAliveB).toEqual(allUp);
     expect(snap.self.mst.coreAliveA).toBe(true);
+    expect(snap.self.mst.bossAlive).toBe(true);
     expect(snap.self.mt).toBe('A');
     // decode through the real client
     const client = bareClient(session.pid);
