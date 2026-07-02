@@ -8,13 +8,58 @@
 // player names); blurbs and ability descriptions render as a documented English
 // backstop (the GROUND_PICKUP_LINES precedent). All chrome goes through t().
 import type { IWorld, MobaStateView } from '../world_api';
-import { MOBA_ABILITIES, MOBA_HEROES } from '../sim/data';
-import { MOBA_MAX_ABILITY_RANK, MOBA_ULT_HERO_LEVEL } from '../sim/moba';
+import { CLASSES, MOBA_ABILITIES, MOBA_HEROES } from '../sim/data';
+import { MOBA_MAX_ABILITY_RANK, MOBA_ULT_HERO_LEVEL, mobaScaleEffectForRank } from '../sim/moba';
+import type { ResourceType } from '../sim/types';
+import {
+  abilityCastLine, abilityEffectText, abilityRangeLine, abilityRequirementLines,
+  formatAbilityNumber, resourceDisplayName,
+} from './ability_text';
 import { esc } from './esc';
 import { iconDataUrl } from './icons';
 import { t } from './i18n';
 
 const $ = <T extends HTMLElement = HTMLElement>(sel: string): T => document.querySelector(sel) as T;
+
+// Rank-resolved tooltip for one Clash ability: name, rank standing (or the
+// not-learned hint), cost/range, cast/cooldown, the description with its $d
+// number slot resolved at the shown rank, a next-rank preview, and the usual
+// requirement lines. Pure HTML builder (Vitest-covered); descriptions are
+// data-English by design (the documented backstop, like hero blurbs).
+export function mobaSkillTooltipHtml(abilityId: string, rank: number, ult: boolean, resourceType: ResourceType | null): string {
+  const def = MOBA_ABILITIES[abilityId];
+  if (!def) return '';
+  const maxRank = ult ? 1 : MOBA_MAX_ABILITY_RANK;
+  const shownRank = Math.min(maxRank, Math.max(1, rank)); // unlearned previews rank 1
+  const damageText = abilityEffectText(def.effects.map((e) => mobaScaleEffectForRank(e, shownRank)));
+  let html = `<div class="tt-title">${esc(def.name)}</div>`;
+  if (ult) {
+    html += `<div class="tt-sub">${esc(t('hudChrome.moba.tooltip.ultimate', { level: String(MOBA_ULT_HERO_LEVEL) }))}</div>`;
+  }
+  html += `<div class="tt-sub">${esc(rank > 0
+    ? t('hudChrome.moba.tooltip.rank', { rank: formatAbilityNumber(rank), max: formatAbilityNumber(maxRank) })
+    : t('hudChrome.moba.tooltip.notLearned'))}</div>`;
+  const costLine: string[] = [];
+  if (def.cost > 0) {
+    costLine.push(t('abilityUi.tooltip.cost', { cost: formatAbilityNumber(def.cost), resource: resourceDisplayName(resourceType) }));
+  }
+  const rangeLine = abilityRangeLine(def);
+  if (rangeLine) costLine.push(rangeLine);
+  if (costLine.length) html += `<div class="tt-stat">${costLine.map(esc).join(' &nbsp; ')}</div>`;
+  const castLine = [abilityCastLine({ def, castTime: def.castTime })];
+  if (def.cooldown > 0) castLine.push(t('abilityUi.tooltip.cooldownSeconds', { seconds: formatAbilityNumber(def.cooldown) }));
+  html += `<div class="tt-stat">${castLine.map(esc).join(' &nbsp; ')}</div>`;
+  html += `<div class="tt-desc">${esc(def.description.replace(/\$d/g, damageText))}</div>`;
+  if (rank >= 1 && rank < maxRank) {
+    const nextText = abilityEffectText(def.effects.map((e) => mobaScaleEffectForRank(e, rank + 1)));
+    if (nextText && nextText !== damageText) {
+      html += `<div class="tt-sub">${esc(t('hudChrome.moba.tooltip.nextRank', { value: nextText }))}</div>`;
+    }
+  }
+  const requirements = abilityRequirementLines(def);
+  if (requirements.length) html += requirements.map((line) => `<div class="tt-sub">${esc(line)}</div>`).join('');
+  return html;
+}
 
 export class MobaHud {
   private root = $('#moba-hud');
@@ -33,7 +78,9 @@ export class MobaHud {
   private bannerShown = false;
   private skillsSig = '';
 
-  constructor(private sim: IWorld) {
+  // attachTooltip is Hud's shared hover/focus/touch tooltip wiring, injected so
+  // this module stays free of Hud internals (and testable without them).
+  constructor(private sim: IWorld, private attachTooltip?: (el: HTMLElement, html: () => string) => void) {
     this.recallBtn?.addEventListener('click', () => this.sim.mobaRecall());
     this.changeHeroBtn?.addEventListener('click', () => this.openHeroSelect());
     this.skillsEl?.addEventListener('click', (ev) => {
@@ -86,7 +133,7 @@ export class MobaHud {
         const def = MOBA_ABILITIES[id];
         if (!def) return '';
         const ult = i === hero.abilities.length - 1;
-        return `<img class="mhs-ab${ult ? ' ult' : ''}" src="${iconDataUrl('ability', id, 28)}" alt="${esc(def.name)}" title="${esc(def.name)}: ${esc(def.description)}">`;
+        return `<img class="mhs-ab${ult ? ' ult' : ''}" src="${iconDataUrl('ability', id, 28)}" alt="${esc(def.name)}" tabindex="0" data-ability="${esc(id)}" data-ult="${ult ? 1 : 0}" data-res="${esc(CLASSES[hero.baseClass]?.resourceType ?? 'mana')}">`;
       }).join('');
       return `<button type="button" class="mhs-card" data-hero="${esc(hero.id)}" style="--hero-color:#${hero.color.toString(16).padStart(6, '0')}">
         <span class="mhs-name">${esc(hero.name)}</span>
@@ -97,6 +144,23 @@ export class MobaHud {
       </button>`;
     }).join('');
     this.gridEl.innerHTML = cards;
+    this.attachSkillTooltips(this.gridEl);
+  }
+
+  // Wire the shared tooltip onto every [data-ability] icon under a rebuilt
+  // container (innerHTML re-renders drop listeners, so re-attach after each
+  // rebuild). Rank/ult ride data attributes; the strip re-renders on any rank
+  // change, so the closure always reads current values.
+  private attachSkillTooltips(rootEl: HTMLElement): void {
+    if (!this.attachTooltip) return;
+    for (const el of Array.from(rootEl.querySelectorAll<HTMLElement>('[data-ability]'))) {
+      this.attachTooltip(el, () => mobaSkillTooltipHtml(
+        el.dataset.ability ?? '',
+        Number(el.dataset.rank ?? '0'),
+        el.dataset.ult === '1',
+        (el.dataset.res as ResourceType | undefined) ?? this.sim.player?.resourceType ?? null,
+      ));
+    }
   }
 
   private updateStatus(st: MobaStateView): void {
@@ -131,7 +195,7 @@ export class MobaHud {
       const pips = Array.from({ length: maxRank }, (_, p) => `<i class="pip${p < rank ? ' on' : ''}"></i>`).join('');
       const learnLabel = rank === 0 ? t('hudChrome.moba.learn') : t('hudChrome.moba.upgrade');
       return `<div class="mskill${rank === 0 ? ' unlearned' : ''}${ult ? ' ult' : ''}">
-        <img src="${iconDataUrl('ability', id, 34)}" alt="${esc(def.name)}" title="${esc(def.name)}: ${esc(def.description)}">
+        <img src="${iconDataUrl('ability', id, 34)}" alt="${esc(def.name)}" tabindex="0" data-ability="${esc(id)}" data-rank="${rank}" data-ult="${ult ? 1 : 0}">
         <span class="pips" aria-hidden="true">${pips}</span>
         ${locked ? `<span class="mskill-lock">${esc(t('hudChrome.moba.ultLocked', { level: String(MOBA_ULT_HERO_LEVEL) }))}</span>` : ''}
         ${canLearn ? `<button type="button" class="mskill-learn" data-learn="${esc(id)}" aria-label="${esc(learnLabel)} ${esc(def.name)}">+</button>` : ''}
@@ -141,6 +205,7 @@ export class MobaHud {
       ? `<div class="mskill-points" role="status">${esc(t('hudChrome.moba.skillPoints', { count: String(st.skillPoints) }))}</div>`
       : '';
     this.skillsEl.innerHTML = rows + points;
+    this.attachSkillTooltips(this.skillsEl);
   }
 
   private updateRecall(st: MobaStateView): void {

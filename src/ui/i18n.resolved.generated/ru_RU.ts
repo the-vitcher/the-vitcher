@@ -232,6 +232,12 @@ export const ru_RU: EnTranslations = {
       "respawnIn": "Возрождение через {seconds} с",
       "victory": "ПОБЕДА",
       "defeat": "ПОРАЖЕНИЕ",
+      "tooltip": {
+        "rank": "Ранг {rank}/{max}",
+        "notLearned": "Не изучено - потратьте очко навыка, чтобы открыть",
+        "nextRank": "Следующий ранг: {value}",
+        "ultimate": "Ультимейт - открывается на уровне героя {level}"
+      },
       "roles": {
         "bruiser": "Боец",
         "assassin": "Убийца",

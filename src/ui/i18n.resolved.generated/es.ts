@@ -232,6 +232,12 @@ export const es: EnTranslations = {
       "respawnIn": "Respawning in {seconds}s",
       "victory": "VICTORY",
       "defeat": "DEFEAT",
+      "tooltip": {
+        "rank": "Rank {rank}/{max}",
+        "notLearned": "Not learned - spend a skill point to unlock",
+        "nextRank": "Next rank: {value}",
+        "ultimate": "Ultimate - unlocks at hero level {level}"
+      },
       "roles": {
         "bruiser": "Bruiser",
         "assassin": "Assassin",

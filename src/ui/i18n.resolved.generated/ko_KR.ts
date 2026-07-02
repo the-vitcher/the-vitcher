@@ -232,6 +232,12 @@ export const ko_KR: EnTranslations = {
       "respawnIn": "{seconds}초 후 부활",
       "victory": "승리",
       "defeat": "패배",
+      "tooltip": {
+        "rank": "랭크 {rank}/{max}",
+        "notLearned": "미습득 - 스킬 포인트를 사용해 해금",
+        "nextRank": "다음 랭크: {value}",
+        "ultimate": "궁극기 - 영웅 레벨 {level}에 해금"
+      },
       "roles": {
         "bruiser": "브루저",
         "assassin": "암살자",

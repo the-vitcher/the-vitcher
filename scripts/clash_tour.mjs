@@ -79,7 +79,30 @@ const learned = await page.evaluate(() => {
   return { known: sim.known.map((k) => k.def.id), points: st?.skillPoints, ranks: st?.skillRanks };
 });
 check('ability learned onto the bar', learned.known.length === 1 && learned.points === 0, JSON.stringify(learned));
+
+// --- Skill tooltip on hover: rank-resolved numbers, cost, cooldown ---
+// (the strip re-renders on the next HUD frame; wait for the rank to land)
+await page.waitForFunction(
+  () => document.querySelector('#moba-skills [data-ability]')?.dataset.rank === '1',
+  { timeout: 10000 },
+).catch(() => {});
+const tooltip = await page.evaluate(() => {
+  const icon = document.querySelector('#moba-skills [data-ability]');
+  if (!icon) return { found: false };
+  icon.dispatchEvent(new MouseEvent('mouseenter', { bubbles: false }));
+  const tt = document.querySelector('#tooltip');
+  return {
+    found: true,
+    visible: !!tt && tt.style.display === 'block',
+    text: tt?.textContent ?? '',
+  };
+});
+check('skill tooltip shows on hover', tooltip.found && tooltip.visible, JSON.stringify({ visible: tooltip.visible }));
+check('tooltip carries rank standing and resolved text', /Rank 1\/3/.test(tooltip.text) && !tooltip.text.includes('$d'), tooltip.text.slice(0, 90));
 await page.screenshot({ path: 'tmp/clash_02_learned.png' });
+await page.evaluate(() => {
+  document.querySelector('#moba-skills [data-ability]')?.dispatchEvent(new MouseEvent('mouseleave'));
+});
 
 // --- Fast-forward through warmup + first wave (pump sim ticks) ---
 await page.evaluate(() => { const sim = window.__game.sim; for (let i = 0; i < 20 * 25; i++) sim.tick(); });

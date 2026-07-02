@@ -232,6 +232,12 @@ export const zh_CN: EnTranslations = {
       "respawnIn": "{seconds}秒后复活",
       "victory": "胜利",
       "defeat": "失败",
+      "tooltip": {
+        "rank": "等级 {rank}/{max}",
+        "notLearned": "尚未学习 - 花费一个技能点解锁",
+        "nextRank": "下一级：{value}",
+        "ultimate": "终极技能 - 英雄等级 {level} 解锁"
+      },
       "roles": {
         "bruiser": "斗士",
         "assassin": "刺客",
