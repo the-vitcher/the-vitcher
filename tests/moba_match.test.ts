@@ -4,7 +4,7 @@ import type { Entity } from '../src/sim/types';
 import { createMob } from '../src/sim/entity';
 import { MOBS } from '../src/sim/data';
 import { MOBA_HEROES } from '../src/sim/content/moba';
-import { MOBA_HERO_LEVEL, MOBA_MATCH_WARMUP_SEC, MOBA_FIRST_WAVE_SEC, MOBA_MINION_XP_PCT, mobaWaveComposition } from '../src/sim/moba';
+import { MOBA_HERO_LEVEL, MOBA_MATCH_WARMUP_SEC, MOBA_FIRST_WAVE_SEC, MOBA_MINION_XP_PCT, MOBA_JUNGLE_CAMPS, mobaWaveComposition } from '../src/sim/moba';
 import { xpForLevel } from '../src/sim/types';
 
 const makeMobaSim = (seed = 7) => new Sim({ seed, playerClass: 'warrior', noPlayer: true, mobaMode: true, mobaTeamSize: 5 });
@@ -526,5 +526,95 @@ describe('The Clash: combat pacing', () => {
     while (!minion.dead && ticks < 20 * 30) { sim.tick(); ticks++; }
     expect(minion.dead).toBe(true);
     expect(ticks / 20).toBeLessThanOrEqual(15);
+  });
+});
+
+// Dota-style jungle: neutral camps between the lanes, farmed for gold and XP,
+// respawning on a match timer after being cleared.
+describe('The Clash: jungle creep camps', () => {
+  const campSim = () => {
+    const sim = makeMobaSim(31);
+    const pid = sim.addPlayer('warrior', 'Jungler');
+    sim.startMobaMatch([pid]);
+    return { sim, pid, match: sim.mobaMatch! };
+  };
+
+  it('spawns every camp at match start with live neutral creeps', () => {
+    const { sim, match } = campSim();
+    expect(match.camps.length).toBe(MOBA_JUNGLE_CAMPS.length);
+    for (let i = 0; i < match.camps.length; i++) {
+      const camp = match.camps[i];
+      expect(camp.ids.length).toBe(MOBA_JUNGLE_CAMPS[i].mobs.length);
+      for (const id of camp.ids) {
+        const m = entOf(sim, id);
+        expect(m.dead).toBe(false);
+        expect(m.mobaTeam ?? null).toBeNull(); // NEUTRAL
+        expect(m.hostile).toBe(true); // hostile to both teams
+      }
+    }
+  });
+
+  it('lane minions and towers ignore neutral creeps; heroes can attack them', () => {
+    const { sim, pid, match } = campSim();
+    const hero = entOf(sim, pid);
+    const creep = entOf(sim, match.camps[0].ids[0]);
+    // hero vs creep: normal hostile mob
+    expect((sim as any).isHostileTo(hero, creep)).toBe(true);
+    // a minion's target scan never returns a neutral: park a minion beside the camp
+    const minion = createMob((sim as any).nextId++, MOBS.moba_minion_melee, 3, { x: creep.pos.x + 2, y: creep.pos.y, z: creep.pos.z });
+    minion.prevPos = { ...minion.pos };
+    minion.mobaTeam = 'A';
+    (sim as any).addEntity(minion);
+    const scanned = (sim as any).mobaNearestEnemy(minion, 12);
+    expect(scanned?.id).not.toBe(creep.id);
+  });
+
+  it('pays instant last-hit gold and turbo XP for a camp creep', () => {
+    const { sim, pid, match } = campSim();
+    const hero = entOf(sim, pid);
+    const meta = (sim as any).players.get(pid);
+    const creep = entOf(sim, match.camps[0].ids[0]);
+    const copper0 = meta.copper;
+    const xp0 = meta.xp;
+    kill(sim, creep, hero);
+    expect(meta.copper).toBeGreaterThan(copper0); // instant bounty, no corpse looting
+    expect(creep.lootable).toBe(false);
+    expect(meta.xp).toBeGreaterThan(xp0); // camp XP flows
+  });
+
+  it('respawns a cleared camp after the respawn timer', () => {
+    const { sim, pid, match } = campSim();
+    const hero = entOf(sim, pid);
+    const before = [...match.camps[0].ids];
+    for (const id of before) kill(sim, entOf(sim, id), hero);
+    sim.tick();
+    expect(match.camps[0].respawnLeft).toBeGreaterThan(0);
+    // run out the camp respawn timer
+    for (let i = 0; i < 20 * 70 && match.camps[0].respawnLeft > 0; i++) sim.tick();
+    const after = match.camps[0].ids;
+    expect(after.length).toBe(MOBA_JUNGLE_CAMPS[0].mobs.length);
+    expect(after.some((id) => before.includes(id))).toBe(false); // a fresh pack
+    for (const id of after) expect(entOf(sim, id).dead).toBe(false);
+  });
+
+  it('a felled tower pays the whole killing team, not just the last-hitter', () => {
+    const sim = makeMobaSim(32);
+    const p1 = sim.addPlayer('warrior', 'Alpha');
+    const p2 = sim.addPlayer('mage', 'Beta');
+    const p3 = sim.addPlayer('rogue', 'Gamma'); // lands on team A too (A,B,A order)
+    sim.startMobaMatch([p1, p2, p3]);
+    const match = sim.mobaMatch!;
+    expect(match.teams.get(p1)).toBe('A');
+    expect(match.teams.get(p2)).toBe('B');
+    expect(match.teams.get(p3)).toBe('A');
+    const m1 = (sim as any).players.get(p1);
+    const m2 = (sim as any).players.get(p2);
+    const m3 = (sim as any).players.get(p3);
+    const c1 = m1.copper, c2 = m2.copper, c3 = m3.copper;
+    // Alpha (team A) last-hits a team-B tower
+    kill(sim, entOf(sim, match.towersB[1][0]), entOf(sim, p1));
+    expect(m1.copper - c1).toBeGreaterThan(m3.copper - c3); // last-hitter gets the big bounty
+    expect(m3.copper - c3).toBeGreaterThan(0); // teammate gets the team bounty
+    expect(m2.copper - c2).toBe(0); // the enemy gets nothing
   });
 });

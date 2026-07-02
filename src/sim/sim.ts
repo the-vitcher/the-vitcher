@@ -12,6 +12,7 @@ import {
   MOBA_FIRST_WAVE_SEC, MOBA_WAVE_INTERVAL_SEC, MOBA_MATCH_WARMUP_SEC, MOBA_HERO_LEVEL,
   MOBA_RECALL_CHANNEL_SEC, MOBA_RECALL_CD_SEC, MOBA_MAX_ABILITY_RANK, MOBA_ULT_RANKS,
   MOBA_ULT_HERO_LEVEL, MOBA_MINION_XP_PCT, MOBA_TOWER_XP_PCT, MOBA_HERO_KILL_XP_PCT,
+  MOBA_CAMP_XP_PCT, MOBA_TOWER_TEAM_GOLD, MOBA_JUNGLE_CAMPS, MOBA_CAMP_RESPAWN_SEC,
   mobaScaleEffectForRank, type MobaLaneIndex, type MobaTeam,
 } from './moba';
 import { MOBA_ABILITIES, MOBA_HEROES } from './content/moba';
@@ -419,6 +420,9 @@ export interface MobaMatch {
   minionIds: Set<number>; // live wave minions
   waveTimer: number; // seconds until the next wave down every lane
   waveIndex: number; // waves spawned so far
+  // Jungle camps (Dota-style neutral packs, one entry per MOBA_JUNGLE_CAMPS spot):
+  // live creep ids, plus the respawn countdown once the camp is fully cleared.
+  camps: { ids: number[]; respawnLeft: number }[];
   elapsed: number; // match seconds since start
   phase: 'warmup' | 'playing' | 'ended';
   winner: MobaTeam | null;
@@ -4535,16 +4539,22 @@ export class Sim {
           creditEntity.comboTargetId = null;
           this.emit({ type: 'comboPoint', points: 0, pid: creditEntity.id });
         }
-        const mobaRole = this.cfg.mobaMode ? this.mobaRoleOf(e) : undefined;
+        // The Clash: every Clash unit (lane minions, towers, and the jungle's
+        // neutral creeps) pays turbo XP and INSTANT last-hit gold.
+        const isClashUnit = this.cfg.mobaMode && e.templateId.startsWith('moba_');
+        const mobaRole = isClashUnit ? this.mobaRoleOf(e) : undefined;
+        const clashXpPct = !isClashUnit ? 0
+          : mobaRole === 'minion' ? MOBA_MINION_XP_PCT
+            : mobaRole === 'tower' ? MOBA_TOWER_XP_PCT
+              : e.templateId.startsWith('moba_creep_') ? MOBA_CAMP_XP_PCT : 0;
         for (const member of eligible) {
           const mE = this.entities.get(member.entityId);
           if (!mE) continue;
           // The Clash: turbo pacing. Kill XP is a fixed fraction of the current
           // level requirement (independent of the vanilla anti-farm curve) so a
           // steady farmer levels a hero through a whole match in ~20 minutes.
-          const xpGain = mobaRole
-            ? Math.round(xpForLevel(Math.min(mE.level, MAX_LEVEL - 1))
-              * (mobaRole === 'minion' ? MOBA_MINION_XP_PCT : mobaRole === 'tower' ? MOBA_TOWER_XP_PCT : 0) / eligible.length)
+          const xpGain = isClashUnit
+            ? Math.round(xpForLevel(Math.min(mE.level, MAX_LEVEL - 1)) * clashXpPct / eligible.length)
             // mobXpValue keeps the level-diff (anti-farm) scaling; grantXp now
             // routes the award to lifetimeXp even at the cap, so the party gate no
             // longer blocks max-level members — it just forwards every positive award.
@@ -4552,7 +4562,7 @@ export class Sim {
           if (xpGain > 0) this.grantXp(xpGain, member, { fromKill: true });
           this.onMobKilledForQuests(e, member);
         }
-        if (this.cfg.mobaMode && this.mobaRoleOf(e)) {
+        if (isClashUnit) {
           // The Clash: bounties pay INSTANTLY to the last-hitter — nobody loots
           // corpses mid-teamfight. The corpse also clears fast so lanes stay
           // readable under a stream of dead minions.
@@ -4560,11 +4570,20 @@ export class Sim {
           let bounty = 0;
           for (const entry of template?.loot ?? []) if (entry.copper) bounty += entry.copper;
           if (bounty > 0) this.grantLootCopper(meta, bounty);
+          // Objectives reward the whole team: a felled tower also pays every OTHER
+          // hero on the killing team a team bounty (the last-hitter got the full one).
+          if (mobaRole === 'tower' && this.mobaMatch && creditEntity.mobaTeam) {
+            for (const [pid, team] of this.mobaMatch.teams) {
+              if (team !== creditEntity.mobaTeam || pid === meta.entityId) continue;
+              const mate = this.players.get(pid);
+              if (mate) this.grantLootCopper(mate, MOBA_TOWER_TEAM_GOLD);
+            }
+          }
         } else {
           this.rollLoot(e, meta, eligible);
         }
       }
-      if (this.cfg.mobaMode && this.mobaRoleOf(e)) e.corpseTimer = Math.min(e.corpseTimer, 3);
+      if (this.cfg.mobaMode && e.templateId.startsWith('moba_')) e.corpseTimer = Math.min(e.corpseTimer, 3);
     }
   }
 
@@ -9024,8 +9043,10 @@ export class Sim {
       slot: inst.slot, teams: assignMobaTeams(roster, this.cfg.mobaTeamSize ?? 5),
       coreA: -1, coreB: -1, towersA: [[], [], []], towersB: [[], [], []], minionIds: new Set(),
       waveTimer: MOBA_FIRST_WAVE_SEC, waveIndex: 0, elapsed: 0,
+      camps: MOBA_JUNGLE_CAMPS.map(() => ({ ids: [], respawnLeft: 0 })),
       phase: 'warmup', winner: null,
     };
+    for (let i = 0; i < MOBA_JUNGLE_CAMPS.length; i++) this.spawnMobaCamp(match, i, inst);
     for (const id of inst.mobIds) {
       const m = this.entities.get(id);
       if (!m) continue;
@@ -9237,6 +9258,7 @@ export class Sim {
       }
     }
     for (const id of [...match.minionIds]) { const m = this.entities.get(id); if (!m || m.dead) match.minionIds.delete(id); }
+    this.updateMobaCamps(match);
     for (const pid of match.teams.keys()) {
       const meta = this.players.get(pid);
       const e = this.entities.get(pid);
@@ -9257,6 +9279,51 @@ export class Sim {
       match.winner = winner;
       match.phase = 'ended';
       this.emit(winner === 'A' ? { type: 'log', text: 'Team A wins the Clash!', color: '#ffd100' } : { type: 'log', text: 'Team B wins the Clash!', color: '#ffd100' });
+    }
+  }
+
+  // (Re)spawn one jungle camp: a pack of NEUTRAL creeps (no mobaTeam) around its
+  // authored spot. They use the standard threat-table mob AI, so they aggro heroes
+  // who attack (or walk into) the camp and leash back home afterward.
+  private spawnMobaCamp(match: MobaMatch, campIndex: number, inst?: InstanceSlot): void {
+    const slot = inst ?? this.instances.find((i) => i.dungeonId === 'moba_lane' && i.slot === match.slot);
+    if (!slot) return;
+    const origin = this.instanceOriginOf(slot);
+    const camp = MOBA_JUNGLE_CAMPS[campIndex];
+    const state = match.camps[campIndex];
+    state.ids = [];
+    state.respawnLeft = 0;
+    let i = 0;
+    for (const mobId of camp.mobs) {
+      const template = MOBS[mobId];
+      if (!template) { i++; continue; }
+      const off = i * 1.8 - (camp.mobs.length - 1) * 0.9; // small line-up around the spot
+      const m = createMob(this.nextId++, template, template.minLevel, this.groundPos(origin.x + camp.x + off, origin.z + camp.z));
+      m.facing = angleTo(m.pos, { x: origin.x, y: 0, z: origin.z });
+      m.prevFacing = m.facing;
+      this.addEntity(m);
+      slot.mobIds.push(m.id);
+      state.ids.push(m.id);
+      i++;
+    }
+  }
+
+  // Per-tick camp bookkeeping: once every creep in a camp is dead, start the
+  // respawn countdown; when it expires, drop the corpses and spawn a fresh pack.
+  private updateMobaCamps(match: MobaMatch): void {
+    for (let i = 0; i < match.camps.length; i++) {
+      const state = match.camps[i];
+      if (state.respawnLeft > 0) {
+        state.respawnLeft -= DT;
+        if (state.respawnLeft <= 0) {
+          for (const id of state.ids) if (this.entities.has(id)) this.dropEntity(id);
+          this.spawnMobaCamp(match, i);
+        }
+        continue;
+      }
+      if (state.ids.length > 0 && state.ids.every((id) => this.entities.get(id)?.dead !== false)) {
+        state.respawnLeft = MOBA_CAMP_RESPAWN_SEC;
+      }
     }
   }
 
@@ -9345,6 +9412,9 @@ export class Sim {
     this.grid.forEachInRadius(mob.pos.x, mob.pos.z, radius, (e, d2) => {
       if (e.dead || e.id === mob.id) return;
       if (e.kind === 'object' || e.kind === 'npc') return;
+      // Lane units fight the war, not the wildlife: neutral jungle creeps (no
+      // mobaTeam) are invisible to minions and towers. Heroes farm them instead.
+      if (this.mobaTeamOf(e) === null) return;
       if (!this.isHostileTo(mob, e)) return;
       if (this.mobaRoleOf(e) === 'core' && this.mobaCoreInvulnerable(e)) return;
       if (d2 < bestD) { bestD = d2; best = e; }

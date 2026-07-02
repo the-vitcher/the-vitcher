@@ -34,7 +34,7 @@ export const MOBA_HERO_ROLE_STATS: Record<MobaRole, { sta: number; ap: number }>
 // (pacing test) while a hero clears a caster in a couple of autos + one spell.
 export const MOBA_MINION_BALANCE = {
   level: 3,
-  melee: { hpBase: 150, hpPerLevel: 7, dmgBase: 5, dmgPerLevel: 0.9, attackSpeed: 2.0, armorPerLevel: 6, moveSpeed: 6, aggroRadius: 9 },
+  melee: { hpBase: 125, hpPerLevel: 7, dmgBase: 5, dmgPerLevel: 0.9, attackSpeed: 2.0, armorPerLevel: 6, moveSpeed: 6, aggroRadius: 9 },
   ranged: { hpBase: 70, hpPerLevel: 5, dmgBase: 7, dmgPerLevel: 1.1, attackSpeed: 2.4, armorPerLevel: 4, moveSpeed: 6, aggroRadius: 12 },
 };
 
