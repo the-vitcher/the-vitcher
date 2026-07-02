@@ -20,6 +20,7 @@ import type { SpatialAudioSink, Surface } from './audio_sink';
 import { buildPropMaterialPrewarmGroup, buildProps } from './props';
 import { plankTexture, sparkleTexture } from './textures';
 import { DungeonInteriors, ensureDungeonAssets } from './dungeon';
+import { buildClashWorld } from './clash_world';
 import { buildGroundQuestObject } from './quest_objects';
 import { Vfx } from './vfx';
 import { Weather } from './weather';
@@ -1610,14 +1611,16 @@ export class Renderer {
       this.sun.target.position.set(pp.x, pp.y, pp.z);
     }
     this.sky.position.set(this.camera.position.x, 0, this.camera.position.z);
-    this.sky.visible = this.fogState === 'outdoor';
-    if (this.sky.visible) {
+    this.sky.visible = this.fogState === 'outdoor' || this.fogState === 'clash';
+    if (this.fogState === 'outdoor') {
+      // biome crossfade keys off overworld z bands; the Clash battleground
+      // keeps the default (vale) sky instead
       this.skyView.setCameraZ(this.camera.position.z, dt);
       this.updateEnvBiome(dt);
     }
     for (const sp of this.sunSprites) {
       sp.position.copy(this.camera.position).addScaledVector(this.sunDir, 760);
-      sp.visible = this.fogState === 'outdoor';
+      sp.visible = this.sky.visible;
     }
     this.updateGodRays();
     this.updateNameplates(true);
@@ -2683,9 +2686,17 @@ export class Renderer {
   // ---------------------------------------------------------------------
 
   private builtInteriors = new Set<string>();
-  private fogState: 'outdoor' | 'dungeon' | 'temple' | 'nythraxis' | 'underwater' = 'outdoor';
+  private fogState: 'outdoor' | 'clash' | 'dungeon' | 'temple' | 'nythraxis' | 'underwater' = 'outdoor';
 
   private buildInterior(interior: string, ox: number, oz: number): void {
+    if (interior === 'clash') {
+      // The Clash battleground is an outdoor world, not a KayKit interior:
+      // procedural ground/river/trees built synchronously from sim/moba data.
+      const view = buildClashWorld(ox, oz, this.lowGfx);
+      setRenderCategory(view.group, 'props');
+      this.scene.add(view.group);
+      return;
+    }
     this.dungeons ??= new DungeonInteriors(this.scene, this.lowGfx, this.flames, this.fireLights);
     void this.dungeons.buildInterior(interior, ox, oz).catch((err) => {
       console.error('Failed to build dungeon interior:', err);
@@ -2722,7 +2733,8 @@ export class Renderer {
         }
       }
     } else if (inside) {
-      void ensureDungeonAssets().catch(() => undefined);
+      // the Clash battleground is procedural: no KayKit GLB fetch needed
+      if (dungeonAt(px)?.interior !== 'clash') void ensureDungeonAssets().catch(() => undefined);
       // build the interior copy the player is standing in
       for (const dungeon of DUNGEON_LIST) {
         for (let i = 0; i < INSTANCE_SLOT_COUNT; i++) {
@@ -2739,9 +2751,13 @@ export class Renderer {
     // the Drowned Temple reads as submerged: a teal murk instead of the
     // crypt's near-black, so its flooded halls feel underwater, not just dark
     const interior = inside && !isArenaPos(px) ? dungeonAt(px)?.interior : null;
+    // The Clash battleground sits in the instance band but is OUTDOORS: it must
+    // classify before the generic inside -> dungeon arm or the map goes dark.
+    const inClash = interior === 'clash';
     const inTemple = interior === 'temple';
     const inNythraxis = interior === 'nythraxis';
-    const desired = inTemple ? 'temple'
+    const desired = inClash ? 'clash'
+      : inTemple ? 'temple'
       : inNythraxis ? 'nythraxis'
         : inside ? 'dungeon'
         : camY < WATER_LEVEL - 0.05 ? 'underwater' : 'outdoor';
@@ -2766,6 +2782,13 @@ export class Renderer {
         fog.color.setHex(0x17506e);
         fog.near = 2;
         fog.far = 48;
+      } else if (desired === 'clash') {
+        // battleground daylight: the vale's outdoor fog, position-independent
+        // (zoneBiomeAt keys off overworld z bands, meaningless at x=9300)
+        const preset = this.lowGfx ? Renderer.LOW_FOG : Renderer.BIOME_FOG.vale;
+        fog.color.setHex(preset.color);
+        fog.near = preset.near;
+        fog.far = preset.far;
       } else {
         const preset = this.outdoorFogPreset();
         fog.color.setHex(preset.color);
@@ -3284,8 +3307,10 @@ export class Renderer {
     worldStart = markWorldPhase('shadows', worldStart);
     // sky dome + sun disc ride along with the camera
     this.sky.position.set(this.camera.position.x, 0, this.camera.position.z);
-    this.sky.visible = this.fogState === 'outdoor';
-    if (this.sky.visible) {
+    this.sky.visible = this.fogState === 'outdoor' || this.fogState === 'clash';
+    if (this.fogState === 'outdoor') {
+      // biome crossfade keys off overworld z bands; the Clash battleground
+      // keeps the default (vale) sky instead
       this.skyView.setCameraZ(this.camera.position.z, dt);
       this.updateEnvBiome(dt);
     }
@@ -3298,7 +3323,7 @@ export class Renderer {
     worldStart = markWorldPhase('sky', worldStart);
     for (const sp of this.sunSprites) {
       sp.position.copy(this.camera.position).addScaledVector(this.sunDir, 760);
-      sp.visible = this.fogState === 'outdoor';
+      sp.visible = this.sky.visible;
     }
     worldStart = markWorldPhase('sunSprites', worldStart);
     this.updateGodRays();

@@ -49,7 +49,7 @@ const boot = await page.evaluate(() => {
 });
 check('match live on boot', !!boot.state, JSON.stringify(boot.state));
 check('seated on a team', boot.state?.myTeam === 'A' || boot.state?.myTeam === 'B');
-check('12 towers standing (6 vs 6)', boot.state?.towersA === 6 && boot.state?.towersB === 6);
+check('18 towers standing (9 vs 9)', boot.state?.towersA === 9 && boot.state?.towersB === 9);
 check('hero select opened', boot.selectOpen);
 check('all 10 heroes offered', boot.heroCards === 10, `${boot.heroCards}`);
 await page.screenshot({ path: 'tmp/clash_01_hero_select.png' });

@@ -141,16 +141,19 @@ const NYTHRAXIS_COLLIDERS: Collider[] = layoutColliders(NYTHRAXIS_LAYOUT);
 // The Clash battleground (interior 'clash') is an outdoor map, not a kit room:
 // four border walls ring the square and the jungle's tree trunks block movement
 // (camGhost, like overworld trees, so the chase camera never slams into a canopy).
+// The borders are camGhost too: the fountains sit in the map corners, so the
+// chase camera regularly swings outside the square; blocking it would slam the
+// camera into the player's back at every spawn.
 // Geometry comes from sim/moba.ts — the SINGLE source shared with the renderer's
 // ground texture and the minimap, so collision and visuals cannot drift.
 function clashColliders(): Collider[] {
   const out: Collider[] = [];
   const edge = MOBA_MAP.half - 0.5;
   const hw = MOBA_MAP.half + 2;
-  out.push({ type: 'obb', x: 0, z: edge, hw, hd: 1, rot: 0 }); // north border
-  out.push({ type: 'obb', x: 0, z: -edge, hw, hd: 1, rot: 0 }); // south border
-  out.push({ type: 'obb', x: edge, z: 0, hw: 1, hd: hw, rot: 0 }); // east border
-  out.push({ type: 'obb', x: -edge, z: 0, hw: 1, hd: hw, rot: 0 }); // west border
+  out.push({ type: 'obb', x: 0, z: edge, hw, hd: 1, rot: 0, camGhost: true }); // north border
+  out.push({ type: 'obb', x: 0, z: -edge, hw, hd: 1, rot: 0, camGhost: true }); // south border
+  out.push({ type: 'obb', x: edge, z: 0, hw: 1, hd: hw, rot: 0, camGhost: true }); // east border
+  out.push({ type: 'obb', x: -edge, z: 0, hw: 1, hd: hw, rot: 0, camGhost: true }); // west border
   for (const t of MOBA_JUNGLE_TREES) out.push({ type: 'circle', x: t.x, z: t.z, r: t.r, camGhost: true });
   return out;
 }
