@@ -8,8 +8,11 @@ import {
 import { ARENA_SPAWN_A, ARENA_SPAWN_B, ARENA_SPAWNS_A_2v2, ARENA_SPAWNS_B_2v2 } from './dungeon_layout';
 import {
   assignMobaTeams, mobaTeamForZ, mobaLaneForX, mobaHeroSpawn, mobaMinionSpawn, mobaMinionMarchTarget,
-  mobaRespawnSeconds, mobaWaveComposition, mobaCoreVulnerable, mobaWinner, MOBA_FIRST_WAVE_SEC,
-  MOBA_WAVE_INTERVAL_SEC, MOBA_MATCH_WARMUP_SEC, MOBA_HERO_LEVEL, type MobaLaneIndex, type MobaTeam,
+  mobaRespawnSeconds, mobaWaveComposition, mobaCoreVulnerable, mobaWinner, mobaHeroKillGold,
+  MOBA_FIRST_WAVE_SEC, MOBA_WAVE_INTERVAL_SEC, MOBA_MATCH_WARMUP_SEC, MOBA_HERO_LEVEL,
+  MOBA_RECALL_CHANNEL_SEC, MOBA_RECALL_CD_SEC, MOBA_MAX_ABILITY_RANK, MOBA_ULT_RANKS,
+  MOBA_ULT_HERO_LEVEL, MOBA_MINION_XP_PCT, MOBA_TOWER_XP_PCT, MOBA_HERO_KILL_XP_PCT,
+  mobaScaleEffectForRank, type MobaLaneIndex, type MobaTeam,
 } from './moba';
 import { MOBA_ABILITIES, MOBA_HEROES } from './content/moba';
 import { lineOfSightClear, resolveMovement, resolvePosition } from './colliders';
@@ -565,6 +568,16 @@ export interface PlayerMeta {
   // seconds left before they respawn at their base (0 = alive). Set only in mobaMode.
   mobaHeroId: string | null;
   mobaRespawnLeft: number;
+  // Recall channel home: seconds left (0 = not recalling), the anchor position the
+  // channel is rooted to (movement past it cancels), and the sim-time the next
+  // recall attempt unlocks (cooldown stamps at channel START, so cancels cost it).
+  mobaRecallLeft: number;
+  mobaRecallAnchor: Vec3 | null;
+  mobaRecallReadyAt: number;
+  // DotA-style ability leveling: chosen rank per hero ability id (absent/0 =
+  // unlearned) and unspent skill points (one granted per hero level, one at seat).
+  mobaSkillRanks: Map<string, number>;
+  mobaSkillPoints: number;
   autoEquip: boolean;
   // sim.time when this character entered the world; powers /played. Session-only
   // (sim.time resets to 0 each server boot), so it reports time this session.
@@ -1030,6 +1043,11 @@ export class Sim {
       playerKills: 0,
       mobaHeroId: null,
       mobaRespawnLeft: 0,
+      mobaRecallLeft: 0,
+      mobaRecallAnchor: null,
+      mobaRecallReadyAt: 0,
+      mobaSkillRanks: new Map(),
+      mobaSkillPoints: 0,
       autoEquip: opts?.autoEquip ?? false,
       joinedAt: this.time,
       lastActiveTick: this.tickCount,
@@ -1473,6 +1491,13 @@ export class Sim {
   private refreshKnownAbilities(meta: PlayerMeta, announce: boolean): void {
     const e = this.entities.get(meta.entityId);
     if (!e) return;
+    // The Clash: a seated hero's bar is its bespoke kit, never the class kit.
+    // Level-ups (lane XP) and equipment changes route through here, so without
+    // this gate they would silently clobber the hero abilities.
+    if (this.cfg.mobaMode && meta.mobaHeroId && MOBA_HEROES[meta.mobaHeroId]) {
+      meta.known = this.mobaHeroKnown(meta);
+      return;
+    }
     const before = new Map(meta.known.map((k) => [k.def.id, k.rank]));
     meta.known = abilitiesKnownAt(meta.cls, e.level, meta.talentMods);
     if (announce) {
@@ -4085,6 +4110,11 @@ export class Sim {
     // The Clash: a core cannot be harmed while its team's towers still stand.
     if (this.cfg.mobaMode && this.mobaRoleOf(target) === 'core' && this.mobaCoreInvulnerable(target)) return;
     if (target.gm) return; // GM characters are invulnerable — every damage path funnels here
+    // The Clash: taking a landed hit interrupts an active recall channel.
+    if (this.cfg.mobaMode && target.kind === 'player' && kind === 'hit' && amount > 0) {
+      const tm = this.players.get(target.id);
+      if (tm && tm.mobaRecallLeft > 0) this.cancelMobaRecall(tm);
+    }
     // A mob that broke leash (or a pet freed to the wild) is in 'evade': it has
     // dropped its hate table and walks home without fighting back, healing to
     // full only on arrival. Classic mechanics make it immune while it retreats,
@@ -4410,8 +4440,22 @@ export class Sim {
       e.chargePath = [];
       e.followTargetId = null;
       if (this.cfg.mobaMode && meta && e.mobaTeam) {
-        // The Clash: a slain hero waits out a level-scaled respawn timer, then
-        // returns at their own core (see updateMobaMatch). No graveyard/spirit flow.
+        // The Clash: the killing enemy hero collects the bounty (scaled by the
+        // victim's level) and the kill counter, paid instantly like creep gold.
+        if (killer) {
+          const kp = this.pvpController(killer);
+          if (kp && kp.kind === 'player' && kp.id !== e.id && kp.mobaTeam && kp.mobaTeam !== e.mobaTeam) {
+            const km = this.players.get(kp.id);
+            if (km) {
+              km.playerKills++;
+              this.grantLootCopper(km, mobaHeroKillGold(e.level));
+              const killXp = Math.round(xpForLevel(Math.min(kp.level, MAX_LEVEL - 1)) * MOBA_HERO_KILL_XP_PCT);
+              if (killXp > 0) this.grantXp(killXp, km, { fromKill: true });
+            }
+          }
+        }
+        // A slain hero waits out a level-scaled respawn timer, then returns at
+        // their own core (see updateMobaMatch). No graveyard/spirit flow.
         meta.mobaRespawnLeft = mobaRespawnSeconds(e.level);
         e.autoAttack = false;
         e.targetId = null;
@@ -4490,18 +4534,36 @@ export class Sim {
           creditEntity.comboTargetId = null;
           this.emit({ type: 'comboPoint', points: 0, pid: creditEntity.id });
         }
+        const mobaRole = this.cfg.mobaMode ? this.mobaRoleOf(e) : undefined;
         for (const member of eligible) {
           const mE = this.entities.get(member.entityId);
           if (!mE) continue;
-          // mobXpValue keeps the level-diff (anti-farm) scaling; grantXp now
-          // routes the award to lifetimeXp even at the cap, so the party gate no
-          // longer blocks max-level members — it just forwards every positive award.
-          const xpGain = Math.round((mobXpValue(e.level, mE.level) * eliteMult * bonus) / eligible.length);
+          // The Clash: turbo pacing. Kill XP is a fixed fraction of the current
+          // level requirement (independent of the vanilla anti-farm curve) so a
+          // steady farmer levels a hero through a whole match in ~20 minutes.
+          const xpGain = mobaRole
+            ? Math.round(xpForLevel(Math.min(mE.level, MAX_LEVEL - 1))
+              * (mobaRole === 'minion' ? MOBA_MINION_XP_PCT : mobaRole === 'tower' ? MOBA_TOWER_XP_PCT : 0) / eligible.length)
+            // mobXpValue keeps the level-diff (anti-farm) scaling; grantXp now
+            // routes the award to lifetimeXp even at the cap, so the party gate no
+            // longer blocks max-level members — it just forwards every positive award.
+            : Math.round((mobXpValue(e.level, mE.level) * eliteMult * bonus) / eligible.length);
           if (xpGain > 0) this.grantXp(xpGain, member, { fromKill: true });
           this.onMobKilledForQuests(e, member);
         }
-        this.rollLoot(e, meta, eligible);
+        if (this.cfg.mobaMode && this.mobaRoleOf(e)) {
+          // The Clash: bounties pay INSTANTLY to the last-hitter — nobody loots
+          // corpses mid-teamfight. The corpse also clears fast so lanes stay
+          // readable under a stream of dead minions.
+          e.corpseTimer = Math.min(e.corpseTimer, 3);
+          let bounty = 0;
+          for (const entry of template?.loot ?? []) if (entry.copper) bounty += entry.copper;
+          if (bounty > 0) this.grantLootCopper(meta, bounty);
+        } else {
+          this.rollLoot(e, meta, eligible);
+        }
       }
+      if (this.cfg.mobaMode && this.mobaRoleOf(e)) e.corpseTimer = Math.min(e.corpseTimer, 3);
     }
   }
 
@@ -4567,6 +4629,8 @@ export class Sim {
       meta.xp -= xpForLevel(p.level);
       p.level++;
       meta.counters.levelUps++;
+      // The Clash: every hero level grants one skill point to spend on the kit.
+      if (this.cfg.mobaMode && meta.mobaHeroId) meta.mobaSkillPoints++;
       recalcPlayerStats(p, meta.cls, meta.equipment, this.playerMods(meta));
       p.hp = p.maxHp;
       if (p.resourceType === 'mana') p.resource = p.maxResource;
@@ -8991,8 +9055,53 @@ export class Sim {
     if (r.e.mobaTeam) this.mobaRespawnHero(r.meta, r.e);
   }
 
+  // A hero's resolved ability kit: only LEARNED abilities (skill rank >= 1), each
+  // with its effects scaled to the chosen rank (mobaScaleEffectForRank).
+  private mobaHeroKnown(meta: PlayerMeta): ResolvedAbility[] {
+    const hero = meta.mobaHeroId ? MOBA_HEROES[meta.mobaHeroId] : null;
+    if (!hero) return [];
+    const out: ResolvedAbility[] = [];
+    for (const id of hero.abilities) {
+      const def = MOBA_ABILITIES[id];
+      const rank = meta.mobaSkillRanks.get(id) ?? 0;
+      if (!def || rank <= 0) continue;
+      out.push({
+        def, rank, cost: def.cost, castTime: def.castTime, cooldown: def.cooldown,
+        effects: def.effects.map((eff) => mobaScaleEffectForRank(eff, rank)),
+        threatFlat: def.threat?.flat ?? 0, threatMult: def.threat?.mult ?? 1,
+      });
+    }
+    return out;
+  }
+
+  // The LAST kit slot is the hero's ultimate (single rank, hero level 6+).
+  private mobaIsUltimate(heroId: string, abilityId: string): boolean {
+    const hero = MOBA_HEROES[heroId];
+    return !!hero && hero.abilities[hero.abilities.length - 1] === abilityId;
+  }
+
+  // Spend one skill point: learn a new ability in the hero's kit, or upgrade a
+  // learned one (basics to rank 3; the ultimate is single-rank, hero level 6+).
+  mobaLearnAbility(abilityId: string, pid?: number): void {
+    if (!this.cfg.mobaMode) return;
+    const r = this.resolve(pid);
+    if (!r || !r.meta.mobaHeroId) return;
+    const hero = MOBA_HEROES[r.meta.mobaHeroId];
+    if (!hero || !hero.abilities.includes(abilityId)) return;
+    if (r.meta.mobaSkillPoints <= 0) return;
+    const isUlt = this.mobaIsUltimate(r.meta.mobaHeroId, abilityId);
+    if (isUlt && r.e.level < MOBA_ULT_HERO_LEVEL) return;
+    const rank = r.meta.mobaSkillRanks.get(abilityId) ?? 0;
+    if (rank >= (isUlt ? MOBA_ULT_RANKS : MOBA_MAX_ABILITY_RANK)) return;
+    r.meta.mobaSkillRanks.set(abilityId, rank + 1);
+    r.meta.mobaSkillPoints--;
+    r.meta.known = this.mobaHeroKnown(r.meta);
+  }
+
   // Rebuild a player as the given hero: bespoke ability kit (not the class kit),
-  // the hero's base class for resource/GCD/stats, and a fixed match level.
+  // the hero's base class for resource/GCD/stats, and the starting match level.
+  // Heroes seat at level 1 with one unspent skill point, DotA-style: nothing is
+  // learned until the player chooses. Lane XP levels them up from there.
   private mobaApplyHero(meta: PlayerMeta, e: Entity, heroId: string): void {
     const hero = MOBA_HEROES[heroId];
     if (!hero) return;
@@ -9000,13 +9109,9 @@ export class Sim {
     meta.cls = hero.baseClass;
     e.level = MOBA_HERO_LEVEL;
     e.cooldowns.clear();
-    meta.known = hero.abilities
-      .map((id) => MOBA_ABILITIES[id])
-      .filter((def): def is AbilityDef => !!def)
-      .map((def) => ({
-        def, rank: 1, cost: def.cost, castTime: def.castTime, cooldown: def.cooldown,
-        effects: def.effects, threatFlat: def.threat?.flat ?? 0, threatMult: def.threat?.mult ?? 1,
-      }));
+    meta.mobaSkillRanks = new Map();
+    meta.mobaSkillPoints = e.level; // one point per level, so one at seat
+    meta.known = this.mobaHeroKnown(meta);
     recalcPlayerStats(e, meta.cls, meta.equipment);
     e.hp = e.maxHp;
     e.resource = e.resourceType === 'mana' ? e.maxResource : e.resourceType === 'energy' ? 100 : 0;
@@ -9033,6 +9138,39 @@ export class Sim {
     e.ccDr.clear();
     this.rebucket(e);
     meta.mobaRespawnLeft = 0;
+  }
+
+  // Recall: begin the stationary channel home (heal + shop). Silent by design —
+  // the HUD renders the channel/cooldown state, so the sim emits no text here.
+  mobaRecall(pid?: number): void {
+    if (!this.cfg.mobaMode) return;
+    const r = this.resolve(pid);
+    if (!r || r.e.dead || !r.e.mobaTeam) return;
+    if (r.meta.mobaRecallLeft > 0) return; // already channeling
+    if (this.time < r.meta.mobaRecallReadyAt) return; // on cooldown
+    r.meta.mobaRecallLeft = MOBA_RECALL_CHANNEL_SEC;
+    r.meta.mobaRecallAnchor = { ...r.e.pos };
+    r.meta.mobaRecallReadyAt = this.time + MOBA_RECALL_CD_SEC; // stamped at start: a cancel costs the cooldown
+  }
+
+  private cancelMobaRecall(meta: PlayerMeta): void {
+    meta.mobaRecallLeft = 0;
+    meta.mobaRecallAnchor = null;
+  }
+
+  // Per-tick recall progress for one seated hero: cancel on death or movement off
+  // the anchor (damage cancels in dealDamage), complete by porting home.
+  private updateMobaRecall(meta: PlayerMeta, e: Entity): void {
+    if (meta.mobaRecallLeft <= 0) return;
+    if (e.dead || (meta.mobaRecallAnchor && dist2d(e.pos, meta.mobaRecallAnchor) > 0.6)) {
+      this.cancelMobaRecall(meta);
+      return;
+    }
+    meta.mobaRecallLeft -= DT;
+    if (meta.mobaRecallLeft <= 0) {
+      this.cancelMobaRecall(meta);
+      this.mobaRespawnHero(meta, e); // home at the base pad, healed and ready to shop
+    }
   }
 
   // A core is invulnerable until at least one of its lanes has lost every tower.
@@ -9079,7 +9217,11 @@ export class Sim {
     for (const pid of match.teams.keys()) {
       const meta = this.players.get(pid);
       const e = this.entities.get(pid);
-      if (!meta || !e || !e.dead) continue;
+      if (!meta || !e) continue;
+      if (!e.dead) {
+        this.updateMobaRecall(meta, e);
+        continue;
+      }
       if (meta.mobaRespawnLeft > 0) {
         meta.mobaRespawnLeft -= DT;
         if (meta.mobaRespawnLeft <= 0) this.mobaRespawnHero(meta, e);

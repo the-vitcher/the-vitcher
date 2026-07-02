@@ -1259,6 +1259,14 @@ export const GUIDE_DUNGEONS: GuideDungeon[] = [
     "name": "The Hollow Crypt"
   },
   {
+    "id": "moba_lane",
+    "isRaid": false,
+    "suggestedPlayers": 5,
+    "min": 8,
+    "max": 10,
+    "name": "The Clash: Ironhold Fields"
+  },
+  {
     "id": "crawl_floor_4",
     "isRaid": false,
     "suggestedPlayers": 5,
@@ -1305,14 +1313,6 @@ export const GUIDE_DUNGEONS: GuideDungeon[] = [
     "min": 16,
     "max": 18,
     "name": "The Drowned Temple"
-  },
-  {
-    "id": "moba_lane",
-    "isRaid": false,
-    "suggestedPlayers": 5,
-    "min": 18,
-    "max": 20,
-    "name": "The Clash: Ironhold Fields"
   },
   {
     "id": "gravewyrm_sanctum",

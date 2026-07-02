@@ -4280,6 +4280,51 @@ export const ko_KR: EnTranslations = {
       "showrunners_gavel": {
         "name": "쇼러너의 의사봉"
       },
+      "moba_spatula_of_smiting": {
+        "name": "징벌의 뒤집개"
+      },
+      "moba_sharpened_pencil": {
+        "name": "2호 연필(깎음)"
+      },
+      "moba_wand_of_inconvenience": {
+        "name": "가벼운 불편의 완드"
+      },
+      "moba_suspicious_spoon": {
+        "name": "수상하게 큰 숟가락"
+      },
+      "moba_hr_violation": {
+        "name": "인증된 인사규정 위반"
+      },
+      "moba_bubble_wrap_cuirass": {
+        "name": "뽁뽁이 흉갑"
+      },
+      "moba_traffic_cone": {
+        "name": "권위의 러버콘"
+      },
+      "moba_oven_mitts": {
+        "name": "능숙한 다루기의 오븐 장갑"
+      },
+      "moba_foam_clogs": {
+        "name": "눈부신 속도의 폼 샌들"
+      },
+      "moba_cargo_shorts": {
+        "name": "수납의 카고 반바지"
+      },
+      "moba_tactical_fanny_pack": {
+        "name": "전술 허리가방"
+      },
+      "moba_shoulder_parrot": {
+        "name": "어깨 앵무새(박제)"
+      },
+      "moba_executive_bathrobe": {
+        "name": "임원용 목욕가운"
+      },
+      "moba_reading_glasses": {
+        "name": "할머니의 돋보기"
+      },
+      "moba_support_brick": {
+        "name": "정서적 지지 벽돌"
+      },
       "briny_idol": {
         "name": "소금기 어린 우상"
       },
@@ -4990,6 +5035,11 @@ export const ko_KR: EnTranslations = {
         "name": "소트릴",
         "title": "9등급 연락관",
         "greeting": "크롤러군. 나는 소트릴, 9등급 연락관, 그래 내가 꽝을 뽑았지. 짧게 말하겠다, 여기선 모든 게 타이머에 걸려 있으니까. 네 세계는 재개발됐고, 너는 이제 크롤의 참가자다. 온 은하가 돈을 거는 생방송이지. 아래로는 층이 잔뜩 있고, 한 층씩 더 치명적이다. 적을 죽이고, 그 레벨을 빼앗고, 내려가는 계단을 찾아라. 그리고 지루해지지 마라, 관객은 대담한 자에게만 돈을 낸다. 인기야말로 탈출을 살 수 있는 유일한 화폐다. 그러니 파티 곁을 떠나지 말고, 볼 만한 가치가 있게 굴어라. 계단은 뒤쪽에 있다. 행운을 빈다. 네가 살아야 내가 돈을 받는다."
+      },
+      "moba_shopkeeper": {
+        "name": "두가방",
+        "title": "분명히 허가받은 상인",
+        "greeting": "어서 오세요, 어서 오세요! 두가방네 가게엔 영웅에게 필요한 모든 것이 있답니다. 뒤집개, 러버콘, 벽돌, 출처가 의심스러운 서류까지. 모든 판매는 환불 불가, 모든 상품은 누군가의 인증을 받았습니다. 금화는 선불, 영광은 후불!"
       },
       "tidewatcher_ondrel": {
         "name": "온드렐 베인",

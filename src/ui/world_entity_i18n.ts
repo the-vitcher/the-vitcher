@@ -53,6 +53,7 @@ const NPC_IDS = [
   'loremaster_caddis', 'ranger_elwyn',
   'brother_aldric_raid', // dynamically-spawned raid turn-in NPC (Crypt of Nythraxis)
   'crawl_guide_sotreel', // The Crawl's guide, spawned into the Guide Room instance
+  'moba_shopkeeper', // The Clash's base shopkeeper, spawned at both team bases
 ] as const;
 
 const QUEST_IDS = [

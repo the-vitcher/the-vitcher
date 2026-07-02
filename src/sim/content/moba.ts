@@ -21,7 +21,7 @@
 // spawn from z (mobaTeamForZ) and their lane from x (mobaLaneForX). Minions spawn in
 // timed waves per lane (Sim), not from `spawns`.
 
-import type { AbilityDef, DungeonDef, DungeonSpawn, MobaHeroDef, MobTemplate } from '../types';
+import type { AbilityDef, DungeonDef, DungeonSpawn, ItemDef, MobaHeroDef, MobTemplate, NpcDef } from '../types';
 import {
   MOBA_CORE_LEVEL, MOBA_MAP, MOBA_MINION_GOLD, MOBA_MINION_LEVEL, MOBA_TOWER_GOLD, MOBA_TOWER_LEVEL,
   mobaTowerPoints, type MobaLaneIndex, type MobaTeam,
@@ -365,6 +365,98 @@ export const MOBA_HEROES: Record<string, MobaHeroDef> = {
 export const MOBA_HERO_IDS: string[] = Object.keys(MOBA_HEROES);
 
 // ---------------------------------------------------------------------------
+// The shop. Fifteen bespoke gear pieces (universal: no class/armour-type locks,
+// like the Crawl drops) bought with lane gold, tiered so a match's creep income
+// buys a build. Prices are buyValue; sellValue is the vendor's buyback rate.
+// ---------------------------------------------------------------------------
+export const MOBA_ITEMS: Record<string, ItemDef> = {
+  moba_spatula_of_smiting: {
+    id: 'moba_spatula_of_smiting', name: 'Spatula of Smiting', kind: 'weapon', slot: 'mainhand', quality: 'uncommon',
+    weapon: { min: 14, max: 22, speed: 2.4 }, stats: { str: 8, sta: 4 }, sellValue: 180, buyValue: 900,
+  },
+  moba_sharpened_pencil: {
+    id: 'moba_sharpened_pencil', name: 'Number Two Pencil (Sharpened)', kind: 'weapon', slot: 'mainhand', quality: 'uncommon',
+    weapon: { min: 9, max: 14, speed: 1.6, dagger: true }, stats: { agi: 8 }, sellValue: 180, buyValue: 900,
+  },
+  moba_wand_of_inconvenience: {
+    id: 'moba_wand_of_inconvenience', name: 'Wand of Mild Inconvenience', kind: 'weapon', slot: 'mainhand', quality: 'uncommon',
+    weapon: { min: 11, max: 18, speed: 2.0 }, stats: { int: 10 }, sellValue: 180, buyValue: 900,
+  },
+  moba_suspicious_spoon: {
+    id: 'moba_suspicious_spoon', name: 'Suspiciously Large Spoon', kind: 'weapon', slot: 'mainhand', quality: 'rare',
+    weapon: { min: 22, max: 34, speed: 2.8 }, stats: { str: 12, sta: 8 }, sellValue: 440, buyValue: 2200,
+  },
+  moba_hr_violation: {
+    id: 'moba_hr_violation', name: 'Certified HR Violation', kind: 'weapon', slot: 'mainhand', quality: 'rare',
+    weapon: { min: 26, max: 40, speed: 2.6 }, stats: { str: 10, agi: 10 }, sellValue: 480, buyValue: 2400,
+  },
+  moba_bubble_wrap_cuirass: {
+    id: 'moba_bubble_wrap_cuirass', name: 'Bubble Wrap Cuirass', kind: 'armor', slot: 'chest', quality: 'uncommon',
+    stats: { sta: 10, armor: 90 }, sellValue: 140, buyValue: 700,
+  },
+  moba_traffic_cone: {
+    id: 'moba_traffic_cone', name: 'Traffic Cone of Authority', kind: 'armor', slot: 'helmet', quality: 'uncommon',
+    stats: { str: 4, sta: 6, armor: 70 }, sellValue: 120, buyValue: 600,
+  },
+  moba_oven_mitts: {
+    id: 'moba_oven_mitts', name: 'Oven Mitts of Deft Handling', kind: 'armor', slot: 'gloves', quality: 'uncommon',
+    stats: { agi: 6, armor: 50 }, sellValue: 100, buyValue: 500,
+  },
+  moba_foam_clogs: {
+    id: 'moba_foam_clogs', name: 'Foam Clogs of Blinding Speed', kind: 'armor', slot: 'feet', quality: 'uncommon',
+    stats: { agi: 5, sta: 4, armor: 45 }, sellValue: 130, buyValue: 650,
+  },
+  moba_cargo_shorts: {
+    id: 'moba_cargo_shorts', name: 'Cargo Shorts of Holding', kind: 'armor', slot: 'legs', quality: 'uncommon',
+    stats: { str: 4, sta: 6, armor: 55 }, sellValue: 130, buyValue: 650,
+  },
+  moba_tactical_fanny_pack: {
+    id: 'moba_tactical_fanny_pack', name: 'Tactical Fanny Pack', kind: 'armor', slot: 'waist', quality: 'uncommon',
+    stats: { sta: 8, armor: 40 }, sellValue: 110, buyValue: 550,
+  },
+  moba_shoulder_parrot: {
+    id: 'moba_shoulder_parrot', name: 'Shoulder Parrot (Taxidermied)', kind: 'armor', slot: 'shoulder', quality: 'uncommon',
+    stats: { agi: 4, sta: 4, armor: 55 }, sellValue: 120, buyValue: 600,
+  },
+  moba_executive_bathrobe: {
+    id: 'moba_executive_bathrobe', name: 'Executive Bathrobe', kind: 'armor', slot: 'chest', quality: 'uncommon',
+    stats: { int: 12, spi: 5, armor: 45 }, sellValue: 160, buyValue: 800,
+  },
+  moba_reading_glasses: {
+    id: 'moba_reading_glasses', name: "Grandma's Reading Glasses", kind: 'armor', slot: 'helmet', quality: 'uncommon',
+    stats: { int: 8, spi: 6, armor: 35 }, sellValue: 140, buyValue: 700,
+  },
+  moba_support_brick: {
+    id: 'moba_support_brick', name: 'Emotional Support Brick', kind: 'armor', slot: 'waist', quality: 'rare',
+    stats: { sta: 14, armor: 60 }, sellValue: 400, buyValue: 2000,
+  },
+};
+
+// ---------------------------------------------------------------------------
+// The shopkeeper. One NPC def, spawned at BOTH bases (two dungeon.npcs entries).
+// Talking to it opens the standard vendor window; stock is the full MOBA gear
+// line plus the classic potions (already localized base items).
+// ---------------------------------------------------------------------------
+export const MOBA_NPCS: Record<string, NpcDef> = {
+  moba_shopkeeper: {
+    id: 'moba_shopkeeper',
+    name: 'Twobags',
+    title: 'Definitely Licensed Merchant',
+    pos: { x: 0, z: 0 }, // ignored: spawned into the instance, not surface-placed
+    facing: 0,
+    color: 0xc8a84a,
+    questIds: [],
+    vendorItems: [
+      ...Object.keys(MOBA_ITEMS),
+      'minor_healing_potion', 'lesser_healing_potion', 'healing_potion',
+      'minor_mana_potion', 'lesser_mana_potion', 'mana_potion',
+    ],
+    greeting: 'Welcome, welcome! Twobags has everything a hero needs: pans, cones, bricks, questionable paperwork. All sales final, all items certified by someone. Gold up front, glory later!',
+    dynamic: true,
+  },
+};
+
+// ---------------------------------------------------------------------------
 // Lane structures and minions. Towers and cores are stationary (mobaRole gates
 // the Sim's stationary AI); minions walk their lane. Team comes from Entity.mobaTeam,
 // assigned at spawn by z (mobaTeamForZ); lane from x (mobaLaneForX).
@@ -373,7 +465,7 @@ export const MOBA_MOBS: Record<string, MobTemplate> = {
   moba_minion_melee: {
     id: 'moba_minion_melee', name: 'Lane Footman', minLevel: MOBA_MINION_LEVEL, maxLevel: MOBA_MINION_LEVEL,
     family: 'humanoid', mobaRole: 'minion',
-    hpBase: 120, hpPerLevel: 6, dmgBase: 9, dmgPerLevel: 1.4, attackSpeed: 2.0,
+    hpBase: 90, hpPerLevel: 6, dmgBase: 6, dmgPerLevel: 1.2, attackSpeed: 2.0,
     armorPerLevel: 6, moveSpeed: 6, aggroRadius: 9,
     loot: [{ copper: MOBA_MINION_GOLD, chance: 1 }],
     scale: 0.85, color: 0xb8a06a,
@@ -381,7 +473,7 @@ export const MOBA_MOBS: Record<string, MobTemplate> = {
   moba_minion_ranged: {
     id: 'moba_minion_ranged', name: 'Lane Caster', minLevel: MOBA_MINION_LEVEL, maxLevel: MOBA_MINION_LEVEL,
     family: 'humanoid', mobaRole: 'minion',
-    hpBase: 80, hpPerLevel: 5, dmgBase: 11, dmgPerLevel: 1.6, attackSpeed: 2.4,
+    hpBase: 65, hpPerLevel: 5, dmgBase: 8, dmgPerLevel: 1.4, attackSpeed: 2.4,
     armorPerLevel: 4, moveSpeed: 6, aggroRadius: 12,
     loot: [{ copper: MOBA_MINION_GOLD, chance: 1 }],
     scale: 0.8, color: 0x8a6ab8,
@@ -436,6 +528,11 @@ export const MOBA_DUNGEON_DEFS: Record<string, DungeonDef> = {
     entry: { x: 0, z: 0 }, // arrivals land at the Team A end; match seating moves each hero to its base
     exitOffset: { x: 0, z: -6 },
     spawns: structureSpawns(),
+    // A shopkeeper at each base, tucked beside the hero spawn pad.
+    npcs: [
+      { npcId: 'moba_shopkeeper', x: 6, z: MOBA_MAP.heroSpawnA.z },
+      { npcId: 'moba_shopkeeper', x: 6, z: MOBA_MAP.heroSpawnB.z },
+    ],
     interior: 'clash',
     suggestedPlayers: 5,
     enterText: 'Welcome to the Clash. Push the lane, take their towers, and shatter the enemy core before they shatter yours.',

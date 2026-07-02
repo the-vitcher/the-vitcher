@@ -31,7 +31,7 @@ import {
   TEMPLE_NPCS, TEMPLE_OBJECTS, TEMPLE_PROPS, TEMPLE_QUEST_ORDER, TEMPLE_QUESTS,
 } from './content/temple';
 import { THE_CRAWL_DUNGEON_DEFS, THE_CRAWL_ITEMS, THE_CRAWL_MOBS, THE_CRAWL_NPCS } from './content/the_crawl';
-import { MOBA_DUNGEON_DEFS, MOBA_MOBS } from './content/moba';
+import { MOBA_DUNGEON_DEFS, MOBA_ITEMS, MOBA_MOBS, MOBA_NPCS } from './content/moba';
 
 function mergeItems(...parts: Record<string, ItemDef>[]): Record<string, ItemDef> {
   const merged = Object.assign({}, ...parts);
@@ -59,7 +59,7 @@ export type {
 // Merged content tables
 // ---------------------------------------------------------------------------
 
-export const ITEMS: Record<string, ItemDef> = mergeItems(BASE_ITEMS, ZONE2_ITEMS, ZONE3_ITEMS, TEMPLE_ITEMS, THE_CRAWL_ITEMS);
+export const ITEMS: Record<string, ItemDef> = mergeItems(BASE_ITEMS, ZONE2_ITEMS, ZONE3_ITEMS, TEMPLE_ITEMS, THE_CRAWL_ITEMS, MOBA_ITEMS);
 
 export const MOBS: Record<string, MobTemplate> = {
   ...ZONE1_MOBS, ...ZONE2_MOBS, ...ZONE3_MOBS, ...DUNGEON_MOBS,
@@ -67,7 +67,7 @@ export const MOBS: Record<string, MobTemplate> = {
 };
 
 export const NPCS: Record<string, NpcDef> = {
-  ...ZONE1_NPCS, ...ZONE2_NPCS, ...ZONE3_NPCS, ...TEMPLE_NPCS, ...THE_CRAWL_NPCS,
+  ...ZONE1_NPCS, ...ZONE2_NPCS, ...ZONE3_NPCS, ...TEMPLE_NPCS, ...THE_CRAWL_NPCS, ...MOBA_NPCS,
 };
 
 export const QUESTS: Record<string, QuestDef> = {

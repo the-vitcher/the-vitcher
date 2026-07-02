@@ -2,8 +2,9 @@ import { describe, it, expect } from 'vitest';
 import {
   assignMobaTeams, mobaBotFill, mobaTeamForZ, mobaLaneForX, mobaEnemyTeam, mobaEnemyCore, mobaHeroSpawn,
   mobaMinionSpawn, mobaMinionMarchTarget, mobaTowerPoints, mobaRespawnSeconds, mobaWaveComposition,
-  mobaCoreVulnerable, mobaWinner, mobaHeroKillGold, MOBA_MAP, MOBA_LANE_XS, MOBA_RESPAWN_MIN,
-  MOBA_RESPAWN_MAX, MOBA_MINION_MELEE_ID, MOBA_MINION_RANGED_ID, type MobaLaneIndex, type MobaTeam,
+  mobaCoreVulnerable, mobaWinner, mobaHeroKillGold, mobaScaleEffectForRank, MOBA_MAP, MOBA_LANE_XS,
+  MOBA_RESPAWN_MIN, MOBA_RESPAWN_MAX, MOBA_MINION_MELEE_ID, MOBA_MINION_RANGED_ID,
+  type MobaLaneIndex, type MobaTeam,
 } from '../src/sim/moba';
 
 const LANES: MobaLaneIndex[] = [0, 1, 2];
@@ -138,6 +139,39 @@ describe('MOBA pure core: wave composition', () => {
     expect(mobaWaveComposition(1).filter((m) => m === MOBA_MINION_MELEE_ID).length).toBe(3);
     expect(mobaWaveComposition(3).filter((m) => m === MOBA_MINION_MELEE_ID).length).toBe(4);
     expect(mobaWaveComposition(6).filter((m) => m === MOBA_MINION_MELEE_ID).length).toBe(5);
+  });
+});
+
+describe('MOBA pure core: ability rank scaling', () => {
+  it('scales damage magnitudes up per rank without mutating the source effect', () => {
+    const src = { type: 'directDamage', min: 40, max: 60 } as const;
+    const r1 = mobaScaleEffectForRank(src, 1) as any;
+    const r2 = mobaScaleEffectForRank(src, 2) as any;
+    const r3 = mobaScaleEffectForRank(src, 3) as any;
+    expect(r1.min).toBeLessThan(r2.min);
+    expect(r2.min).toBe(40); // authored numbers ARE rank 2
+    expect(r3.min).toBeGreaterThan(r2.min);
+    expect(src.min).toBe(40); // source untouched
+  });
+
+  it('scales hard-CC durations on the gentler CC curve', () => {
+    const stun = { type: 'stun', duration: 2 } as const;
+    expect((mobaScaleEffectForRank(stun, 1) as any).duration).toBe(2);
+    expect((mobaScaleEffectForRank(stun, 2) as any).duration).toBe(2.5);
+    expect((mobaScaleEffectForRank(stun, 3) as any).duration).toBe(3);
+  });
+
+  it('leaves rank-invariant effects untouched (charge, slows, self-buffs)', () => {
+    const charge = { type: 'charge' } as const;
+    expect(mobaScaleEffectForRank(charge, 3)).toEqual(charge);
+    const slow = { type: 'slow', mult: 0.5, duration: 4 } as const;
+    expect(mobaScaleEffectForRank(slow, 3)).toEqual(slow);
+  });
+
+  it('clamps out-of-range ranks into 1..3', () => {
+    const src = { type: 'heal', min: 100, max: 100 } as const;
+    expect(mobaScaleEffectForRank(src, 0)).toEqual(mobaScaleEffectForRank(src, 1));
+    expect(mobaScaleEffectForRank(src, 9)).toEqual(mobaScaleEffectForRank(src, 3));
   });
 });
 

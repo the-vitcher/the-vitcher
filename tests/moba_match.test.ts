@@ -4,7 +4,8 @@ import type { Entity } from '../src/sim/types';
 import { createMob } from '../src/sim/entity';
 import { MOBS } from '../src/sim/data';
 import { MOBA_HEROES } from '../src/sim/content/moba';
-import { MOBA_HERO_LEVEL, MOBA_MATCH_WARMUP_SEC, MOBA_FIRST_WAVE_SEC, mobaWaveComposition } from '../src/sim/moba';
+import { MOBA_HERO_LEVEL, MOBA_MATCH_WARMUP_SEC, MOBA_FIRST_WAVE_SEC, MOBA_MINION_XP_PCT, mobaWaveComposition } from '../src/sim/moba';
+import { xpForLevel } from '../src/sim/types';
 
 const makeMobaSim = (seed = 7) => new Sim({ seed, playerClass: 'warrior', noPlayer: true, mobaMode: true, mobaTeamSize: 5 });
 const kill = (sim: Sim, target: Entity, by: Entity | null) => { target.hp = 0; (sim as any).handleDeath(target, by); };
@@ -24,8 +25,9 @@ describe('The Clash: match setup', () => {
     expect(e.level).toBe(MOBA_HERO_LEVEL);
     const meta = (sim as any).players.get(pid);
     expect(meta.mobaHeroId).toBe(Object.keys(MOBA_HEROES)[0]);
-    const heroAbilities = MOBA_HEROES[meta.mobaHeroId].abilities;
-    expect(meta.known.map((k: any) => k.def.id).sort()).toEqual([...heroAbilities].sort());
+    // DotA-style: nothing is learned at seat; one skill point waits to be spent.
+    expect(meta.known.length).toBe(0);
+    expect(meta.mobaSkillPoints).toBe(1);
   });
 
   it('spawns 2 towers per lane per team plus one core each, tagged by side', () => {
@@ -41,7 +43,7 @@ describe('The Clash: match setup', () => {
     for (const lane of laneTowers(sim, match.towersB)) for (const t of lane) expect(t.mobaTeam).toBe('B');
   });
 
-  it('pickMobaHero swaps the ability kit and base class for every hero', () => {
+  it('pickMobaHero swaps the base class and resets skill choices for every hero', () => {
     const sim = makeMobaSim();
     const pid = sim.addPlayer('warrior', 'Picker');
     sim.startMobaMatch([pid]);
@@ -50,8 +52,87 @@ describe('The Clash: match setup', () => {
       sim.pickMobaHero(hero.id, pid);
       expect(meta.mobaHeroId).toBe(hero.id);
       expect(meta.cls).toBe(hero.baseClass);
-      expect(meta.known.map((k: any) => k.def.id).sort()).toEqual([...hero.abilities].sort());
+      expect(meta.known.length).toBe(0); // fresh hero, nothing learned yet
+      expect(meta.mobaSkillPoints).toBe(1);
     }
+  });
+});
+
+describe('The Clash: DotA-style ability leveling', () => {
+  const seat = (heroId = 'snacko') => {
+    const sim = makeMobaSim();
+    const pid = sim.addPlayer('warrior', 'Learner');
+    sim.startMobaMatch([pid]);
+    sim.pickMobaHero(heroId, pid);
+    const meta = (sim as any).players.get(pid);
+    const hero = entOf(sim, pid);
+    return { sim, pid, meta, hero };
+  };
+
+  it('spends the level-1 point to learn one basic ability', () => {
+    const { sim, pid, meta } = seat();
+    const basic = MOBA_HEROES.snacko.abilities[0];
+    sim.mobaLearnAbility(basic, pid);
+    expect(meta.mobaSkillPoints).toBe(0);
+    expect(meta.known.map((k: any) => k.def.id)).toEqual([basic]);
+    expect(meta.known[0].rank).toBe(1);
+    sim.mobaLearnAbility(MOBA_HEROES.snacko.abilities[1], pid); // no points left
+    expect(meta.known.length).toBe(1);
+  });
+
+  it('upgrading a rank makes the ability measurably stronger, capped at rank 3', () => {
+    const { sim, pid, meta } = seat('zapp');
+    const quiz = 'moba_pop_quiz';
+    meta.mobaSkillPoints = 5;
+    sim.mobaLearnAbility(quiz, pid);
+    const r1 = meta.known.find((k: any) => k.def.id === quiz)!.effects[0];
+    sim.mobaLearnAbility(quiz, pid);
+    const r2 = meta.known.find((k: any) => k.def.id === quiz)!.effects[0];
+    sim.mobaLearnAbility(quiz, pid);
+    const r3 = meta.known.find((k: any) => k.def.id === quiz)!.effects[0];
+    expect(r2.min).toBeGreaterThan(r1.min);
+    expect(r3.min).toBeGreaterThan(r2.min);
+    expect(meta.known.find((k: any) => k.def.id === quiz)!.rank).toBe(3);
+    sim.mobaLearnAbility(quiz, pid); // rank 3 is the cap
+    expect(meta.known.find((k: any) => k.def.id === quiz)!.rank).toBe(3);
+    expect(meta.mobaSkillPoints).toBe(2); // capped attempt spent nothing
+  });
+
+  it('locks the ultimate until hero level 6', () => {
+    const { sim, pid, meta, hero } = seat('moth_larry');
+    const ult = MOBA_HEROES.moth_larry.abilities[3]; // L A M P
+    meta.mobaSkillPoints = 3;
+    sim.mobaLearnAbility(ult, pid);
+    expect(meta.known.length).toBe(0); // too low level
+    hero.level = 6;
+    sim.mobaLearnAbility(ult, pid);
+    expect(meta.known.map((k: any) => k.def.id)).toEqual([ult]);
+    sim.mobaLearnAbility(ult, pid); // single-rank ultimate
+    expect(meta.known.find((k: any) => k.def.id === ult)!.rank).toBe(1);
+  });
+
+  it('leveling up grants a skill point and keeps learned ranks', () => {
+    const { sim, pid, meta, hero } = seat();
+    const basic = MOBA_HEROES.snacko.abilities[0];
+    sim.mobaLearnAbility(basic, pid);
+    expect(meta.mobaSkillPoints).toBe(0);
+    const lvl0 = hero.level;
+    (sim as any).grantXp(xpForLevel(hero.level), meta, { fromKill: true });
+    expect(hero.level).toBe(lvl0 + 1);
+    expect(meta.mobaSkillPoints).toBe(1);
+    expect(meta.known.map((k: any) => k.def.id)).toEqual([basic]); // kit survives the level-up
+  });
+
+  it('minion kills pay turbo XP (a fixed fraction of the level requirement)', () => {
+    const { sim, pid, meta, hero } = seat();
+    const minion = createMob((sim as any).nextId++, MOBS.moba_minion_melee, 3, { x: hero.pos.x, y: hero.pos.y, z: hero.pos.z + 3 });
+    minion.prevPos = { ...minion.pos };
+    minion.mobaTeam = 'B';
+    (sim as any).addEntity(minion);
+    const xpBefore = meta.xp;
+    kill(sim, minion, hero);
+    const expected = Math.round(xpForLevel(hero.level) * MOBA_MINION_XP_PCT);
+    expect(meta.xp - xpBefore).toBe(expected);
   });
 });
 
@@ -63,8 +144,14 @@ describe('The Clash: every hero kit casts', () => {
       sim.startMobaMatch([pid]);
       sim.pickMobaHero(hero.id, pid);
       const p = entOf(sim, pid);
+      const meta = (sim as any).players.get(pid);
+      // learn the full kit (level to 6 for the ultimate, grant enough points)
+      p.level = 6;
+      meta.mobaSkillPoints = hero.abilities.length;
+      for (const abilityId of hero.abilities) sim.mobaLearnAbility(abilityId, pid);
+      expect(meta.known.length, `${hero.id} full kit learned`).toBe(hero.abilities.length);
       // stand a hostile minion dummy in front of the hero
-      const mob = createMob((sim as any).nextId++, MOBS.moba_minion_melee, 12, { x: p.pos.x, y: p.pos.y, z: p.pos.z + 4 });
+      const mob = createMob((sim as any).nextId++, MOBS.moba_minion_melee, 3, { x: p.pos.x, y: p.pos.y, z: p.pos.z + 4 });
       mob.prevPos = { ...mob.pos };
       mob.mobaTeam = 'B';
       (sim as any).addEntity(mob);
@@ -191,6 +278,152 @@ describe('The Clash: waves and respawn', () => {
     for (let i = 0; i < 20 * 60 && hero.dead; i++) sim.tick();
     expect(hero.dead).toBe(false);
     expect(hero.hp).toBe(hero.maxHp);
+  });
+});
+
+describe('The Clash: gold economy', () => {
+  it('pays minion bounty gold instantly on the kill, no looting required', () => {
+    const sim = makeMobaSim();
+    const pid = sim.addPlayer('warrior', 'Farmer');
+    sim.startMobaMatch([pid]);
+    const hero = entOf(sim, pid);
+    const meta = (sim as any).players.get(pid);
+    const minion = createMob((sim as any).nextId++, MOBS.moba_minion_melee, 12, { x: hero.pos.x, y: hero.pos.y, z: hero.pos.z + 3 });
+    minion.prevPos = { ...minion.pos };
+    minion.mobaTeam = 'B';
+    (sim as any).addEntity(minion);
+    const before = meta.copper;
+    kill(sim, minion, hero);
+    expect(meta.copper).toBeGreaterThan(before); // paid on the spot
+    expect(minion.lootable).toBe(false); // nothing left to click
+  });
+
+  it('pays a tower bounty to the last-hitter', () => {
+    const sim = makeMobaSim();
+    const pid = sim.addPlayer('warrior', 'Sieger');
+    sim.startMobaMatch([pid]);
+    const match = sim.mobaMatch!;
+    const hero = entOf(sim, pid);
+    const meta = (sim as any).players.get(pid);
+    const before = meta.copper;
+    const tower = entOf(sim, match.towersB[1][0]);
+    tower.tappedById = pid;
+    kill(sim, tower, hero);
+    expect(meta.copper - before).toBeGreaterThanOrEqual(200);
+  });
+
+  it('pays hero-kill gold to the killing enemy hero', () => {
+    const sim = makeMobaSim();
+    const a = sim.addPlayer('warrior', 'Hunter');
+    const b = sim.addPlayer('mage', 'Prey');
+    sim.startMobaMatch([a, b]);
+    const killer = entOf(sim, a);
+    const victim = entOf(sim, b);
+    expect(killer.mobaTeam).not.toBe(victim.mobaTeam);
+    const km = (sim as any).players.get(a);
+    const before = km.copper;
+    kill(sim, victim, killer);
+    expect(km.copper).toBeGreaterThan(before);
+    expect(km.playerKills).toBe(1);
+  });
+
+  it('lane XP levels a hero up WITHOUT clobbering the hero ability kit', () => {
+    const sim = makeMobaSim();
+    const pid = sim.addPlayer('warrior', 'Leveler');
+    sim.startMobaMatch([pid]);
+    sim.pickMobaHero('snacko', pid);
+    const hero = entOf(sim, pid);
+    const meta = (sim as any).players.get(pid);
+    sim.mobaLearnAbility(MOBA_HEROES.snacko.abilities[0], pid);
+    const lvl0 = hero.level;
+    (sim as any).grantXp(50000, meta, { fromKill: true }); // enough to level several times
+    expect(hero.level).toBeGreaterThan(lvl0);
+    // still the hero's kit (learned slice), not the warrior class kit
+    expect(meta.known.map((k: any) => k.def.id)).toEqual([MOBA_HEROES.snacko.abilities[0]]);
+  });
+});
+
+describe('The Clash: recall', () => {
+  const setupAway = () => {
+    const sim = makeMobaSim();
+    const pid = sim.addPlayer('warrior', 'Homesick');
+    sim.startMobaMatch([pid]);
+    const hero = entOf(sim, pid);
+    const meta = (sim as any).players.get(pid);
+    const homeZ = hero.pos.z;
+    // walk the hero out into the lane
+    hero.pos = { ...hero.pos, z: hero.pos.z + 40 };
+    hero.prevPos = { ...hero.pos };
+    (sim as any).rebucket(hero);
+    return { sim, pid, hero, meta, homeZ };
+  };
+
+  it('channels for the full duration then ports home, healed', () => {
+    const { sim, pid, hero, meta, homeZ } = setupAway();
+    hero.hp = Math.round(hero.maxHp / 2);
+    sim.mobaRecall(pid);
+    expect(meta.mobaRecallLeft).toBeGreaterThan(0);
+    for (let i = 0; i < 20 * 8; i++) sim.tick();
+    expect(Math.abs(hero.pos.z - homeZ)).toBeLessThan(3); // back at the base pad
+    expect(hero.hp).toBe(hero.maxHp);
+  });
+
+  it('is interrupted by taking a hit, and the cooldown still applies', () => {
+    const { sim, pid, hero, meta } = setupAway();
+    const startZ = hero.pos.z;
+    sim.mobaRecall(pid);
+    for (let i = 0; i < 20; i++) sim.tick(); // 1s into the channel
+    (sim as any).dealDamage(null, hero, 5, false, 'physical', null, 'hit');
+    expect(meta.mobaRecallLeft).toBe(0);
+    for (let i = 0; i < 20 * 8; i++) sim.tick();
+    expect(hero.pos.z).toBeCloseTo(startZ, 0); // never ported
+    sim.mobaRecall(pid); // still on cooldown (stamped at start)
+    expect(meta.mobaRecallLeft).toBe(0);
+  });
+
+  it('is cancelled by moving off the anchor', () => {
+    const { sim, pid, hero, meta } = setupAway();
+    sim.mobaRecall(pid);
+    for (let i = 0; i < 20; i++) sim.tick();
+    hero.pos = { ...hero.pos, x: hero.pos.x + 2 }; // step away
+    sim.tick();
+    expect(meta.mobaRecallLeft).toBe(0);
+  });
+});
+
+describe('The Clash: the shop', () => {
+  it('spawns a shopkeeper at each base with the full stock', () => {
+    const sim = makeMobaSim();
+    const pid = sim.addPlayer('warrior', 'Shopper');
+    sim.startMobaMatch([pid]);
+    const keepers = [...sim.entities.values()].filter((e) => e.kind === 'npc' && e.templateId === 'moba_shopkeeper');
+    expect(keepers.length).toBe(2);
+    for (const k of keepers) {
+      expect(k.vendorItems.length).toBeGreaterThanOrEqual(20); // 15 gear + 6 potions
+      for (const itemId of k.vendorItems) {
+        expect((sim as any).constructor === Sim).toBe(true);
+        expect(MOBS[itemId], 'vendor stock must be items, not mobs').toBeUndefined();
+      }
+    }
+  });
+
+  it('a hero can buy gear with bounty gold and equip it', () => {
+    const sim = makeMobaSim();
+    const pid = sim.addPlayer('warrior', 'Buyer');
+    sim.startMobaMatch([pid]);
+    const meta = (sim as any).players.get(pid);
+    meta.copper = 5000;
+    const keeper = [...sim.entities.values()].find((e) => e.kind === 'npc' && e.templateId === 'moba_shopkeeper')!;
+    const hero = entOf(sim, pid);
+    hero.pos = { ...keeper.pos, z: keeper.pos.z - 2 };
+    hero.prevPos = { ...hero.pos };
+    (sim as any).rebucket(hero);
+    sim.targetEntity(keeper.id);
+    sim.buyItem(keeper.id, 'moba_traffic_cone', pid);
+    expect(meta.copper).toBe(5000 - 600);
+    expect(meta.inventory.some((s: any) => s.itemId === 'moba_traffic_cone')).toBe(true);
+    sim.equipItem('moba_traffic_cone', pid);
+    expect(meta.equipment.helmet).toBe('moba_traffic_cone');
   });
 });
 

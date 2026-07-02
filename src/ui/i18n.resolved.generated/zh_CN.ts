@@ -4280,6 +4280,51 @@ export const zh_CN: EnTranslations = {
       "showrunners_gavel": {
         "name": "节目总监的木槌"
       },
+      "moba_spatula_of_smiting": {
+        "name": "惩戒锅铲"
+      },
+      "moba_sharpened_pencil": {
+        "name": "二号铅笔（削尖）"
+      },
+      "moba_wand_of_inconvenience": {
+        "name": "轻度不便魔杖"
+      },
+      "moba_suspicious_spoon": {
+        "name": "可疑的大勺子"
+      },
+      "moba_hr_violation": {
+        "name": "经认证的HR违规"
+      },
+      "moba_bubble_wrap_cuirass": {
+        "name": "气泡膜胸甲"
+      },
+      "moba_traffic_cone": {
+        "name": "权威交通锥"
+      },
+      "moba_oven_mitts": {
+        "name": "灵巧隔热手套"
+      },
+      "moba_foam_clogs": {
+        "name": "致盲疾速泡沫洞洞鞋"
+      },
+      "moba_cargo_shorts": {
+        "name": "收纳工装短裤"
+      },
+      "moba_tactical_fanny_pack": {
+        "name": "战术腰包"
+      },
+      "moba_shoulder_parrot": {
+        "name": "肩头鹦鹉（标本）"
+      },
+      "moba_executive_bathrobe": {
+        "name": "总裁浴袍"
+      },
+      "moba_reading_glasses": {
+        "name": "奶奶的老花镜"
+      },
+      "moba_support_brick": {
+        "name": "情感支持砖头"
+      },
       "briny_idol": {
         "name": "咸海神像"
       },
@@ -4990,6 +5035,11 @@ export const zh_CN: EnTranslations = {
         "name": "索特里尔",
         "title": "九级联络员",
         "greeting": "爬塔者。我是索特里尔，九级联络员，没错，我抽到了下下签。长话短说，因为这下面的一切都有计时：你的世界被重新开发了，如今你是地城爬行的参赛者，一场全银河都在押注的现场直播。下面还有许多层，一层比一层致命。杀怪、夺取它们的等级、找到向下的楼梯，别让自己变得无聊，因为观众只为大胆买单。人气是唯一能买来活路的货币，所以别离队太远，争取让自己值得一看。楼梯在后面。祝你好运。你活着，我才有钱拿。"
+      },
+      "moba_shopkeeper": {
+        "name": "双袋子",
+        "title": "绝对持证商人",
+        "greeting": "欢迎欢迎！双袋子这里应有尽有：锅铲、路锥、砖头、来路存疑的文书。所有交易概不退换，所有商品都经过某人认证。先交金币，后得荣耀！"
       },
       "tidewatcher_ondrel": {
         "name": "翁德雷尔·凡恩",

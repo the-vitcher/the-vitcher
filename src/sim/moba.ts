@@ -13,6 +13,8 @@
 // at x = -45 / 0 / +45, divided by broken pillar rows at |x| = 22. Team A holds the
 // low-z end, Team B the high-z end; A pushes toward +z, B toward -z.
 
+import type { AbilityEffect } from './types';
+
 export type MobaTeam = 'A' | 'B';
 export type MobaLaneIndex = 0 | 1 | 2; // 0 = top (x -45), 1 = mid (x 0), 2 = bot (x +45)
 
@@ -97,20 +99,72 @@ export const MOBA_FIRST_WAVE_SEC = 15; // first minion wave after match start
 export const MOBA_WAVE_INTERVAL_SEC = 30; // a wave down every lane every 30s
 export const MOBA_MATCH_WARMUP_SEC = 5; // pre-match countdown before waves/combat
 
-// --- Structure / minion levels (drive HP/damage via the mob templates) ---
-export const MOBA_MINION_LEVEL = 12;
-export const MOBA_TOWER_LEVEL = 18;
-export const MOBA_CORE_LEVEL = 20;
-// Heroes play at a fixed level so matches are gear/level-neutral; bounties scale off it.
-export const MOBA_HERO_LEVEL = 15;
+// --- Recall: the channel home to heal and shop. Stationary; damage or movement
+// cancels it, and a fresh attempt waits out the cooldown (stamped at START, so a
+// cancelled recall cannot be spammed). ---
+export const MOBA_RECALL_CHANNEL_SEC = 6;
+export const MOBA_RECALL_CD_SEC = 25;
 
-// --- Bounties (copper for gold, xp) awarded to the last-hitter ---
+// --- Structure / minion levels (drive HP/damage via the mob templates) ---
+export const MOBA_MINION_LEVEL = 3;
+export const MOBA_TOWER_LEVEL = 8;
+export const MOBA_CORE_LEVEL = 10;
+// Heroes seat at level 1 (one skill point, DotA-style) and level up on lane XP.
+export const MOBA_HERO_LEVEL = 1;
+
+// --- Ability leveling: DotA-style skill points. One point per hero level (one at
+// seat); each point learns a new basic ability or upgrades a learned one. The
+// LAST kit slot is the hero's ultimate: single-rank, locked until hero level 6. ---
+export const MOBA_MAX_ABILITY_RANK = 3;
+export const MOBA_ULT_RANKS = 1;
+export const MOBA_ULT_HERO_LEVEL = 6;
+// Effect power by rank (authored numbers are rank 2); crowd-control durations
+// grow on their own gentler curve.
+export const MOBA_RANK_POWER: readonly number[] = [0.7, 1.0, 1.3];
+export const MOBA_RANK_CC: readonly number[] = [1, 1.25, 1.5];
+
+// Scale one ability effect to a rank, returning a NEW object (content defs are
+// shared module data and must never be mutated). Damage/heal magnitudes follow
+// MOBA_RANK_POWER; hard-CC durations follow MOBA_RANK_CC; everything else
+// (slows, charges, buff multipliers) is rank-invariant.
+export function mobaScaleEffectForRank(eff: AbilityEffect, rank: number): AbilityEffect {
+  const r = Math.max(1, Math.min(MOBA_MAX_ABILITY_RANK, Math.floor(rank)));
+  const p = MOBA_RANK_POWER[r - 1];
+  const cc = MOBA_RANK_CC[r - 1];
+  switch (eff.type) {
+    case 'weaponDamage': return { ...eff, bonus: Math.round(eff.bonus * p) };
+    case 'weaponStrike': return { ...eff, bonus: Math.round(eff.bonus * p) };
+    case 'directDamage': return { ...eff, min: Math.round(eff.min * p), max: Math.round(eff.max * p) };
+    case 'dot': return { ...eff, total: Math.round(eff.total * p) };
+    case 'aoeDamage': return { ...eff, min: Math.round(eff.min * p), max: Math.round(eff.max * p) };
+    case 'aoeRoot': return { ...eff, min: Math.round(eff.min * p), max: Math.round(eff.max * p), duration: Math.round(eff.duration * cc * 10) / 10 };
+    case 'groundAoE': return { ...eff, min: Math.round(eff.min * p), max: Math.round(eff.max * p) };
+    case 'drainTick': return { ...eff, min: Math.round(eff.min * p), max: Math.round(eff.max * p) };
+    case 'finisherDamage': return { ...eff, base: Math.round(eff.base * p), perCombo: Math.round(eff.perCombo * p) };
+    case 'heal': return { ...eff, min: Math.round(eff.min * p), max: Math.round(eff.max * p) };
+    case 'hot': return { ...eff, total: Math.round(eff.total * p) };
+    case 'absorb': return { ...eff, amount: Math.round(eff.amount * p) };
+    case 'stun': return { ...eff, duration: Math.round(eff.duration * cc * 10) / 10 };
+    case 'root': return { ...eff, duration: Math.round(eff.duration * cc * 10) / 10 };
+    case 'incapacitate': return { ...eff, duration: Math.round(eff.duration * cc * 10) / 10 };
+    case 'polymorph': return { ...eff, duration: Math.round(eff.duration * cc * 10) / 10 };
+    default: return eff;
+  }
+}
+
+// --- XP pacing: turbo. Kill XP is a fixed fraction of the level requirement so a
+// steady farmer finishes a match (hero level ~10-12) in about twenty minutes,
+// independent of the vanilla anti-farm curves. ---
+export const MOBA_MINION_XP_PCT = 0.09;
+export const MOBA_TOWER_XP_PCT = 0.6;
+export const MOBA_HERO_KILL_XP_PCT = 0.5;
+
+// --- Bounties (copper) paid instantly to the last-hitter. XP is not listed here:
+// kill XP flows through the engine's normal mobXpValue path, which is what levels
+// heroes up over a match. ---
 export const MOBA_MINION_GOLD = 30;
-export const MOBA_MINION_XP = 45;
 export const MOBA_TOWER_GOLD = 200;
-export const MOBA_TOWER_XP = 260;
 export const MOBA_HERO_GOLD_BASE = 120;
-export const MOBA_HERO_XP = 200;
 
 // Hero-kill gold scales a little with the victim's level so late kills pay more.
 export function mobaHeroKillGold(victimLevel: number): number {

@@ -4280,6 +4280,51 @@ export const ja_JP: EnTranslations = {
       "showrunners_gavel": {
         "name": "ショーランナーの小槌"
       },
+      "moba_spatula_of_smiting": {
+        "name": "懲罰のフライ返し"
+      },
+      "moba_sharpened_pencil": {
+        "name": "2番鉛筆（削り済み）"
+      },
+      "moba_wand_of_inconvenience": {
+        "name": "軽い迷惑のワンド"
+      },
+      "moba_suspicious_spoon": {
+        "name": "怪しく大きなスプーン"
+      },
+      "moba_hr_violation": {
+        "name": "認定済み人事違反"
+      },
+      "moba_bubble_wrap_cuirass": {
+        "name": "プチプチの胸当て"
+      },
+      "moba_traffic_cone": {
+        "name": "権威のトラフィックコーン"
+      },
+      "moba_oven_mitts": {
+        "name": "巧みな扱いのオーブンミトン"
+      },
+      "moba_foam_clogs": {
+        "name": "目にも留まらぬ速さのフォームサンダル"
+      },
+      "moba_cargo_shorts": {
+        "name": "収納のカーゴパンツ"
+      },
+      "moba_tactical_fanny_pack": {
+        "name": "戦術ウエストポーチ"
+      },
+      "moba_shoulder_parrot": {
+        "name": "肩のオウム（剥製）"
+      },
+      "moba_executive_bathrobe": {
+        "name": "重役のバスローブ"
+      },
+      "moba_reading_glasses": {
+        "name": "おばあちゃんの老眼鏡"
+      },
+      "moba_support_brick": {
+        "name": "心の支えレンガ"
+      },
       "briny_idol": {
         "name": "潮辛の偶像"
       },
@@ -4990,6 +5035,11 @@ export const ja_JP: EnTranslations = {
         "name": "ソトリール",
         "title": "ティア9リエゾン",
         "greeting": "クロウラーだな。おれはソトリール、ティア9のリエゾン、ああ、貧乏くじを引いたよ。手短に言う、ここでは何もかもが時間制限つきだからな。お前の世界は再開発され、お前はいまクロウルの出場者だ。銀河じゅうが賭けている生放送さ。下にはまだ大量の階があり、一つごとに致命的になる。敵を狩り、そのレベルを奪い、下りの階段を見つけろ。そして退屈になるな。観客は大胆さにしか金を払わない。人気だけが出口を買える唯一の通貨だ。だから仲間のそばを離れず、見られる価値のある動きをしろ。階段は奥だ。幸運を。お前が生きれば、おれの稼ぎになる。"
+      },
+      "moba_shopkeeper": {
+        "name": "フタフクロ",
+        "title": "間違いなく認可された商人",
+        "greeting": "いらっしゃい、いらっしゃい！フタフクロの店には英雄に必要なものが何でも揃っている。フライ返し、コーン、レンガ、怪しい書類まで。返品不可、全商品誰かのお墨付き。金貨は前払い、栄光は後払いだ！"
       },
       "tidewatcher_ondrel": {
         "name": "オンドレル・ヴェイン",

@@ -4280,6 +4280,51 @@ export const pt_BR: EnTranslations = {
       "showrunners_gavel": {
         "name": "O Martelo do Showrunner"
       },
+      "moba_spatula_of_smiting": {
+        "name": "Espátula da Punição"
+      },
+      "moba_sharpened_pencil": {
+        "name": "Lápis Número Dois (Apontado)"
+      },
+      "moba_wand_of_inconvenience": {
+        "name": "Varinha do Leve Incômodo"
+      },
+      "moba_suspicious_spoon": {
+        "name": "Colher Suspeitamente Grande"
+      },
+      "moba_hr_violation": {
+        "name": "Violação Certificada de RH"
+      },
+      "moba_bubble_wrap_cuirass": {
+        "name": "Couraça de Plástico-Bolha"
+      },
+      "moba_traffic_cone": {
+        "name": "Cone de Trânsito da Autoridade"
+      },
+      "moba_oven_mitts": {
+        "name": "Luvas de Forno do Manejo Hábil"
+      },
+      "moba_foam_clogs": {
+        "name": "Tamancos de Espuma da Velocidade Ofuscante"
+      },
+      "moba_cargo_shorts": {
+        "name": "Bermuda Cargo da Contenção"
+      },
+      "moba_tactical_fanny_pack": {
+        "name": "Pochete Tática"
+      },
+      "moba_shoulder_parrot": {
+        "name": "Papagaio de Ombro (Empalhado)"
+      },
+      "moba_executive_bathrobe": {
+        "name": "Roupão Executivo"
+      },
+      "moba_reading_glasses": {
+        "name": "Óculos de Leitura da Vovó"
+      },
+      "moba_support_brick": {
+        "name": "Tijolo de Apoio Emocional"
+      },
       "briny_idol": {
         "name": "Ídolo Salobro"
       },
@@ -4990,6 +5035,11 @@ export const pt_BR: EnTranslations = {
         "name": "Sotreel",
         "title": "Tier-9 Liaison",
         "greeting": "Crawler. Sotreel, Tier-9 Liaison, that is me, and yes I drew the short straw. Fast version, because everything down here is on a timer: your world got redeveloped and you are now a contestant on the Crawl, a live broadcast the whole galaxy is betting on. There are floors below us, each deadlier than the last. Kill things, take their levels, find the stairs down, and do not get boring, because the audience pays for the bold. Approval is the only currency that buys a way out, so stay near your party and try to be worth watching. The stairs are at the back. Good luck. I get paid when you live."
+      },
+      "moba_shopkeeper": {
+        "name": "Twobags",
+        "title": "Definitely Licensed Merchant",
+        "greeting": "Welcome, welcome! Twobags has everything a hero needs: pans, cones, bricks, questionable paperwork. All sales final, all items certified by someone. Gold up front, glory later!"
       },
       "tidewatcher_ondrel": {
         "name": "Ondrel Vane",

@@ -53,6 +53,31 @@ const CRAWL_ITEM_NAMES_FR = [
   'Jeton de la Descente', 'Croc de Gnasher', 'Gilet matelassé du Propriétaire', "Collier de l'Animal du Producteur",
   "Gants longs de l'Hôtesse", "Spallières de l'Ancre de Brume", "Couronne de la Tête d'affiche", 'Le Maillet du Showrunner',
 ];
+// The Clash (MOBA) shop stock, same contract as the Crawl items above.
+const MOBA_ITEM_IDS = [
+  'moba_spatula_of_smiting', 'moba_sharpened_pencil', 'moba_wand_of_inconvenience', 'moba_suspicious_spoon',
+  'moba_hr_violation', 'moba_bubble_wrap_cuirass', 'moba_traffic_cone', 'moba_oven_mitts',
+  'moba_foam_clogs', 'moba_cargo_shorts', 'moba_tactical_fanny_pack', 'moba_shoulder_parrot',
+  'moba_executive_bathrobe', 'moba_reading_glasses', 'moba_support_brick',
+] as const;
+const MOBA_ITEM_NAMES_EN = [
+  'Spatula of Smiting', 'Number Two Pencil (Sharpened)', 'Wand of Mild Inconvenience', 'Suspiciously Large Spoon',
+  'Certified HR Violation', 'Bubble Wrap Cuirass', 'Traffic Cone of Authority', 'Oven Mitts of Deft Handling',
+  'Foam Clogs of Blinding Speed', 'Cargo Shorts of Holding', 'Tactical Fanny Pack', 'Shoulder Parrot (Taxidermied)',
+  'Executive Bathrobe', "Grandma's Reading Glasses", 'Emotional Support Brick',
+];
+const MOBA_ITEM_NAMES_ES = [
+  'Espátula de Castigo', 'Lápiz del Número Dos (Afilado)', 'Varita de Molestia Leve', 'Cuchara Sospechosamente Grande',
+  'Infracción Certificada de RRHH', 'Coraza de Plástico de Burbujas', 'Cono de Tráfico de Autoridad', 'Manoplas de Manejo Diestro',
+  'Zuecos de Espuma de Velocidad Cegadora', 'Pantalones Cargo de Contención', 'Riñonera Táctica', 'Loro de Hombro (Disecado)',
+  'Albornoz Ejecutivo', 'Gafas de Leer de la Abuela', 'Ladrillo de Apoyo Emocional',
+];
+const MOBA_ITEM_NAMES_FR = [
+  'Spatule de Châtiment', 'Crayon Numéro Deux (Taillé)', 'Baguette de Désagrément Léger', 'Cuillère Étrangement Grande',
+  'Infraction RH Certifiée', 'Cuirasse en Papier Bulle', "Cône de Signalisation d'Autorité", 'Gants de Four de Manipulation Habile',
+  'Sabots en Mousse de Vitesse Aveuglante', 'Short Cargo de Contenance', 'Sacoche Banane Tactique', "Perroquet d'Épaule (Empaillé)",
+  'Peignoir de Direction', 'Lunettes de Lecture de Mamie', 'Brique de Soutien Émotionnel',
+];
 
 type MergeNameTranslations<TId extends string> = Record<TId, { name: string }>;
 
@@ -1925,7 +1950,7 @@ const mergeEntitiesEn = {
     "Glimmerfin Koi", "Raw Bog Eel", "Raw Frostgill Trout", "Raw Marsh Pike", "Raw River Perch", "Raw Stonescale Carp", "Soggy Boot",
     "Elixir of the Bear", "Lesser Healing Potion", "Lesser Mana Potion", "Healing Potion", "Mana Potion", "Tunnelking's Spade",
     "Brutok's Maul", "Cracked Ogre Tusk", "Crag Warden Cudgel", "Cragmaw Prowlboots", "Drowned Tide Scepter", "Emberfang Warblade", "Emberwing Cinderscale", "Emberwing Legguards", "Gravewarden's Shiv", "Staff of the Hollow Vigil", "Maldrec's Soulbinder", "Oathbound Greaves", "Skullsmasher's Warbelt", "Skullsplitter Dirk", "Sloomtooth's Tidefang", "Tidereaver Gaff", "Verlan's Oathblade",
-  ], 'item'), ...mergeNameTranslations(CRAWL_ITEM_IDS, CRAWL_ITEM_NAMES_EN, 'crawl item') },
+  ], 'item'), ...mergeNameTranslations(CRAWL_ITEM_IDS, CRAWL_ITEM_NAMES_EN, 'crawl item'), ...mergeNameTranslations(MOBA_ITEM_IDS, MOBA_ITEM_NAMES_EN, 'moba item') },
   mobs: mergeNameTranslations(MERGE_MOB_IDS, [
     "Elder Bristleback", "Ironvein Foreman", "Ironvein Sapper", "Marrowlord Varkas", "Mirejaw Frenzy", "Mirejaw the Ravenous",
     "Mogger", "Mogger Lackey", "Nhalia Mourner", "Sableweb Hatchling", "Sableweb Matriarch", "Sister Nhalia", "Varkas Boneguard",
@@ -1967,7 +1992,7 @@ export const mergeEntities = {
       "Koi Aletadestello", "Anguila de Ciénaga Cruda", "Trucha Branquiescarcha Cruda", "Lucio de Marisma Crudo", "Perca de Río Cruda", "Carpa Escamapétrea Cruda", "Bota Empapada",
       "Elixir del Oso", "Poción inferior de sanación", "Poción inferior de maná", "Poción de sanación", "Poción de maná", "Pala del Rey del Túnel",
       "Mazo de Brutok", "Colmillo de ogro agrietado", "Garrote del guardián del risco", "Botas acechadoras de Cragmaw", "Cetro de la marea ahogada", "Espada de guerra colmillo de brasa", "Escama de ceniza de Aladebrasa", "Quijotes de Aladebrasa", "Punzón del guardián de tumbas", "Bastón de la vigilia hueca", "Atadora de almas de Maldrec", "Grebas del juramento", "Cinturón de guerra del rompecráneos", "Daga partecráneos", "Colmillo de marea de Sloomtooth", "Bichero del segamareas", "Espada del juramento de Verlan",
-    ], 'item'), ...mergeNameTranslations(CRAWL_ITEM_IDS, CRAWL_ITEM_NAMES_ES, 'crawl item') },
+    ], 'item'), ...mergeNameTranslations(CRAWL_ITEM_IDS, CRAWL_ITEM_NAMES_ES, 'crawl item'), ...mergeNameTranslations(MOBA_ITEM_IDS, MOBA_ITEM_NAMES_ES, 'moba item') },
     mobs: mergeNameTranslations(MERGE_MOB_IDS, [
       "Viejo Bristleback", "Capataz Vena de Hierro", "Zapador Vena de Hierro", "Señor de Médula Varkas", "Frenesí Mirejaw", "Mirejaw el Voraz",
       "Mogger", "Esbirro de Mogger", "Doliente de Nhalia", "Cría Sableweb", "Matriarca Sableweb", "Hermana Nhalia", "Guardahuesos de Varkas",
@@ -2006,7 +2031,7 @@ export const mergeEntities = {
       "Koï Nageoluisante", "Anguille des marais crue", "Truite Givrebranchie crue", "Brochet des marais cru", "Perche de rivière crue", "Carpe Écaillepierre crue", "Botte détrempée",
       "Elixir of the Bear", "Potion de soins inférieure", "Potion de mana inférieure", "Potion de soins", "Potion de mana", "Pelle du Roi des tunnels",
       "Maillet de Brutok", "Défense d'ogre fêlée", "Gourdin du gardien des falaises", "Bottes rôdeuses de Cragmaw", "Sceptre de la marée noyée", "Lame de guerre crocs-de-braise", "Écaille de cendre d'Aile-de-braise", "Jambières d'Aile-de-braise", "Surin du gardien des tombes", "Bâton de la veille creuse", "Lieur d'âmes de Maldrec", "Jambières du serment", "Ceinturon de guerre du briseur de crânes", "Dague fend-crâne", "Croc-de-marée de Sloomtooth", "Gaffe du fendeur de marées", "Lame du serment de Verlan",
-    ], 'item'), ...mergeNameTranslations(CRAWL_ITEM_IDS, CRAWL_ITEM_NAMES_FR, 'crawl item') },
+    ], 'item'), ...mergeNameTranslations(CRAWL_ITEM_IDS, CRAWL_ITEM_NAMES_FR, 'crawl item'), ...mergeNameTranslations(MOBA_ITEM_IDS, MOBA_ITEM_NAMES_FR, 'moba item') },
     mobs: mergeNameTranslations(MERGE_MOB_IDS, [
       "Ancien Bristleback", "Contremaître Veinefer", "Sapeur Veinefer", "Seigneur de moelle Varkas", "Frénésie Mirejaw", "Mirejaw l'Affamé",
       "Mogger", "Laquais de Mogger", "Pleureuse de Nhalia", "Jeune Sableweb", "Matriarche Sableweb", "Soeur Nhalia", "Garde-os de Varkas",
