@@ -3,7 +3,7 @@ import {
   DUNGEON_X_THRESHOLD, INSTANCE_SLOT_COUNT, PROPS, arenaOriginAt, dungeonAt, instanceOrigin, isArenaPos,
 } from './data';
 import { ARENA_LAYOUT, CRYPT_LAYOUT, NYTHRAXIS_LAYOUT, SANCTUM_LAYOUT, TEMPLE_LAYOUT, layoutColliders } from './dungeon_layout';
-import { MOBA_MAP, MOBA_JUNGLE_TREES } from './moba';
+import { MOBA_MAP, MOBA_JUNGLE_TREES, MOBA_WALL_SEGMENTS } from './moba';
 
 // Static world collision. Prop placement comes from the per-zone content
 // modules (merged into PROPS by sim/data.ts): the renderer builds its meshes
@@ -155,6 +155,23 @@ function clashColliders(): Collider[] {
   out.push({ type: 'obb', x: edge, z: 0, hw: 1, hd: hw, rot: 0, camGhost: true }); // east border
   out.push({ type: 'obb', x: -edge, z: 0, hw: 1, hd: hw, rot: 0, camGhost: true }); // west border
   for (const t of MOBA_JUNGLE_TREES) out.push({ type: 'circle', x: t.x, z: t.z, r: t.r, camGhost: true });
+  // Lane walls: the offset wall lines from sim/moba.ts, one OBB per sampled
+  // segment (the fence pattern). camGhost so the chase camera never slams shut
+  // in a walled lane corridor; the renderer draws them low enough to see over.
+  for (const w of MOBA_WALL_SEGMENTS) {
+    const dx = w.x2 - w.x1, dz = w.z2 - w.z1;
+    const len = Math.hypot(dx, dz);
+    if (len < 1e-6) continue;
+    out.push({
+      type: 'obb',
+      x: (w.x1 + w.x2) / 2,
+      z: (w.z1 + w.z2) / 2,
+      hw: len / 2 + 0.4,
+      hd: 0.9,
+      rot: Math.atan2(-dz, dx),
+      camGhost: true,
+    });
+  }
   return out;
 }
 const CLASH_COLLIDERS: Collider[] = clashColliders();

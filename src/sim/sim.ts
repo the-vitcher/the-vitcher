@@ -6500,12 +6500,19 @@ export class Sim {
     // the obstacle. That lets a mob round the camp props to reach its target
     // instead of pinning on them. Open-ground movers take the first branch.
     let bestX = e.pos.x, bestZ = e.pos.z, bestProgress = 1e-3;
+    // The Clash: mobs respect the same climb limit players do, so cliffs and
+    // the river banks funnel them too (mobaMode-gated: MMO mobs are untouched).
+    const climbH0 = this.cfg.mobaMode ? groundHeight(e.pos.x, e.pos.z, this.cfg.seed) : 0;
     for (const off of MOVE_SLIDE_FAN) {
       const a = desired + off;
       const nx = e.pos.x + Math.sin(a) * step;
       const nz = e.pos.z + Math.cos(a) * step;
       // landlocked creatures stop at the waterline instead of walking under it
       if (!canSwim && groundHeight(nx, nz, this.cfg.seed) < WATER_LEVEL - SWIM_DEPTH) continue;
+      if (this.cfg.mobaMode && step > 1e-5) {
+        const h1 = groundHeight(nx, nz, this.cfg.seed);
+        if (h1 > climbH0 && (h1 - climbH0) / step > MAX_CLIMB_SLOPE) continue;
+      }
       const r = resolvePosition(this.cfg.seed, nx, nz, BODY_RADIUS);
       const progress = d - Math.hypot(r.x - dest.x, r.z - dest.z);
       if (progress > bestProgress) { bestProgress = progress; bestX = r.x; bestZ = r.z; }
@@ -9348,9 +9355,14 @@ export class Sim {
       const step = mobaSeparationStep({ id: e.id, x: e.pos.x, z: e.pos.z, r }, neighbors, maxStep);
       if (!step) continue;
       const resolved = resolvePosition(this.cfg.seed, e.pos.x + step.x, e.pos.z + step.z, r);
+      // never let the shuffle push a unit up a cliff face
+      const h0 = groundHeight(e.pos.x, e.pos.z, this.cfg.seed);
+      const h1 = groundHeight(resolved.x, resolved.z, this.cfg.seed);
+      const run = Math.hypot(resolved.x - e.pos.x, resolved.z - e.pos.z);
+      if (h1 > h0 && run > 1e-5 && (h1 - h0) / run > MAX_CLIMB_SLOPE) continue;
       e.pos.x = resolved.x;
       e.pos.z = resolved.z;
-      e.pos.y = groundHeight(e.pos.x, e.pos.z, this.cfg.seed);
+      e.pos.y = h1;
     }
   }
 

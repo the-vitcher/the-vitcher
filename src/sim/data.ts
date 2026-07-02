@@ -194,6 +194,19 @@ export function dungeonByIndex(index: number): DungeonDef | null {
   return DUNGEON_LIST.find((d) => d.index === index) ?? null;
 }
 
+// The Clash battleground band: maps a world position to battleground-local
+// coordinates when it falls inside the moba_lane x-band (its instance slots
+// repeat every 500 in z), else null. groundHeight uses this to carve the
+// battleground heightfield ONLY there; every other instance band stays flat.
+export function mobaBandLocal(x: number, z: number): { x: number; z: number } | null {
+  const index = DUNGEONS.moba_lane?.index;
+  if (index === undefined) return null;
+  const ox = 900 + index * 600;
+  if (x < ox - 300 || x >= ox + 300) return null;
+  const slot = Math.round((z + 1250) / 500);
+  return { x: x - ox, z: z - (-1250 + slot * 500) };
+}
+
 // Which dungeon a far-off instance position belongs to, by x-band.
 export function dungeonAt(x: number): DungeonDef | null {
   if (x <= DUNGEON_X_THRESHOLD || x >= ARENA_X_MIN) return null;

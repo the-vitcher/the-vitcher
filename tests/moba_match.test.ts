@@ -2,9 +2,15 @@ import { describe, it, expect } from 'vitest';
 import { Sim } from '../src/sim/sim';
 import type { Entity } from '../src/sim/types';
 import { createMob } from '../src/sim/entity';
-import { MOBS } from '../src/sim/data';
+import { MOBS, DUNGEONS, instanceOrigin } from '../src/sim/data';
+import { groundHeight } from '../src/sim/world';
+import { resolvePosition } from '../src/sim/colliders';
 import { MOBA_HEROES } from '../src/sim/content/moba';
-import { MOBA_HERO_LEVEL, MOBA_MATCH_WARMUP_SEC, MOBA_FIRST_WAVE_SEC, MOBA_MINION_XP_PCT, MOBA_JUNGLE_CAMPS, mobaWaveComposition } from '../src/sim/moba';
+import {
+  MOBA_HERO_LEVEL, MOBA_MATCH_WARMUP_SEC, MOBA_FIRST_WAVE_SEC, MOBA_MINION_XP_PCT, MOBA_JUNGLE_CAMPS,
+  MOBA_PLATEAUS, MOBA_WALL_SEGMENTS, MOBA_LANE_ENTRANCES, MOBA_MAP,
+  mobaWaveComposition, mobaHeightAt, mobaLanePath, polylineLength, pointAlongPolyline,
+} from '../src/sim/moba';
 import { xpForLevel } from '../src/sim/types';
 
 const makeMobaSim = (seed = 7) => new Sim({ seed, playerClass: 'warrior', noPlayer: true, mobaMode: true, mobaTeamSize: 5 });
@@ -862,5 +868,61 @@ describe('The Clash: healing fountain', () => {
     const before = e.hp;
     for (let i = 0; i < 20 * 3; i++) sim.tick();
     expect(e.hp - before).toBeLessThan(e.maxHp * 0.15);
+  });
+});
+
+describe('The Clash: the heightfield is live in the world', () => {
+  const ORIGIN = instanceOrigin(DUNGEONS.moba_lane.index, 0);
+
+  it('groundHeight carves the battleground band and leaves other bands flat', () => {
+    const pl = MOBA_PLATEAUS[0];
+    expect(groundHeight(ORIGIN.x + pl.x, ORIGIN.z + pl.z, 42)).toBeCloseTo(pl.h, 3);
+    expect(groundHeight(ORIGIN.x, ORIGIN.z, 42)).toBeCloseTo(mobaHeightAt(0, 0), 6);
+    // a Crawl-band instance point stays a flat floor
+    const crawl = instanceOrigin(6, 0);
+    expect(groundHeight(crawl.x + pl.x, crawl.z + pl.z, 42)).toBe(0);
+    // the overworld is untouched (pure terrain passthrough)
+    expect(groundHeight(0, 0, 42)).toBe(groundHeight(0, 0, 42));
+  });
+
+  it('clash mobs refuse cliff climbs (the mobaMode climb gate)', () => {
+    const sim = makeMobaSim();
+    const pid = sim.addPlayer('warrior', 'Bait');
+    sim.startMobaMatch([pid]);
+    const origin = instanceOrigin(DUNGEONS.moba_lane.index, sim.mobaMatch!.slot);
+    const pl = MOBA_PLATEAUS[0]; // its ramps face W and SE; NE is sheer cliff
+    const d = (pl.r + 4) * Math.SQRT1_2;
+    const start = { x: origin.x + pl.x + d, y: 0, z: origin.z + pl.z + d };
+    start.y = groundHeight(start.x, start.z, sim.cfg.seed);
+    const minion = createMob((sim as any).nextId++, MOBS.moba_minion_melee, 3, start);
+    minion.prevPos = { ...minion.pos };
+    minion.mobaTeam = 'A';
+    (sim as any).addEntity(minion);
+    const dest = { x: origin.x + pl.x, y: pl.h, z: origin.z + pl.z };
+    for (let i = 0; i < 100; i++) (sim as any).moveToward(minion, dest, 6);
+    const localH = mobaHeightAt(minion.pos.x - origin.x, minion.pos.z - origin.z);
+    expect(localH).toBeLessThan(1.5); // never scaled the cliff
+  });
+
+  it('lane walls block movement while the authored entrances stay open', () => {
+    const seed = 7;
+    // a wall segment midpoint pushes a mover out...
+    const w = MOBA_WALL_SEGMENTS[Math.floor(MOBA_WALL_SEGMENTS.length / 2)];
+    const wx = ORIGIN.x + (w.x1 + w.x2) / 2;
+    const wz = ORIGIN.z + (w.z1 + w.z2) / 2;
+    const pushed = resolvePosition(seed, wx, wz, 0.5);
+    expect(Math.hypot(pushed.x - wx, pushed.z - wz)).toBeGreaterThan(0.3);
+    // ...while every authored entrance point resolves in place (open gap)
+    for (const e of MOBA_LANE_ENTRANCES) {
+      const path = mobaLanePath('A', e.lane);
+      const len = polylineLength(path);
+      const p = pointAlongPolyline(path, len * e.frac);
+      const ahead = pointAlongPolyline(path, Math.min(len, len * e.frac + 1));
+      const dl = Math.hypot(ahead.x - p.x, ahead.z - p.z) || 1;
+      const gx = ORIGIN.x + p.x + ((ahead.z - p.z) / dl) * (MOBA_MAP.laneHalfW + 2.5) * e.side;
+      const gz = ORIGIN.z + p.z - ((ahead.x - p.x) / dl) * (MOBA_MAP.laneHalfW + 2.5) * e.side;
+      const open = resolvePosition(seed, gx, gz, 0.5);
+      expect(Math.hypot(open.x - gx, open.z - gz)).toBeLessThan(0.6);
+    }
   });
 });

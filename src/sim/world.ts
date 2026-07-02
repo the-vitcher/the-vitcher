@@ -2,7 +2,9 @@ import { fbm2, hash2 } from './rng';
 import {
   CAMPS, DUNGEON_FLOOR_Y, DUNGEON_X_THRESHOLD, ROADS, WORLD_MAX_X, WORLD_MAX_Z,
   WORLD_MIN_X, WORLD_MIN_Z, ZONES,
+  mobaBandLocal,
 } from './data';
+import { mobaHeightAt } from './moba';
 import type { BiomeId } from './types';
 
 // Terrain is a pure function of (x, z, seed): both the sim (ground clamping)
@@ -119,7 +121,13 @@ function baseHeight(x: number, z: number, seed: number): number {
 
 // Ground height including instanced dungeon floors (flat, far off-world).
 export function groundHeight(x: number, z: number, seed: number): number {
-  if (x > DUNGEON_X_THRESHOLD) return DUNGEON_FLOOR_Y;
+  if (x > DUNGEON_X_THRESHOLD) {
+    // The Clash battleground carries its own authored heightfield (plateaus,
+    // river channel, boss pit); every other instance band is a flat floor.
+    const local = mobaBandLocal(x, z);
+    if (local) return DUNGEON_FLOOR_Y + mobaHeightAt(local.x, local.z);
+    return DUNGEON_FLOOR_Y;
+  }
   return terrainHeight(x, z, seed);
 }
 
