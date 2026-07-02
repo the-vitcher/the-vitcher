@@ -4,8 +4,7 @@ import { ABILITIES, MOBS, DUNGEONS, CLASSES, dungeonAt, instanceOrigin } from '.
 // table (the Sim builds hero kits from MOBA_ABILITIES directly), so they must NOT leak
 // into the class ability surface that drives icons/tooltips/talents.
 import { MOBA_ABILITIES, MOBA_HEROES, MOBA_HERO_IDS, MOBA_MOBS, MOBA_DUNGEON_DEFS } from '../src/sim/content/moba';
-import { mobaWaveComposition, mobaTeamForZ, mobaLaneForX, MOBA_MAP } from '../src/sim/moba';
-import { CLASH_LAYOUT } from '../src/sim/dungeon_layout';
+import { mobaWaveComposition, mobaTeamForPos, mobaLaneForPos, MOBA_MAP, MOBA_JUNGLE_CAMPS } from '../src/sim/moba';
 import type { MobaHeroDef } from '../src/sim/types';
 
 describe('MOBA content: the ten heroes', () => {
@@ -63,10 +62,14 @@ describe('MOBA content: the ten heroes', () => {
 });
 
 describe('MOBA content: structures and minions', () => {
-  it('tags every MOBA mob with a mobaRole and merges it into MOBS', () => {
+  it('tags lane units with a mobaRole (neutral creeps deliberately have none) and merges all into MOBS', () => {
     for (const [id, tpl] of Object.entries(MOBA_MOBS)) {
-      expect(tpl.mobaRole, `mob ${id} missing mobaRole`).toBeDefined();
       expect(MOBS[id], `mob ${id} not merged into MOBS`).toBeDefined();
+      if (id.startsWith('moba_creep_')) {
+        expect(tpl.mobaRole, `neutral creep ${id} must NOT carry a mobaRole`).toBeUndefined();
+      } else {
+        expect(tpl.mobaRole, `lane unit ${id} missing mobaRole`).toBeDefined();
+      }
     }
   });
 
@@ -99,29 +102,39 @@ describe('MOBA content: the three-lane battleground', () => {
     expect(dungeonAt(o.x)?.id).toBe('moba_lane');
   });
 
-  it('spawns 2 cores and 12 towers (2 per lane per team), split evenly by half', () => {
+  it('spawns 2 cores and 18 towers (3 per lane per team), split evenly by side', () => {
     const spawns = DUNGEONS.moba_lane.spawns;
     expect(spawns.filter((s) => s.mobId === 'moba_core').length).toBe(2);
     const towers = spawns.filter((s) => s.mobId === 'moba_tower');
-    expect(towers.length).toBe(12);
+    expect(towers.length).toBe(18);
     for (const team of ['A', 'B'] as const) {
-      const side = towers.filter((s) => mobaTeamForZ(s.z) === team);
-      expect(side.length, `team ${team} towers`).toBe(6);
+      const side = towers.filter((s) => mobaTeamForPos(s.x, s.z) === team);
+      expect(side.length, `team ${team} towers`).toBe(9);
       for (const lane of [0, 1, 2] as const) {
-        expect(side.filter((s) => mobaLaneForX(s.x) === lane).length, `team ${team} lane ${lane}`).toBe(2);
+        expect(side.filter((s) => mobaLaneForPos(s.x, s.z) === lane).length, `team ${team} lane ${lane}`).toBe(3);
       }
     }
     for (const s of spawns) expect(MOBS[s.mobId], `spawn ${s.mobId} not in MOBS`).toBeDefined();
   });
 
-  it('keeps every structure and spawn point inside the clash room', () => {
-    const inX = (x: number) => Math.abs(x) < (CLASH_LAYOUT.wallX ?? 23);
-    const inZ = (z: number) => z > CLASH_LAYOUT.zMin && z < CLASH_LAYOUT.zMax;
+  it('keeps every structure and spawn point inside the map square', () => {
+    const inMap = (x: number, z: number) => Math.abs(x) <= MOBA_MAP.half && Math.abs(z) <= MOBA_MAP.half;
     for (const s of DUNGEONS.moba_lane.spawns) {
-      expect(inX(s.x) && inZ(s.z), `spawn ${s.mobId} at (${s.x},${s.z}) outside the room`).toBe(true);
+      expect(inMap(s.x, s.z), `spawn ${s.mobId} at (${s.x},${s.z}) outside the map`).toBe(true);
     }
-    for (const p of [MOBA_MAP.coreA, MOBA_MAP.coreB, MOBA_MAP.heroSpawnA, MOBA_MAP.heroSpawnB]) {
-      expect(inX(p.x) && inZ(p.z)).toBe(true);
+    for (const p of [MOBA_MAP.coreA, MOBA_MAP.coreB, MOBA_MAP.heroSpawnA, MOBA_MAP.heroSpawnB, MOBA_MAP.shopA, MOBA_MAP.shopB]) {
+      expect(inMap(p.x, p.z)).toBe(true);
+    }
+  });
+
+  it('every jungle camp references only defined neutral creep templates', () => {
+    for (const camp of MOBA_JUNGLE_CAMPS) {
+      for (const mobId of camp.mobs) {
+        expect(MOBA_MOBS[mobId], `camp creep ${mobId} missing from MOBA_MOBS`).toBeDefined();
+        expect(MOBS[mobId], `camp creep ${mobId} not merged into MOBS`).toBeDefined();
+        expect(MOBA_MOBS[mobId].mobaRole, `camp creep ${mobId} must be NEUTRAL (no mobaRole)`).toBeUndefined();
+        expect(MOBA_MOBS[mobId].loot.some((l) => (l.copper ?? 0) > 0), `camp creep ${mobId} needs a gold bounty`).toBe(true);
+      }
     }
   });
 });

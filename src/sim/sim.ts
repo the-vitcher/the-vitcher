@@ -7,14 +7,15 @@ import {
 } from './data';
 import { ARENA_SPAWN_A, ARENA_SPAWN_B, ARENA_SPAWNS_A_2v2, ARENA_SPAWNS_B_2v2 } from './dungeon_layout';
 import {
-  assignMobaTeams, mobaTeamForZ, mobaLaneForX, mobaHeroSpawn, mobaMinionSpawn, mobaMinionMarchTarget,
-  mobaRespawnSeconds, mobaWaveComposition, mobaCoreVulnerable, mobaWinner, mobaHeroKillGold,
+  assignMobaTeams, mobaTeamForPos, mobaLaneForPos, mobaHeroSpawn, mobaMinionSpawn, mobaMinionMarchTarget,
+  mobaEnemyCore, mobaRespawnSeconds, mobaWaveComposition, mobaCoreVulnerable, mobaWinner, mobaHeroKillGold,
   MOBA_FIRST_WAVE_SEC, MOBA_WAVE_INTERVAL_SEC, MOBA_MATCH_WARMUP_SEC, MOBA_HERO_LEVEL,
   MOBA_RECALL_CHANNEL_SEC, MOBA_RECALL_CD_SEC, MOBA_MAX_ABILITY_RANK, MOBA_ULT_RANKS,
   MOBA_ULT_HERO_LEVEL, MOBA_MINION_XP_PCT, MOBA_TOWER_XP_PCT, MOBA_HERO_KILL_XP_PCT,
   mobaScaleEffectForRank, type MobaLaneIndex, type MobaTeam,
 } from './moba';
 import { MOBA_ABILITIES, MOBA_HEROES } from './content/moba';
+import { MOBA_HERO_ROLE_STATS } from './content/moba_balance';
 import { lineOfSightClear, resolveMovement, resolvePosition } from './colliders';
 import { PLAYER_BODY_RADIUS, PLAYER_MAX_CLIMB_SLOPE, PLAYER_SWIM_DEPTH, findPlayerPath } from './pathfind';
 import { combatProfileForMob, effectiveMobMeleeRange, type MobCombatProfile } from './mob_combat';
@@ -9031,7 +9032,7 @@ export class Sim {
       const role = this.mobaRoleOf(m);
       if (role === 'core') { if (m.mobaTeam === 'A') match.coreA = id; else match.coreB = id; }
       else if (role === 'tower') {
-        const lane = mobaLaneForX(m.pos.x - origin.x);
+        const lane = mobaLaneForPos(m.pos.x - origin.x, m.pos.z - origin.z);
         (m.mobaTeam === 'A' ? match.towersA : match.towersB)[lane].push(id);
       }
     }
@@ -9112,7 +9113,7 @@ export class Sim {
     meta.mobaSkillRanks = new Map();
     meta.mobaSkillPoints = e.level; // one point per level, so one at seat
     meta.known = this.mobaHeroKnown(meta);
-    recalcPlayerStats(e, meta.cls, meta.equipment);
+    recalcPlayerStats(e, meta.cls, meta.equipment, this.playerMods(meta));
     e.hp = e.maxHp;
     e.resource = e.resourceType === 'mana' ? e.maxResource : e.resourceType === 'energy' ? 100 : 0;
     e.color = hero.color;
@@ -9129,7 +9130,7 @@ export class Sim {
     e.resource = e.resourceType === 'mana' ? e.maxResource : e.resourceType === 'energy' ? 100 : 0;
     e.pos = this.groundPos(origin.x + base.x, origin.z + base.z);
     e.prevPos = { ...e.pos };
-    e.facing = team === 'A' ? 0 : Math.PI;
+    e.facing = angleTo(e.pos, { x: origin.x, y: 0, z: origin.z }); // face out of the fountain, toward map center
     e.inCombat = false;
     e.combatTimer = 99;
     e.targetId = null;
@@ -9324,16 +9325,16 @@ export class Sim {
       }
       return;
     }
-    // no enemy in range: march the lane toward the enemy core (two segments —
-    // hold the lane centreline, then swing to the core; see mobaMinionMarchTarget)
+    // no enemy in range: march the lane toward the enemy core (waypoint follower
+    // along the lane polyline; see mobaMinionMarchTarget)
     mob.aggroTargetId = null;
     mob.inCombat = false;
     mob.aiState = 'chase';
     const inst = this.instances.find((i) => i.dungeonId === 'moba_lane' && i.mobIds.includes(mob.id));
     const origin = inst ? this.instanceOriginOf(inst) : { x: 0, z: 0 };
     const team: MobaTeam = mob.mobaTeam === 'B' ? 'B' : 'A';
-    const lane = (mob.mobaLane ?? mobaLaneForX(mob.pos.x - origin.x)) as MobaLaneIndex;
-    const step = mobaMinionMarchTarget(team, lane, mob.pos.z - origin.z);
+    const lane = (mob.mobaLane ?? mobaLaneForPos(mob.pos.x - origin.x, mob.pos.z - origin.z)) as MobaLaneIndex;
+    const step = mobaMinionMarchTarget(team, lane, mob.pos.x - origin.x, mob.pos.z - origin.z);
     this.moveToward(mob, this.groundPos(origin.x + step.x, origin.z + step.z), mob.moveSpeed);
   }
 
@@ -10466,9 +10467,29 @@ export class Sim {
 
   // The effective talent modifiers for a player: their talents with any Fiesta
   // augments folded in. Every stat/ability/threat recompute reads through this,
-  // so augments persist through aura procs, gear swaps, and respawns.
+  // so augments persist through aura procs, gear swaps, and respawns. In Clash
+  // (moba) mode heroes do not use talent trees: they carry the flat MOBA hero
+  // stat block instead, so the League-scale HP/damage survives level-ups too.
   playerMods(meta: PlayerMeta): TalentModifiers {
+    if (this.cfg.mobaMode) return this.mobaHeroMods(meta);
     return meta.fiestaMods ?? meta.talentMods;
+  }
+
+  // The Clash hero stat block as a TalentModifiers, per ROLE (memoized): carries
+  // stay squishy with high damage, bruisers run ~2.2x their durability, supports
+  // bring utility. All numbers live in content/moba_balance.ts.
+  private mobaHeroModsCache = new Map<string, TalentModifiers>();
+  private mobaHeroMods(meta: PlayerMeta): TalentModifiers {
+    const role = (meta.mobaHeroId ? MOBA_HEROES[meta.mobaHeroId]?.role : undefined) ?? 'bruiser';
+    let mods = this.mobaHeroModsCache.get(role);
+    if (!mods) {
+      mods = emptyModifiers();
+      const block = MOBA_HERO_ROLE_STATS[role];
+      mods.stats.sta += block.sta;
+      mods.stats.ap += block.ap;
+      this.mobaHeroModsCache.set(role, mods);
+    }
+    return mods;
   }
 
   // talentMods + the chosen augments' flat effects, deep-cloned so the base
@@ -11693,11 +11714,12 @@ export class Sim {
       const level = this.rng.int(template.minLevel, template.maxLevel);
       const mob = createMob(this.nextId++, template, level, this.groundPos(origin.x + spawn.x, origin.z + spawn.z));
       mob.facing = Math.PI; // face the entrance
-      // The Clash: tag lane structures with their team (by which half of the lane
-      // they sit in) and face them down-lane toward the enemy base.
+      // The Clash: tag lane structures with their team (which side of the river
+      // they stand on) and face them across the map toward the enemy core.
       if (this.cfg.mobaMode && template.mobaRole) {
-        mob.mobaTeam = mobaTeamForZ(spawn.z);
-        mob.facing = mob.mobaTeam === 'A' ? 0 : Math.PI;
+        mob.mobaTeam = mobaTeamForPos(spawn.x, spawn.z);
+        const foe = mobaEnemyCore(mob.mobaTeam);
+        mob.facing = angleTo(mob.pos, { x: origin.x + foe.x, y: 0, z: origin.z + foe.z });
       }
       mob.prevFacing = mob.facing;
       this.addEntity(mob);

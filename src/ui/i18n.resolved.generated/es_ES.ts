@@ -4830,6 +4830,18 @@ export const es_ES: EnTranslations = {
       "moba_core": {
         "name": "Nexus Core"
       },
+      "moba_creep_raccoon": {
+        "name": "Dumpster Raccoon"
+      },
+      "moba_creep_goose": {
+        "name": "Unionized Goose"
+      },
+      "moba_creep_goose_foreman": {
+        "name": "Goose Foreman"
+      },
+      "moba_creep_vendbot": {
+        "name": "Vend-O-Tron"
+      },
       "elder_bristleback": {
         "name": "Viejo Bristleback"
       },

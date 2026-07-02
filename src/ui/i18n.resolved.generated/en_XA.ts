@@ -4830,6 +4830,18 @@ export const en_XA: EnTranslations = {
       "moba_core": {
         "name": "[Ñéẋúš Çóŕé]"
       },
+      "moba_creep_raccoon": {
+        "name": "[Ðúɱþšţéŕ Ŕáççóóñ]"
+      },
+      "moba_creep_goose": {
+        "name": "[Úñíóñížéð Ĝóóšé]"
+      },
+      "moba_creep_goose_foreman": {
+        "name": "[Ĝóóšé Ƒóŕéɱáñ]"
+      },
+      "moba_creep_vendbot": {
+        "name": "[Ʋéñð-Ó-Ţŕóñ]"
+      },
       "elder_bristleback": {
         "name": "[Éļðéŕ Ɓŕíšţļéƀáçķ]"
       },

@@ -19,7 +19,7 @@ import { radialGlowTexture } from './textures';
 import { sharedUniforms } from './gfx';
 import { instanceOrigin } from '../sim/data';
 import {
-  ARENA_LAYOUT, CLASH_LAYOUT, CRYPT_LAYOUT, SANCTUM_LAYOUT, TEMPLE_LAYOUT, DUNGEON_WALL_X, TOMB_HD,
+  ARENA_LAYOUT, CRYPT_LAYOUT, SANCTUM_LAYOUT, TEMPLE_LAYOUT, DUNGEON_WALL_X, TOMB_HD,
   DUNGEON_END_WALL_HW, DUNGEON_WALL_HEIGHT, DUNGEON_WALL_HW, NYTHRAXIS_LAYOUT,
   DungeonLayout, GridPoint, WallStub,
 } from '../sim/dungeon_layout';
@@ -383,11 +383,12 @@ export class DungeonInteriors {
 
   async buildInterior(interior: string, ox: number, oz: number): Promise<void> {
     await ensureDungeonAssets();
+    // NOTE: interior 'clash' never reaches this builder — the renderer routes the
+    // outdoor Clash battleground to its own clash_world builder instead.
     const layout = interior === 'sanctum' ? SANCTUM_LAYOUT
       : interior === 'temple' ? TEMPLE_LAYOUT
         : interior === 'arena' ? ARENA_LAYOUT
-          : interior === 'nythraxis' ? NYTHRAXIS_LAYOUT
-            : interior === 'clash' ? CLASH_LAYOUT : CRYPT_LAYOUT;
+          : interior === 'nythraxis' ? NYTHRAXIS_LAYOUT : CRYPT_LAYOUT;
     const variant = this.variantFor(interior, ox);
     const group = new THREE.Group();
     const p = new Placements();

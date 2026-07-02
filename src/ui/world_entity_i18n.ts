@@ -43,6 +43,8 @@ const MOB_IDS = [
   'crawl_boss_mist_anchor', 'crawl_boss_kordeth', 'crawl_boss_showrunner',
   // The Clash (MOBA, src/sim/content/moba.ts): lane minions + structures
   'moba_minion_melee', 'moba_minion_ranged', 'moba_tower', 'moba_core',
+  // The Clash jungle neutrals (farmable creep camps)
+  'moba_creep_raccoon', 'moba_creep_goose', 'moba_creep_goose_foreman', 'moba_creep_vendbot',
 ] as const;
 
 const NPC_IDS = [

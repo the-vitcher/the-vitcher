@@ -4830,6 +4830,18 @@ export const zh_CN: EnTranslations = {
       "moba_core": {
         "name": "枢纽核心"
       },
+      "moba_creep_raccoon": {
+        "name": "垃圾箱浣熊"
+      },
+      "moba_creep_goose": {
+        "name": "工会大鹅"
+      },
+      "moba_creep_goose_foreman": {
+        "name": "鹅工头"
+      },
+      "moba_creep_vendbot": {
+        "name": "自动售货魔"
+      },
       "elder_bristleback": {
         "name": "年长硬鬃"
       },

@@ -4830,6 +4830,18 @@ export const ko_KR: EnTranslations = {
       "moba_core": {
         "name": "넥서스 코어"
       },
+      "moba_creep_raccoon": {
+        "name": "쓰레기통 라쿤"
+      },
+      "moba_creep_goose": {
+        "name": "노조 거위"
+      },
+      "moba_creep_goose_foreman": {
+        "name": "거위 작업반장"
+      },
+      "moba_creep_vendbot": {
+        "name": "벤드오트론"
+      },
       "elder_bristleback": {
         "name": "늙은 뻣센등뼈"
       },

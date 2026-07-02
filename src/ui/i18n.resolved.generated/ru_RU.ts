@@ -4830,6 +4830,18 @@ export const ru_RU: EnTranslations = {
       "moba_core": {
         "name": "Ядро нексуса"
       },
+      "moba_creep_raccoon": {
+        "name": "Помоечный енот"
+      },
+      "moba_creep_goose": {
+        "name": "Профсоюзный гусь"
+      },
+      "moba_creep_goose_foreman": {
+        "name": "Гусь-бригадир"
+      },
+      "moba_creep_vendbot": {
+        "name": "Вендотрон"
+      },
       "elder_bristleback": {
         "name": "Старый Щетиноспин"
       },

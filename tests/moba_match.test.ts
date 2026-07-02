@@ -30,13 +30,13 @@ describe('The Clash: match setup', () => {
     expect(meta.mobaSkillPoints).toBe(1);
   });
 
-  it('spawns 2 towers per lane per team plus one core each, tagged by side', () => {
+  it('spawns 3 towers per lane per team plus one core each, tagged by side', () => {
     const sim = makeMobaSim();
     const pid = sim.addPlayer('mage', 'Solo');
     sim.startMobaMatch([pid]);
     const match = sim.mobaMatch!;
-    expect(match.towersA.map((l) => l.length)).toEqual([2, 2, 2]);
-    expect(match.towersB.map((l) => l.length)).toEqual([2, 2, 2]);
+    expect(match.towersA.map((l) => l.length)).toEqual([3, 3, 3]);
+    expect(match.towersB.map((l) => l.length)).toEqual([3, 3, 3]);
     expect(entOf(sim, match.coreA).mobaTeam).toBe('A');
     expect(entOf(sim, match.coreB).mobaTeam).toBe('B');
     for (const lane of laneTowers(sim, match.towersA)) for (const t of lane) expect(t.mobaTeam).toBe('A');
@@ -197,13 +197,16 @@ describe('The Clash: hostility and objectives', () => {
     const coreB = entOf(sim, match.coreB);
     const hp0 = coreB.hp;
     (sim as any).dealDamage(hero, coreB, 500, false, 'physical', null, 'hit');
-    expect(coreB.hp).toBe(hp0); // all 6 towers stand
-    // kill one tower in each lane: still invulnerable (no lane fully cleared)
-    for (const lane of [0, 1, 2]) kill(sim, entOf(sim, match.towersB[lane][0]), hero);
+    expect(coreB.hp).toBe(hp0); // all 9 towers stand
+    // kill two towers in each lane: still invulnerable (no lane fully cleared)
+    for (const lane of [0, 1, 2]) {
+      kill(sim, entOf(sim, match.towersB[lane][0]), hero);
+      kill(sim, entOf(sim, match.towersB[lane][1]), hero);
+    }
     (sim as any).dealDamage(hero, coreB, 500, false, 'physical', null, 'hit');
     expect(coreB.hp).toBe(hp0);
     // finish the mid lane: core opens up
-    kill(sim, entOf(sim, match.towersB[1][1]), hero);
+    kill(sim, entOf(sim, match.towersB[1][2]), hero);
     (sim as any).dealDamage(hero, coreB, 500, false, 'physical', null, 'hit');
     expect(coreB.hp).toBeLessThan(hp0);
   });
@@ -438,5 +441,90 @@ describe('The Clash: determinism', () => {
       return { minions: m.minionIds.size, wave: m.waveIndex, phase: m.phase };
     };
     expect(run()).toEqual(run());
+  });
+});
+
+// Combat pacing locks (the balance brief): minions left unattended kill each
+// other in 30-45s; heroes clear caster minions fast; frontliners run ~2.2x a
+// carry's health. Every number under test lives in content/moba_balance.ts.
+describe('The Clash: combat pacing', () => {
+  // Stand two enemy-team footmen next to each other on the battleground and let
+  // the lane AI fight it out. Returns seconds until one dies.
+  const minionMirrorSeconds = (): number => {
+    const sim = makeMobaSim(21);
+    const pid = sim.addPlayer('warrior', 'Ref');
+    sim.startMobaMatch([pid]);
+    const inst = (sim as any).instances.find((i: any) => i.dungeonId === 'moba_lane' && i.partyKey === 'moba');
+    const origin = (sim as any).instanceOriginOf(inst);
+    const mk = (team: 'A' | 'B', dz: number) => {
+      const m = createMob((sim as any).nextId++, MOBS.moba_minion_melee, MOBS.moba_minion_melee.minLevel, { x: origin.x + 30, y: 0, z: origin.z + 30 + dz });
+      m.prevPos = { ...m.pos };
+      m.mobaTeam = team;
+      (sim as any).addEntity(m);
+      return m;
+    };
+    const a = mk('A', 0);
+    const b = mk('B', 3);
+    let ticks = 0;
+    while (!a.dead && !b.dead && ticks < 20 * 90) { sim.tick(); ticks++; }
+    expect(a.dead || b.dead, 'duel never resolved').toBe(true);
+    return ticks / 20;
+  };
+
+  it('two lane footmen left unattended kill each other in 30-45 seconds', () => {
+    const s = minionMirrorSeconds();
+    expect(s).toBeGreaterThanOrEqual(30);
+    expect(s).toBeLessThanOrEqual(45);
+  });
+
+  it('a hero clears a caster minion quickly with autos (league-style farming)', () => {
+    const sim = makeMobaSim(22);
+    const pid = sim.addPlayer('hunter', 'Farmer');
+    sim.startMobaMatch([pid]);
+    sim.pickMobaHero('gerald', pid); // marksman: highest sustained auto DPS
+    const hero = entOf(sim, pid);
+    const caster = createMob((sim as any).nextId++, MOBS.moba_minion_ranged, MOBS.moba_minion_ranged.minLevel, { x: hero.pos.x, y: hero.pos.y, z: hero.pos.z + 3 });
+    caster.prevPos = { ...caster.pos };
+    caster.mobaTeam = 'B';
+    (sim as any).addEntity(caster);
+    sim.targetEntity(caster.id);
+    hero.autoAttack = true;
+    let ticks = 0;
+    while (!caster.dead && ticks < 20 * 20) {
+      hero.facing = Math.atan2(caster.pos.x - hero.pos.x, caster.pos.z - hero.pos.z);
+      sim.tick();
+      ticks++;
+    }
+    expect(caster.dead, 'caster survived 20s of autos').toBe(true);
+    expect(ticks / 20).toBeLessThanOrEqual(10);
+  });
+
+  it('a bruiser runs roughly 2-2.5x a marksman durability (role stat blocks)', () => {
+    const sim = makeMobaSim(23);
+    const pid = sim.addPlayer('warrior', 'Roles');
+    sim.startMobaMatch([pid]);
+    sim.pickMobaHero('gerald', pid); // marksman
+    const squishyHp = entOf(sim, pid).maxHp;
+    sim.pickMobaHero('snacko', pid); // bruiser
+    const bruiserHp = entOf(sim, pid).maxHp;
+    const ratio = bruiserHp / squishyHp;
+    expect(ratio).toBeGreaterThanOrEqual(1.8);
+    expect(ratio).toBeLessThanOrEqual(2.6);
+  });
+
+  it('a tower kills a lane minion fast enough to chew unattended waves', () => {
+    const sim = makeMobaSim(24);
+    const pid = sim.addPlayer('warrior', 'Watcher');
+    sim.startMobaMatch([pid]);
+    const match = sim.mobaMatch!;
+    const tower = entOf(sim, match.towersA[1][0]);
+    const minion = createMob((sim as any).nextId++, MOBS.moba_minion_melee, MOBS.moba_minion_melee.minLevel, { x: tower.pos.x + 3, y: tower.pos.y, z: tower.pos.z });
+    minion.prevPos = { ...minion.pos };
+    minion.mobaTeam = 'B';
+    (sim as any).addEntity(minion);
+    let ticks = 0;
+    while (!minion.dead && ticks < 20 * 30) { sim.tick(); ticks++; }
+    expect(minion.dead).toBe(true);
+    expect(ticks / 20).toBeLessThanOrEqual(15);
   });
 });

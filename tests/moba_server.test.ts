@@ -97,13 +97,13 @@ describe('The Clash online: CLASH_MODE realm', () => {
     expect(snap).toBeTruthy();
     expect(snap.self.mst).toBeTruthy();
     expect(snap.self.mst.phase).toBe('warmup');
-    expect(snap.self.mst.towersA).toBe(6);
+    expect(snap.self.mst.towersA).toBe(9);
     expect(snap.self.mt).toBe('A');
     // decode through the real client
     const client = bareClient(session.pid);
     (client as any).applySnapshot(snap);
     expect(client.mobaState()?.myTeam).toBe('A');
-    expect(client.mobaState()?.towersB).toBe(6);
+    expect(client.mobaState()?.towersB).toBe(9);
     expect(client.entities.get(session.pid)?.mobaTeam).toBe('A');
   });
 

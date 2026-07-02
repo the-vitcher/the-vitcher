@@ -4830,6 +4830,18 @@ export const ja_JP: EnTranslations = {
       "moba_core": {
         "name": "ネクサスコア"
       },
+      "moba_creep_raccoon": {
+        "name": "ゴミ箱アライグマ"
+      },
+      "moba_creep_goose": {
+        "name": "労組ガチョウ"
+      },
+      "moba_creep_goose_foreman": {
+        "name": "ガチョウ現場監督"
+      },
+      "moba_creep_vendbot": {
+        "name": "ベンド・オ・トロン"
+      },
       "elder_bristleback": {
         "name": "老ブリストルバック"
       },

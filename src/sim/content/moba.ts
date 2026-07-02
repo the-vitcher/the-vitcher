@@ -15,17 +15,19 @@
 // blurbs and ability descriptions render from this data as a documented English
 // backstop (the GROUND_PICKUP_LINES precedent), pending a dedicated locale pass.
 //
-// The battleground is the oversized 'clash' interior (sim/dungeon_layout
-// CLASH_LAYOUT); geometry lives in sim/moba.ts. Structures (2 towers per lane per
-// team + 1 core per team) spawn from this def's `spawns`; their team is assigned at
-// spawn from z (mobaTeamForZ) and their lane from x (mobaLaneForX). Minions spawn in
-// timed waves per lane (Sim), not from `spawns`.
+// The battleground is the outdoor diagonal-square map (geometry in sim/moba.ts:
+// corner bases, S-curved mid, edge-running top/bot, river, jungle). Structures
+// (3 towers per lane per team + 1 core per team) spawn from this def's `spawns`;
+// their team is assigned at spawn from position (mobaTeamForPos) and their lane
+// from the nearest centreline (mobaLaneForPos). Minions spawn in timed waves per
+// lane, and the jungle's neutral creep camps respawn on a match timer (both Sim).
 
 import type { AbilityDef, DungeonDef, DungeonSpawn, ItemDef, MobaHeroDef, MobTemplate, NpcDef } from '../types';
 import {
   MOBA_CORE_LEVEL, MOBA_MAP, MOBA_MINION_GOLD, MOBA_MINION_LEVEL, MOBA_TOWER_GOLD, MOBA_TOWER_LEVEL,
   mobaTowerPoints, type MobaLaneIndex, type MobaTeam,
 } from '../moba';
+import { MOBA_MINION_BALANCE, MOBA_TOWER_BALANCE, MOBA_CORE_BALANCE, MOBA_ECONOMY } from './moba_balance';
 
 // ---------------------------------------------------------------------------
 // Bespoke hero ability kits. Built from AbilityEffect primitives; `class` is the
@@ -457,49 +459,84 @@ export const MOBA_NPCS: Record<string, NpcDef> = {
 };
 
 // ---------------------------------------------------------------------------
-// Lane structures and minions. Towers and cores are stationary (mobaRole gates
-// the Sim's stationary AI); minions walk their lane. Team comes from Entity.mobaTeam,
-// assigned at spawn by z (mobaTeamForZ); lane from x (mobaLaneForX).
+// Lane structures, minions, and the jungle's neutral creeps. Towers and cores are
+// stationary (mobaRole gates the Sim's stationary AI); minions walk their lane.
+// Team comes from Entity.mobaTeam, assigned at spawn from position. The jungle
+// creeps have NO mobaRole and NO mobaTeam: they are neutral (hostile to both
+// teams, ignored by minions and towers), guard their camp with the normal
+// threat-table AI, and pay instant last-hit gold plus kill XP — farm them.
 // ---------------------------------------------------------------------------
 export const MOBA_MOBS: Record<string, MobTemplate> = {
   moba_minion_melee: {
     id: 'moba_minion_melee', name: 'Lane Footman', minLevel: MOBA_MINION_LEVEL, maxLevel: MOBA_MINION_LEVEL,
     family: 'humanoid', mobaRole: 'minion',
-    hpBase: 90, hpPerLevel: 6, dmgBase: 6, dmgPerLevel: 1.2, attackSpeed: 2.0,
-    armorPerLevel: 6, moveSpeed: 6, aggroRadius: 9,
+    ...MOBA_MINION_BALANCE.melee,
     loot: [{ copper: MOBA_MINION_GOLD, chance: 1 }],
     scale: 0.85, color: 0xb8a06a,
   },
   moba_minion_ranged: {
     id: 'moba_minion_ranged', name: 'Lane Caster', minLevel: MOBA_MINION_LEVEL, maxLevel: MOBA_MINION_LEVEL,
     family: 'humanoid', mobaRole: 'minion',
-    hpBase: 65, hpPerLevel: 5, dmgBase: 8, dmgPerLevel: 1.4, attackSpeed: 2.4,
-    armorPerLevel: 4, moveSpeed: 6, aggroRadius: 12,
+    ...MOBA_MINION_BALANCE.ranged,
     loot: [{ copper: MOBA_MINION_GOLD, chance: 1 }],
     scale: 0.8, color: 0x8a6ab8,
   },
   moba_tower: {
     id: 'moba_tower', name: 'Guard Tower', minLevel: MOBA_TOWER_LEVEL, maxLevel: MOBA_TOWER_LEVEL,
     family: 'elemental', mobaRole: 'tower',
-    hpBase: 900, hpPerLevel: 0, dmgBase: 34, dmgPerLevel: 0, attackSpeed: 1.5,
-    armorPerLevel: 22, moveSpeed: 0, aggroRadius: 16,
+    hpBase: MOBA_TOWER_BALANCE.hp, hpPerLevel: 0, dmgBase: MOBA_TOWER_BALANCE.dmg, dmgPerLevel: 0,
+    attackSpeed: MOBA_TOWER_BALANCE.attackSpeed,
+    armorPerLevel: MOBA_TOWER_BALANCE.armorPerLevel, moveSpeed: 0, aggroRadius: MOBA_TOWER_BALANCE.aggroRadius,
     loot: [{ copper: MOBA_TOWER_GOLD, chance: 1 }],
     scale: 2.2, color: 0xd9c27a,
   },
   moba_core: {
     id: 'moba_core', name: 'Nexus Core', minLevel: MOBA_CORE_LEVEL, maxLevel: MOBA_CORE_LEVEL,
     family: 'elemental', mobaRole: 'core',
-    hpBase: 2200, hpPerLevel: 0, dmgBase: 22, dmgPerLevel: 0, attackSpeed: 2.0,
-    armorPerLevel: 26, moveSpeed: 0, aggroRadius: 14,
+    hpBase: MOBA_CORE_BALANCE.hp, hpPerLevel: 0, dmgBase: MOBA_CORE_BALANCE.dmg, dmgPerLevel: 0,
+    attackSpeed: MOBA_CORE_BALANCE.attackSpeed,
+    armorPerLevel: MOBA_CORE_BALANCE.armorPerLevel, moveSpeed: 0, aggroRadius: MOBA_CORE_BALANCE.aggroRadius,
     loot: [],
     scale: 3.0, color: 0x6ad0ff,
+  },
+
+  // ---- Jungle neutrals (small / medium / large camp, one of each per side) ----
+  moba_creep_raccoon: {
+    id: 'moba_creep_raccoon', name: 'Dumpster Raccoon', minLevel: 2, maxLevel: 2, family: 'beast',
+    hpBase: 70, hpPerLevel: 8, dmgBase: 6, dmgPerLevel: 1.2, attackSpeed: 1.8,
+    armorPerLevel: 5, moveSpeed: 7, aggroRadius: 6,
+    loot: [{ copper: MOBA_ECONOMY.campGold.raccoon, chance: 1 }],
+    scale: 0.8, color: 0x8a7a66,
+  },
+  moba_creep_goose: {
+    id: 'moba_creep_goose', name: 'Unionized Goose', minLevel: 3, maxLevel: 3, family: 'beast',
+    hpBase: 95, hpPerLevel: 9, dmgBase: 8, dmgPerLevel: 1.4, attackSpeed: 1.6,
+    armorPerLevel: 5, moveSpeed: 8, aggroRadius: 6,
+    loot: [{ copper: MOBA_ECONOMY.campGold.goose, chance: 1 }],
+    scale: 0.85, color: 0xd8d8cc,
+  },
+  moba_creep_goose_foreman: {
+    id: 'moba_creep_goose_foreman', name: 'Goose Foreman', minLevel: 4, maxLevel: 4, family: 'beast',
+    hpBase: 150, hpPerLevel: 12, dmgBase: 10, dmgPerLevel: 1.6, attackSpeed: 1.8,
+    armorPerLevel: 8, moveSpeed: 8, aggroRadius: 7,
+    cleave: { radius: 5, mult: 0.4, name: 'Grievance Filing' },
+    loot: [{ copper: MOBA_ECONOMY.campGold.gooseForeman, chance: 1 }],
+    scale: 1.05, color: 0xb8b8a8,
+  },
+  moba_creep_vendbot: {
+    id: 'moba_creep_vendbot', name: 'Vend-O-Tron', minLevel: 5, maxLevel: 5, family: 'elemental',
+    hpBase: 260, hpPerLevel: 14, dmgBase: 12, dmgPerLevel: 1.8, attackSpeed: 2.4,
+    armorPerLevel: 12, moveSpeed: 5, aggroRadius: 7,
+    stoneskin: { amount: 60, every: 12, duration: 6, name: 'Exact Change Only' },
+    loot: [{ copper: MOBA_ECONOMY.campGold.vendbot, chance: 1 }],
+    scale: 1.3, color: 0xcc4444,
   },
 };
 
 // ---------------------------------------------------------------------------
-// Static structure spawns (instance-local). One core per team plus two towers
-// per lane per team, laid out from the shared geometry in sim/moba.ts. Team is
-// derived from z at spawn time, lane from x.
+// Static structure spawns (instance-local). One core per team plus three towers
+// per lane per team, laid out from the shared geometry in sim/moba.ts. Team and
+// lane are derived from position at spawn time.
 // ---------------------------------------------------------------------------
 function structureSpawns(): DungeonSpawn[] {
   const out: DungeonSpawn[] = [
@@ -530,8 +567,8 @@ export const MOBA_DUNGEON_DEFS: Record<string, DungeonDef> = {
     spawns: structureSpawns(),
     // A shopkeeper at each base, tucked beside the hero spawn pad.
     npcs: [
-      { npcId: 'moba_shopkeeper', x: 6, z: MOBA_MAP.heroSpawnA.z },
-      { npcId: 'moba_shopkeeper', x: 6, z: MOBA_MAP.heroSpawnB.z },
+      { npcId: 'moba_shopkeeper', x: MOBA_MAP.shopA.x, z: MOBA_MAP.shopA.z },
+      { npcId: 'moba_shopkeeper', x: MOBA_MAP.shopB.x, z: MOBA_MAP.shopB.z },
     ],
     interior: 'clash',
     suggestedPlayers: 5,

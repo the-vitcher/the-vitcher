@@ -36,7 +36,7 @@ export interface MobaStateView {
   recallReadyIn: number; // seconds until recall may be used again (0 = ready)
   skillPoints: number; // unspent skill points
   skillRanks: Record<string, number>; // chosen rank per hero ability id
-  towersA: number; // standing towers per team (of 6)
+  towersA: number; // standing towers per team (of 9: 3 per lane)
   towersB: number;
   winner: 'A' | 'B' | null;
   elapsed: number; // match seconds

@@ -2,7 +2,8 @@ import { generateDecorations, groundHeight } from './world';
 import {
   DUNGEON_X_THRESHOLD, INSTANCE_SLOT_COUNT, PROPS, arenaOriginAt, dungeonAt, instanceOrigin, isArenaPos,
 } from './data';
-import { ARENA_LAYOUT, CLASH_LAYOUT, CRYPT_LAYOUT, NYTHRAXIS_LAYOUT, SANCTUM_LAYOUT, TEMPLE_LAYOUT, layoutColliders } from './dungeon_layout';
+import { ARENA_LAYOUT, CRYPT_LAYOUT, NYTHRAXIS_LAYOUT, SANCTUM_LAYOUT, TEMPLE_LAYOUT, layoutColliders } from './dungeon_layout';
+import { MOBA_MAP, MOBA_JUNGLE_TREES } from './moba';
 
 // Static world collision. Prop placement comes from the per-zone content
 // modules (merged into PROPS by sim/data.ts): the renderer builds its meshes
@@ -136,7 +137,24 @@ const SANCTUM_COLLIDERS: Collider[] = layoutColliders(SANCTUM_LAYOUT);
 const TEMPLE_COLLIDERS: Collider[] = layoutColliders(TEMPLE_LAYOUT);
 const ARENA_COLLIDERS: Collider[] = layoutColliders(ARENA_LAYOUT);
 const NYTHRAXIS_COLLIDERS: Collider[] = layoutColliders(NYTHRAXIS_LAYOUT);
-const CLASH_COLLIDERS: Collider[] = layoutColliders(CLASH_LAYOUT);
+
+// The Clash battleground (interior 'clash') is an outdoor map, not a kit room:
+// four border walls ring the square and the jungle's tree trunks block movement
+// (camGhost, like overworld trees, so the chase camera never slams into a canopy).
+// Geometry comes from sim/moba.ts — the SINGLE source shared with the renderer's
+// ground texture and the minimap, so collision and visuals cannot drift.
+function clashColliders(): Collider[] {
+  const out: Collider[] = [];
+  const edge = MOBA_MAP.half - 0.5;
+  const hw = MOBA_MAP.half + 2;
+  out.push({ type: 'obb', x: 0, z: edge, hw, hd: 1, rot: 0 }); // north border
+  out.push({ type: 'obb', x: 0, z: -edge, hw, hd: 1, rot: 0 }); // south border
+  out.push({ type: 'obb', x: edge, z: 0, hw: 1, hd: hw, rot: 0 }); // east border
+  out.push({ type: 'obb', x: -edge, z: 0, hw: 1, hd: hw, rot: 0 }); // west border
+  for (const t of MOBA_JUNGLE_TREES) out.push({ type: 'circle', x: t.x, z: t.z, r: t.r, camGhost: true });
+  return out;
+}
+const CLASH_COLLIDERS: Collider[] = clashColliders();
 
 // Interior collider sets keyed by DungeonDef.interior.
 const INTERIOR_COLLIDERS: Record<string, Collider[]> = {
