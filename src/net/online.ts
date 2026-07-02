@@ -475,7 +475,7 @@ function blankEntity(id: number): Entity {
 }
 
 export class ClientWorld implements IWorld {
-  cfg: { seed: number; playerClass: PlayerClass };
+  cfg: { seed: number; playerClass: PlayerClass; mobaMode?: boolean };
   entities = new Map<number, Entity>();
   playerId = -1;
   moveInput: MoveInput = emptyMoveInput();
@@ -685,6 +685,7 @@ export class ClientWorld implements IWorld {
     if (msg.t === 'hello') {
       this.playerId = msg.pid;
       this.cfg.seed = msg.seed;
+      this.cfg.mobaMode = msg.clash === 1;
       if (typeof msg.realm === 'string') this.realm = msg.realm;
       if (Array.isArray(msg.softWords)) {
         this.profanityWords = msg.softWords.filter((w: unknown): w is string => typeof w === 'string');

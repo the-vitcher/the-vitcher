@@ -883,61 +883,71 @@ export class Sim {
     };
     this.rng = new Rng(cfg.seed);
 
-    // NPCs — nudged out of buildings and deep water if their data position is bad
-    for (const npcDef of Object.values(NPCS)) {
-      if (npcDef.dynamic) continue; // spawned on demand by its owning system, not surface-placed
-      const safe = this.findSafePos(npcDef.pos.x, npcDef.pos.z, WATER_LEVEL + 0.6);
-      const npc = createNpc(this.nextId++, npcDef, this.groundPos(safe.x, safe.z));
-      this.addEntity(npc);
-      if (npcDef.market) this.merchantId = npc.id; // the World Market is anchored here
-    }
-    this.seedHouseListings();
-
-    // Mobs from camps
-    for (const camp of CAMPS) {
-      const template = MOBS[camp.mobId];
-      // Aquatic/flagged swimmers may wade in the shallows; everyone else
-      // still spawns on dry land even though combat movement can enter water.
-      const minHeight = this.mobCanSpawnInWater(template) ? WATER_LEVEL - 0.5 : WATER_LEVEL + 0.4;
-      for (let i = 0; i < camp.count; i++) {
-        const ang = this.rng.range(0, Math.PI * 2);
-        const r = Math.sqrt(this.rng.next()) * camp.radius;
-        const safe = this.findSafePos(camp.center.x + Math.sin(ang) * r, camp.center.z + Math.cos(ang) * r, minHeight);
-        const pos = this.groundPos(safe.x, safe.z);
-        const level = this.rng.int(template.minLevel, template.maxLevel);
-        const mob = createMob(this.nextId++, template, level, pos);
-        mob.facing = this.rng.range(-Math.PI, Math.PI);
-        mob.prevFacing = mob.facing;
-        mob.wanderTimer = this.rng.range(2, 10);
-        this.addEntity(mob);
+    if (this.cfg.mobaMode) {
+      // The Clash is a STANDALONE world: no WoCC NPCs, camps, ground objects, or
+      // dungeon doors ever spawn. The only world content is the battleground —
+      // register its instance slots (the match claims one) and nothing else. The
+      // normal-mode path below is untouched, byte for byte.
+      for (let i = 0; i < INSTANCE_SLOT_COUNT; i++) {
+        this.instances.push({ dungeonId: 'moba_lane', slot: i, partyKey: null, mobIds: [], objectIds: [], exitId: null, emptyFor: 0, floorDeadline: 0 });
       }
-    }
-
-    // Ground objects
-    for (const objDef of GROUND_OBJECTS) {
-      for (const p of objDef.positions) {
-        const obj = createGroundObject(this.nextId++, objDef.itemId, objDef.name, this.groundPos(p.x, p.z));
-        this.addEntity(obj);
+    } else {
+      // NPCs — nudged out of buildings and deep water if their data position is bad
+      for (const npcDef of Object.values(NPCS)) {
+        if (npcDef.dynamic) continue; // spawned on demand by its owning system, not surface-placed
+        const safe = this.findSafePos(npcDef.pos.x, npcDef.pos.z, WATER_LEVEL + 0.6);
+        const npc = createNpc(this.nextId++, npcDef, this.groundPos(safe.x, safe.z));
+        this.addEntity(npc);
+        if (npcDef.market) this.merchantId = npc.id; // the World Market is anchored here
       }
-    }
+      this.seedHouseListings();
 
-    // Dungeon entrances + their private instance slots
-    for (const dungeon of DUNGEON_LIST) {
-      if (dungeon.overworldDoor === false) {
+      // Mobs from camps
+      for (const camp of CAMPS) {
+        const template = MOBS[camp.mobId];
+        // Aquatic/flagged swimmers may wade in the shallows; everyone else
+        // still spawns on dry land even though combat movement can enter water.
+        const minHeight = this.mobCanSpawnInWater(template) ? WATER_LEVEL - 0.5 : WATER_LEVEL + 0.4;
+        for (let i = 0; i < camp.count; i++) {
+          const ang = this.rng.range(0, Math.PI * 2);
+          const r = Math.sqrt(this.rng.next()) * camp.radius;
+          const safe = this.findSafePos(camp.center.x + Math.sin(ang) * r, camp.center.z + Math.cos(ang) * r, minHeight);
+          const pos = this.groundPos(safe.x, safe.z);
+          const level = this.rng.int(template.minLevel, template.maxLevel);
+          const mob = createMob(this.nextId++, template, level, pos);
+          mob.facing = this.rng.range(-Math.PI, Math.PI);
+          mob.prevFacing = mob.facing;
+          mob.wanderTimer = this.rng.range(2, 10);
+          this.addEntity(mob);
+        }
+      }
+
+      // Ground objects
+      for (const objDef of GROUND_OBJECTS) {
+        for (const p of objDef.positions) {
+          const obj = createGroundObject(this.nextId++, objDef.itemId, objDef.name, this.groundPos(p.x, p.z));
+          this.addEntity(obj);
+        }
+      }
+
+      // Dungeon entrances + their private instance slots
+      for (const dungeon of DUNGEON_LIST) {
+        if (dungeon.overworldDoor === false) {
+          for (let i = 0; i < INSTANCE_SLOT_COUNT; i++) {
+            this.instances.push({ dungeonId: dungeon.id, slot: i, partyKey: null, mobIds: [], objectIds: [], exitId: null, emptyFor: 0, floorDeadline: 0 });
+          }
+          continue;
+        }
+        const doorName = dungeon.id === 'nythraxis_crypt' ? 'Abandoned Crypt' : dungeon.name;
+        const door = createGroundObject(this.nextId++, '', doorName, this.groundPos(dungeon.doorPos.x, dungeon.doorPos.z));
+        door.templateId = 'dungeon_door';
+        door.dungeonId = dungeon.id;
+        door.objectItemId = null;
+        door.lootable = true; // interactable
+        this.addEntity(door);
         for (let i = 0; i < INSTANCE_SLOT_COUNT; i++) {
           this.instances.push({ dungeonId: dungeon.id, slot: i, partyKey: null, mobIds: [], objectIds: [], exitId: null, emptyFor: 0, floorDeadline: 0 });
         }
-        continue;
-      }
-      const doorName = dungeon.id === 'nythraxis_crypt' ? 'Abandoned Crypt' : dungeon.name;
-      const door = createGroundObject(this.nextId++, '', doorName, this.groundPos(dungeon.doorPos.x, dungeon.doorPos.z));
-      door.templateId = 'dungeon_door';
-      door.dungeonId = dungeon.id;
-      door.objectItemId = null;
-      door.lootable = true; // interactable
-      this.addEntity(door);
-      for (let i = 0; i < INSTANCE_SLOT_COUNT; i++) {
-        this.instances.push({ dungeonId: dungeon.id, slot: i, partyKey: null, mobIds: [], objectIds: [], exitId: null, emptyFor: 0, floorDeadline: 0 });
       }
     }
 
@@ -1006,9 +1016,19 @@ export class Sim {
       const dungeon = dungeonAt(savedPos.x) ?? DUNGEON_LIST[0];
       savedPos = { x: dungeon.doorPos.x, z: dungeon.doorPos.z - 4 };
     }
-    const startPos = savedPos
-      ? this.groundPos(savedPos.x, savedPos.z)
-      : this.groundPos(PLAYER_START.x, PLAYER_START.z);
+    // The Clash standalone world has no town: players are born at the team-A
+    // fountain (enterMobaMatch reseats them by team a moment later), never at
+    // PLAYER_START or a saved overworld position.
+    const mobaStart = (() => {
+      const o = instanceOrigin(DUNGEONS.moba_lane.index, 0);
+      const f = mobaHeroSpawn('A');
+      return { x: o.x + f.x, z: o.z + f.z };
+    });
+    const startPos = this.cfg.mobaMode
+      ? this.groundPos(mobaStart().x, mobaStart().z)
+      : savedPos
+        ? this.groundPos(savedPos.x, savedPos.z)
+        : this.groundPos(PLAYER_START.x, PLAYER_START.z);
     const savedArena1v1: ArenaStanding = {
       rating: opts?.state?.arena1v1Rating ?? opts?.state?.arenaRating ?? ARENA_BASE_RATING,
       wins: opts?.state?.arena1v1Wins ?? opts?.state?.arenaWins ?? 0,
@@ -11815,6 +11835,9 @@ export class Sim {
       this.addEntity(npc);
       inst.mobIds.push(npc.id); // tracked with the instance so it despawns on free
     }
+    // The Clash standalone world has no overworld to exit back into, so the
+    // battleground gets no exit portal (leaving is via the end-of-match flow).
+    if (this.cfg.mobaMode && dungeon.id === 'moba_lane') return;
     const exit = createGroundObject(this.nextId++, '', `${dungeon.name} Exit`, this.groundPos(origin.x + dungeon.exitOffset.x, origin.z + dungeon.exitOffset.z));
     exit.templateId = 'dungeon_exit';
     exit.dungeonId = dungeon.id;

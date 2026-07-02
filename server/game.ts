@@ -790,6 +790,9 @@ export class GameServer {
       name,
       cls,
       realm: REALM,
+      // Clash realm flag: the client must know BEFORE the first snapshot (the
+      // renderer builds either the WoCC overworld or the battleground at boot).
+      clash: this.mobaMode ? 1 : 0,
       // Soft (cosmetic) words the client masks locally when its profanity
       // filter is on. Hard words are never sent — they're enforced server-side.
       softWords: this.chatFilter.softWords(),

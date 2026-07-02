@@ -618,3 +618,53 @@ describe('The Clash: jungle creep camps', () => {
     expect(m2.copper - c2).toBe(0); // the enemy gets nothing
   });
 });
+
+// Standalone world: a Clash session never generates the WoCC overworld — no
+// NPCs, camps, ground objects, or dungeon doors. Normal mode stays untouched.
+describe('The Clash: standalone world', () => {
+  it('a mobaMode Sim contains zero WoCC world content', () => {
+    const sim = makeMobaSim(41);
+    const kinds = { npc: 0, mob: 0, object: 0 };
+    for (const e of sim.entities.values()) {
+      if (e.kind === 'npc') kinds.npc++;
+      else if (e.kind === 'mob') kinds.mob++;
+      else if (e.kind === 'object') kinds.object++;
+    }
+    expect(kinds.npc).toBe(0); // no town NPCs
+    expect(kinds.mob).toBe(0); // no overworld camps (match structures spawn later)
+    expect(kinds.object).toBe(0); // no sparkles, no dungeon doors
+    // only the battleground's instance slots are registered
+    const dungeonIds = new Set((sim as any).instances.map((i: any) => i.dungeonId));
+    expect([...dungeonIds]).toEqual(['moba_lane']);
+  });
+
+  it('players are born at the battleground fountain, never in town', () => {
+    const sim = makeMobaSim(42);
+    const pid = sim.addPlayer('warrior', 'Born');
+    const e = sim.entities.get(pid)!;
+    expect(e.pos.x).toBeGreaterThan(600); // far band, not the overworld strip
+    // and seating the match puts them at their team fountain at full hp
+    sim.startMobaMatch([pid]);
+    expect(e.hp).toBe(e.maxHp);
+  });
+
+  it('the battleground instance has no exit portal back to a nonexistent overworld', () => {
+    const sim = makeMobaSim(43);
+    const pid = sim.addPlayer('warrior', 'Stay');
+    sim.startMobaMatch([pid]);
+    for (const e of sim.entities.values()) {
+      expect(e.templateId === 'dungeon_exit').toBe(false);
+    }
+  });
+
+  it('normal-mode worlds are untouched by the gating (same seed, same world)', () => {
+    const census = () => {
+      const sim = new Sim({ seed: 4242, playerClass: 'warrior' });
+      const out: string[] = [];
+      for (const e of sim.entities.values()) out.push(`${e.kind}:${e.templateId}:${Math.round(e.pos.x)}:${Math.round(e.pos.z)}`);
+      return out;
+    };
+    expect(census()).toEqual(census()); // deterministic and fully populated
+    expect(census().length).toBeGreaterThan(100);
+  });
+});

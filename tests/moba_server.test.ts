@@ -134,3 +134,14 @@ describe('The Clash online: CLASH_MODE realm', () => {
     expect(snap.self.mt).toBeUndefined();
   });
 });
+
+describe('The Clash online: standalone world flag', () => {
+  it('the hello payload tells the client this is a Clash realm before any snapshot', () => {
+    const server = clashServer();
+    const fc = fakeWs();
+    join(server, fc, 9, 'Flag');
+    const hello = fc.sent.find((m: any) => m.t === 'hello');
+    expect(hello).toBeTruthy();
+    expect(hello.clash).toBe(1);
+  });
+});

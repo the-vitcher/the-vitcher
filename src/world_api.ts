@@ -263,7 +263,11 @@ export interface AccountCosmetics {
 // satisfies this structurally; the online `ClientWorld` implements it by
 // mirroring server snapshots and sending commands over the socket.
 export interface IWorld {
-  cfg: { seed: number; playerClass: PlayerClass };
+  // World config the presentation layer may read. mobaMode must be known BEFORE
+  // the first snapshot (the renderer decides at build time whether to construct
+  // the WoCC overworld or the Clash battleground), so ClientWorld learns it from
+  // the server hello payload, not from the first moba state snapshot.
+  cfg: { seed: number; playerClass: PlayerClass; mobaMode?: boolean };
   entities: Map<number, Entity>;
   playerId: number;
   player: Entity;
