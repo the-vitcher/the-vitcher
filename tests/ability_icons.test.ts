@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ABILITIES } from '../src/sim/data';
+import { ABILITIES, MOBA_ABILITIES } from '../src/sim/data';
 import { abilityIconRecipe, hasExplicitAbilityIcon } from '../src/ui/icons';
 
 // Every class ability must have a deliberate, visually distinct icon.
@@ -7,7 +7,8 @@ import { abilityIconRecipe, hasExplicitAbilityIcon } from '../src/ui/icons';
 // (e.g. all 6 Warlock summons render the same shadow sigil), so we require
 // a hand-authored recipe per ability and guard against any two colliding.
 
-const abilityIds = Object.keys(ABILITIES);
+// The Clash hero kits live in their own table but share the icon pipeline.
+const abilityIds = [...Object.keys(ABILITIES), ...Object.keys(MOBA_ABILITIES)];
 
 function serialize(id: string): string {
   const recipe = abilityIconRecipe(id);

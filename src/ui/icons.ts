@@ -1006,6 +1006,69 @@ const PRIMITIVES = {
     ctx.fillStyle = pal.accent;
     ctx.beginPath(); ctx.arc(0, 0, 2.2, 0, TAU); ctx.fill();
   },
+  // --- The Clash signature props (comedy hero kits) ---
+  pan(ctx, pal) {
+    ctx.rotate(0.5);
+    // handle
+    ctx.fillStyle = lin(ctx, 0, -2.5, 0, 2.5, [[0, '#5a5a62'], [1, '#26262c']]);
+    rrPath(ctx, 2, -2.5, 26, 5, 2.5); ctx.fill(); edge(ctx, '#101014', 1);
+    // body
+    ctx.beginPath(); ctx.arc(-9, 0, 15, 0, TAU);
+    ctx.fillStyle = rad(ctx, -14, -5, 20, [[0, pal.light], [0.5, pal.base], [1, pal.dark]]);
+    ctx.fill(); edge(ctx, '#101014', 1.8);
+    noShadow(ctx);
+    ctx.strokeStyle = withAlpha(pal.dark, 0.9); ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(-9, 0, 10.5, 0, TAU); ctx.stroke();
+    ctx.strokeStyle = withAlpha(pal.light, 0.7); ctx.lineWidth = 1.4;
+    ctx.beginPath(); ctx.arc(-9, 0, 13, Math.PI * 0.75, Math.PI * 1.4); ctx.stroke();
+  },
+  fork(ctx, pal) {
+    ctx.rotate(-0.5);
+    // stem
+    ctx.fillStyle = lin(ctx, -2, 0, 2, 0, [[0, pal.light], [1, pal.dark]]);
+    rrPath(ctx, -2, -6, 4, 32, 2); ctx.fill(); edge(ctx, pal.dark, 1);
+    // head + tines
+    rrPath(ctx, -8, -18, 16, 8, 3); ctx.fill(); edge(ctx, pal.dark, 1);
+    for (const x of [-6.2, 0, 6.2]) {
+      rrPath(ctx, x - 1.6, -28, 3.2, 12, 1.6); ctx.fill(); edge(ctx, pal.dark, 0.9);
+    }
+    noShadow(ctx);
+    ctx.strokeStyle = withAlpha(pal.light, 0.8); ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.moveTo(-0.8, -4); ctx.lineTo(-0.8, 22); ctx.stroke();
+  },
+  waffle(ctx, pal) {
+    ctx.beginPath(); ctx.arc(0, 0, 17, 0, TAU);
+    ctx.fillStyle = rad(ctx, -5, -6, 22, [[0, '#e8b45e'], [0.6, '#c98c34'], [1, '#8a5716']]);
+    ctx.fill(); edge(ctx, '#5e3a0c', 1.8);
+    noShadow(ctx);
+    ctx.strokeStyle = withAlpha('#5e3a0c', 0.85); ctx.lineWidth = 2.4;
+    ctx.beginPath();
+    for (const o of [-6, 0, 6]) {
+      ctx.moveTo(-16, o); ctx.lineTo(16, o);
+      ctx.moveTo(o, -16); ctx.lineTo(o, 16);
+    }
+    ctx.save(); ctx.clip(); ctx.stroke(); ctx.restore();
+    // a pat of butter, catching the light
+    rrPath(ctx, -4.5, -4.5, 9, 9, 1.5);
+    ctx.fillStyle = lin(ctx, -4, -4, 4, 4, [[0, '#fff2b0'], [1, pal.accent]]);
+    ctx.fill(); edge(ctx, '#8a5716', 1);
+  },
+  lamp(ctx, pal) {
+    // shade
+    ctx.beginPath();
+    ctx.moveTo(-14, -6); ctx.lineTo(-7, -24); ctx.lineTo(7, -24); ctx.lineTo(14, -6);
+    ctx.closePath();
+    ctx.fillStyle = lin(ctx, 0, -24, 0, -6, [[0, pal.light], [1, pal.base]]);
+    ctx.fill(); edge(ctx, pal.dark, 1.6);
+    // glowing bulb under the shade
+    noShadow(ctx);
+    ctx.fillStyle = rad(ctx, 0, -2, 10, [[0, '#fffbe0'], [0.5, pal.accent], [1, withAlpha(pal.accent, 0)]]);
+    ctx.beginPath(); ctx.arc(0, -2, 10, 0, TAU); ctx.fill();
+    // stem + base
+    ctx.fillStyle = lin(ctx, -1.5, 0, 1.5, 0, [[0, pal.base], [1, pal.dark]]);
+    rrPath(ctx, -1.5, -6, 3, 26, 1.5); ctx.fill(); edge(ctx, pal.dark, 0.8);
+    rrPath(ctx, -10, 20, 20, 4.5, 2); ctx.fill(); edge(ctx, pal.dark, 1);
+  },
 } satisfies Record<string, Painter>;
 type PrimitiveName = keyof typeof PRIMITIVES;
 
@@ -1261,6 +1324,58 @@ const ABILITY_RECIPES: Record<string, IconRecipe> = {
   regrowth: r('nature', 'leafGreen', ['heart', { p: 'leaf', ...BR }], ['sparkle']),
   barkskin: r('earth', 'earthBrown', ['shield', { p: 'leaf', ...BR }]),
   starfire: r('arcane', 'silverWhite', ['moon', { p: 'sunburst', ...BR }], ['sparkle', 'glow']),
+
+  // --- The Clash hero kits (10 heroes x 4 abilities) ---
+  // Snacko, the Trash Bandit (bruiser)
+  moba_pan_smash: r('fury', 'steel', ['pan'], ['motion', 'glow']),
+  moba_yoink: r('fury', 'leather', ['boot', { p: 'meat', ...TR }], ['motion']),
+  moba_grease_fire: r('fire', 'ember', ['pan', { p: 'flame', ...TR }], ['glow']),
+  moba_five_second_rule: r('food', 'leafGreen', ['meat', { p: 'heart', ...BR }], ['sparkle', 'glow']),
+  // Lord Wafflesworth III, the Breakfast Baron (support)
+  moba_fork_of_justice: r('holy', 'holyGold', ['fork', { p: 'sunburst', ...TL }], ['glow']),
+  moba_syrup_slick: r('food', 'earthBrown', ['droplet', { p: 'web', ...BR }], ['drips']),
+  moba_butter_up: r('holy', 'gold', ['shield', { p: 'waffle', ...BR }], ['glow']),
+  moba_brunch_hour: r('food', 'gold', ['waffle'], ['sparkle', 'glow']),
+  // Gerald, Employee of the Month (marksman)
+  moba_stapler_shot: r('steel', 'steel', ['arrow', { p: 'crate', ...TL }], ['motion']),
+  moba_red_tape: r('fury', 'blood', ['scroll', { p: 'web', ...BR }]),
+  moba_audit: r('parchment', 'bone', ['scroll', { p: 'eye', ...TR }], ['drips']),
+  moba_severance: r('fury', 'blood', ['axe', { p: 'coin', ...BR }], ['glow']),
+  // Grandma Vex, the Passive-Aggressor (support)
+  moba_cookie_toss: r('food', 'earthBrown', ['coin', { p: 'heart', ...TR }], ['sparkle']),
+  moba_itchy_sweater: r('cloth', 'cloth', ['chestplate', { p: 'claw_slash', ...BR }]),
+  moba_disappointed_sigh: r('shadow', 'silverWhite', ['eye'], ['arcs']),
+  moba_naptime: r('arcane', 'shadowPurple', ['moon'], ['sparkle', 'glow']),
+  // Blorbo, the Unemployed (bruiser)
+  moba_splat: r('nature', 'venom', [{ p: 'droplet', ...BIG }, { p: 'claw_slash', s: 0.6 }], ['drips']),
+  moba_engulf: r('nature', 'venom', [{ p: 'droplet', ...BIG }, { p: 'skull', s: 0.55 }], ['glow']),
+  moba_acid_reflux: r('nature', 'venom', ['flame'], ['drips', 'glow']),
+  moba_regoo: r('nature', 'leafGreen', ['heart', { p: 'droplet', ...BR }], ['sparkle', 'glow']),
+  // Captain Chairleg, the Furniture Pirate (assassin)
+  moba_splinter_stab: r('wood', 'earthBrown', ['dagger'], ['motion']),
+  moba_flatpack_ambush: r('wood', 'earthBrown', ['crate', { p: 'dagger', ...BR }], ['motion']),
+  moba_peg_leg_sweep: r('wood', 'earthBrown', ['claw_slash', { p: 'boot', ...BR }], ['arcs']),
+  moba_warranty_void: r('shadow', 'blood', ['scroll', { p: 'skull', ...TR }], ['crack', 'glow']),
+  // Professor Zapp, Tenured and Unhinged (mage)
+  moba_pop_quiz: r('arcane', 'arcanePink', ['scroll', { p: 'meteor', ...TR }], ['sparkle']),
+  moba_peer_review: r('arcane', 'arcanePink', ['eye', { p: 'claw_slash', ...BR }], ['glow']),
+  moba_office_hours: r('fire', 'ember', ['meteor', { p: 'scroll', ...BR }], ['glow']),
+  moba_thesis_defense: r('arcane', 'sky', ['shield', { p: 'scroll', ...BR }], ['glow']),
+  // Doug, Middle Manager of Darkness (mage/warlock)
+  moba_touch_base: r('shadow', 'shadowPurple', ['hand'], ['glow']),
+  moba_circle_back: r('shadow', 'shadowPurple', ['sigil_rune'], ['arcs']),
+  moba_synergy_drain: r('shadow', 'venom', ['tendrils'], ['drips']),
+  moba_mandatory_meeting: r('shadow', 'shadowPurple', ['web', { p: 'skull', s: 0.5 }], ['glow']),
+  // Tinker Tallulah, OSHA's Final Warning (support)
+  moba_rocket_wrench: r('storm', 'steel', ['mace', { p: 'flame', ...BR }], ['motion']),
+  moba_duct_tape: r('steel', 'gold', ['belt'], ['sparkle']),
+  moba_jumper_cables: r('storm', 'sky', ['lightning'], ['arcs', 'glow']),
+  moba_untested_prototype: r('fire', 'ember', ['crate', { p: 'lightning', ...TR }], ['crack', 'glow']),
+  // Moth Larry, Lamp Enthusiast (marksman)
+  moba_wing_slap: r('storm', 'cloth', ['wing'], ['motion']),
+  moba_dust_gust: r('nature', 'bone', ['wing', { p: 'moon', ...TR }], ['sparkle']),
+  moba_erratic_flight: r('storm', 'sky', [{ p: 'wing', rot: -0.6 }], ['motion']),
+  moba_the_lamp: r('holy', 'gold', ['lamp'], ['glow', 'sparkle']),
 };
 
 const ITEM_RECIPES: Record<string, IconRecipe> = {
