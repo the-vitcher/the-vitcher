@@ -38,7 +38,7 @@ export interface InputCallbacks {
   onTargetFriendly(): void;
   onCycleFriendly(): void;
   onAbility(slot: number): void;
-  onUiKey(key: 'interact' | 'bags' | 'char' | 'spellbook' | 'talents' | 'questlog' | 'map' | 'nameplates' | 'escape' | 'chat' | 'meters' | 'social' | 'arena' | 'leaderboard'): void;
+  onUiKey(key: 'interact' | 'bags' | 'char' | 'spellbook' | 'talents' | 'questlog' | 'map' | 'nameplates' | 'escape' | 'chat' | 'meters' | 'social' | 'arena' | 'leaderboard' | 'mobaRecall'): void;
   onEmoteWheel(open: boolean): void;
   onClickPick(x: number, y: number, button: number): void;
   /** Attack-move key pressed (only fires while Attack Move mode is on); x/y is the cursor. */
@@ -586,6 +586,7 @@ export class Input {
       case 'arena': this.cb.onUiKey('arena'); return;
       case 'leaderboard': this.cb.onUiKey('leaderboard'); return;
       case 'chat': this.cb.onUiKey('chat'); return;
+      case 'mobaRecall': this.cb.onUiKey('mobaRecall'); return;
     }
   }
 

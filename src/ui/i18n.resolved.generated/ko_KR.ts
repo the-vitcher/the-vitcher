@@ -286,7 +286,8 @@ export const ko_KR: EnTranslations = {
     "keybinds": {
       "emoteWheel": "감정 표현 휠",
       "targetFriendly": "가장 가까운 아군 대상 지정",
-      "targetFriendlyNext": "아군 대상 순환"
+      "targetFriendlyNext": "아군 대상 순환",
+      "mobaRecall": "귀환 (The Clash)"
     },
     "options": {
       "clickMoveLeft": "왼쪽 클릭",

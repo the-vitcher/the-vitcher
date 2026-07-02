@@ -90,3 +90,14 @@ describe('combat SFX policy', () => {
     expect(shouldPlayCombatImpactForTarget(target('player', 'warrior'))).toBe(true);
   });
 });
+
+describe('The Clash SFX policy', () => {
+  it('mutes Clash unit grunts (minions, creeps, structures) but keeps weapon impacts', () => {
+    for (const id of ['moba_minion_melee', 'moba_minion_ranged', 'moba_creep_goose', 'moba_tower', 'moba_core']) {
+      expect(shouldPlayMobVoiceSfxForEntity(target('mob', id))).toBe(false);
+      expect(shouldPlayCombatImpactForTarget(target('mob', id))).toBe(true);
+    }
+    // ordinary MMO mobs still grunt
+    expect(shouldPlayMobVoiceSfxForEntity(target('mob', 'crypt_shambler'))).toBe(true);
+  });
+});

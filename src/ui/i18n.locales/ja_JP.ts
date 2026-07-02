@@ -2474,6 +2474,7 @@ export const ja_JP: Partial<Record<TranslationKey, string>> = {
   "hudChrome.spectator.none": "生存中のクロウラーがいません",
   "hudChrome.clash.tagline": "ヒーロー10人。レーン3本。品位ゼロ。",
   "hudChrome.clash.loading": "The Clash に入場中...",
+  "hudChrome.keybinds.mobaRecall": "リコール（The Clash）",
   "hudChrome.clash.lobbyTitle": "ゲームロビー",
   "hudChrome.clash.host3": "3v3 を作成",
   "hudChrome.clash.host5": "5v5 を作成",

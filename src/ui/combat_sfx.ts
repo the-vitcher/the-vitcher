@@ -16,5 +16,8 @@ export function shouldPlayCombatImpactForTarget(target: Entity): boolean {
 export function shouldPlayMobVoiceSfxForEntity(entity: Entity): boolean {
   return entity.kind === 'mob'
     && entity.templateId !== 'nythraxis_scourge_of_thornpeak'
-    && entity.templateId !== 'nythraxis_skeleton_warrior';
+    && entity.templateId !== 'nythraxis_skeleton_warrior'
+    // The Clash units stay quiet: no grunting from minions/creeps/structures
+    // when hit or aggroed (weapon-impact sfx are gated separately and stay).
+    && !entity.templateId.startsWith('moba_');
 }

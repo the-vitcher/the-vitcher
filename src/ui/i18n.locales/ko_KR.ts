@@ -2474,6 +2474,7 @@ export const ko_KR: Partial<Record<TranslationKey, string>> = {
   "hudChrome.spectator.none": "생존한 크롤러 없음",
   "hudChrome.clash.tagline": "영웅 10명. 라인 3개. 체면 제로.",
   "hudChrome.clash.loading": "The Clash 입장 중...",
+  "hudChrome.keybinds.mobaRecall": "귀환 (The Clash)",
   "hudChrome.clash.lobbyTitle": "게임 로비",
   "hudChrome.clash.host3": "3v3 만들기",
   "hudChrome.clash.host5": "5v5 만들기",

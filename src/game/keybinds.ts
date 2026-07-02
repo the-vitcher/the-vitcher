@@ -63,6 +63,8 @@ export const BIND_ACTIONS: BindAction[] = [
   { id: 'arena', label: 'Arena (Ashen Coliseum)', category: 'Interface', kind: 'edge', defaults: ['KeyG'] },
   { id: 'leaderboard', label: 'Leaderboard', category: 'Interface', kind: 'edge', defaults: ['KeyK'] },
   { id: 'chat', label: 'Open Chat', category: 'Interface', kind: 'edge', defaults: ['Enter', 'NumpadEnter'] },
+  // The Clash: channel a recall home (no-op outside a moba match)
+  { id: 'mobaRecall', label: 'Recall (The Clash)', category: 'Interface', kind: 'edge', defaults: ['KeyT'] },
   { id: 'emoteWheel', label: 'Emote Wheel', category: 'Interface', kind: 'held', defaults: ['KeyX'] },
   // Action bar (slot 0 = Attack)
   ...SLOT_DEFAULTS.map((code, i): BindAction => ({

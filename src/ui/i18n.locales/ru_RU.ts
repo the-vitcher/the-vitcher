@@ -2474,6 +2474,7 @@ export const ru_RU: Partial<Record<TranslationKey, string>> = {
   "hudChrome.spectator.none": "Нет живых краулеров",
   "hudChrome.clash.tagline": "Десять героев. Три линии. Ноль достоинства.",
   "hudChrome.clash.loading": "Вход в The Clash...",
+  "hudChrome.keybinds.mobaRecall": "Возврат (The Clash)",
   "hudChrome.clash.lobbyTitle": "Лобби игр",
   "hudChrome.clash.host3": "Создать 3v3",
   "hudChrome.clash.host5": "Создать 5v5",

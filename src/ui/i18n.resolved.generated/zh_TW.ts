@@ -286,7 +286,8 @@ export const zh_TW: EnTranslations = {
     "keybinds": {
       "emoteWheel": "表情輪盤",
       "targetFriendly": "選取最近友方",
-      "targetFriendlyNext": "切換友方目標"
+      "targetFriendlyNext": "切換友方目標",
+      "mobaRecall": "回城（The Clash）"
     },
     "options": {
       "clickMoveLeft": "左鍵",

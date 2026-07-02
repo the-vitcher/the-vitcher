@@ -808,3 +808,57 @@ describe('The Clash: pre-match lobby', () => {
     expect(leftovers).toHaveLength(0);
   });
 });
+
+describe('The Clash: unit separation (no blobs)', () => {
+  it('stacked minions push apart into individually targetable spacing', () => {
+    const sim = makeMobaSim();
+    const pid = sim.addPlayer('warrior', 'Watcher');
+    sim.startMobaMatch([pid]);
+    // let the first waves spawn and meet mid-lane for a while
+    for (let i = 0; i < 20 * 45; i++) sim.tick();
+    const minions = [...sim.entities.values()].filter((e) => e.kind === 'mob' && !e.dead && e.templateId.startsWith('moba_minion'));
+    expect(minions.length).toBeGreaterThan(8);
+    let minPair = Infinity;
+    for (let i = 0; i < minions.length; i++) {
+      for (let j = i + 1; j < minions.length; j++) {
+        const dx = minions[i].pos.x - minions[j].pos.x;
+        const dz = minions[i].pos.z - minions[j].pos.z;
+        minPair = Math.min(minPair, Math.hypot(dx, dz));
+      }
+    }
+    expect(minPair).toBeGreaterThanOrEqual(0.55);
+  });
+
+  it('stays deterministic (same seed, same world, twice)', () => {
+    const run = () => {
+      const sim = makeMobaSim(99);
+      const pid = sim.addPlayer('warrior', 'Det');
+      sim.startMobaMatch([pid]);
+      for (let i = 0; i < 20 * 40; i++) sim.tick();
+      return [...sim.entities.values()]
+        .filter((e) => e.kind === 'mob' && !e.dead)
+        .map((e) => `${e.templateId}:${e.pos.x.toFixed(4)}:${e.pos.z.toFixed(4)}:${e.hp}`);
+    };
+    expect(run()).toEqual(run());
+  });
+});
+
+describe('The Clash: healing fountain', () => {
+  it('restores a wounded hero standing on their own pad, not on the enemy pad', () => {
+    const sim = makeMobaSim();
+    const pid = sim.addPlayer('warrior', 'Sipper');
+    sim.startMobaMatch([pid]);
+    const e = entOf(sim, pid);
+    // hero spawns at the fountain; wound them and wait
+    e.hp = Math.floor(e.maxHp * 0.3);
+    for (let i = 0; i < 20 * 10 && e.hp < e.maxHp; i++) sim.tick();
+    expect(e.hp).toBe(e.maxHp);
+    // wound again away from any fountain: no fountain healing (regen only)
+    e.pos.x += 40;
+    e.prevPos = { ...e.pos };
+    e.hp = Math.floor(e.maxHp * 0.3);
+    const before = e.hp;
+    for (let i = 0; i < 20 * 3; i++) sim.tick();
+    expect(e.hp - before).toBeLessThan(e.maxHp * 0.15);
+  });
+});

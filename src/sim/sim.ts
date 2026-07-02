@@ -13,6 +13,7 @@ import {
   MOBA_RECALL_CHANNEL_SEC, MOBA_RECALL_CD_SEC, MOBA_MAX_ABILITY_RANK, MOBA_ULT_RANKS,
   MOBA_ULT_HERO_LEVEL, MOBA_MINION_XP_PCT, MOBA_TOWER_XP_PCT, MOBA_HERO_KILL_XP_PCT,
   MOBA_CAMP_XP_PCT, MOBA_TOWER_TEAM_GOLD, MOBA_JUNGLE_CAMPS, MOBA_CAMP_RESPAWN_SEC,
+  MOBA_FOUNTAIN, MOBA_SEPARATION, mobaSeparationStep, type MobaBody,
   mobaScaleEffectForRank, type MobaLaneIndex, type MobaTeam,
 } from './moba';
 import { MOBA_ABILITIES, MOBA_HEROES } from './content/moba';
@@ -9310,6 +9311,49 @@ export class Sim {
     }
   }
 
+  // Standing on your own fountain pad restores health and resource fast (the
+  // classic MOBA fountain). Enemy fountains do nothing (their towers do).
+  private mobaFountainHeal(e: Entity): void {
+    if (!e.mobaTeam || e.dead) return;
+    const match = this.mobaMatch;
+    const inst = match ? this.instances.find((i) => i.dungeonId === 'moba_lane' && i.slot === match.slot) : null;
+    if (!inst) return;
+    const origin = this.instanceOriginOf(inst);
+    const pad = mobaHeroSpawn(e.mobaTeam);
+    if (dist2d(e.pos, { x: origin.x + pad.x, y: 0, z: origin.z + pad.z }) > MOBA_FOUNTAIN.radius) return;
+    if (e.hp < e.maxHp) e.hp = Math.min(e.maxHp, e.hp + e.maxHp * MOBA_FOUNTAIN.hpPctPerSec * DT);
+    if (e.resourceType !== 'rage' && e.resource < e.maxResource) {
+      e.resource = Math.min(e.maxResource, e.resource + e.maxResource * MOBA_FOUNTAIN.resourcePctPerSec * DT);
+    }
+  }
+
+  // Un-blob the armies: soft-separate live Clash mobs (minions, creeps) so a
+  // stacked wave spreads into individually targetable units. Pure push math in
+  // moba.ts; entity-insertion iteration order keeps it deterministic. Towers,
+  // cores, and players never shift.
+  private mobaSeparateUnits(): void {
+    const maxStep = MOBA_SEPARATION.maxStepPerSec * DT;
+    const bodyOf = (m: Entity): number => (MOBS[m.templateId]?.scale ?? 1) * MOBA_SEPARATION.radiusPerScale;
+    const isMover = (m: Entity): boolean =>
+      m.kind === 'mob' && !m.dead && m.templateId.startsWith('moba_') && !MOBS[m.templateId]?.mobaRole?.match(/tower|core/);
+    for (const e of this.entities.values()) {
+      if (!isMover(e)) continue;
+      const r = bodyOf(e);
+      const neighbors: MobaBody[] = [];
+      this.grid.forEachInRadius(e.pos.x, e.pos.z, r + 1.2, (n) => {
+        if (n.id === e.id || !isMover(n)) return;
+        neighbors.push({ id: n.id, x: n.pos.x, z: n.pos.z, r: bodyOf(n) });
+      });
+      if (neighbors.length === 0) continue;
+      const step = mobaSeparationStep({ id: e.id, x: e.pos.x, z: e.pos.z, r }, neighbors, maxStep);
+      if (!step) continue;
+      const resolved = resolvePosition(this.cfg.seed, e.pos.x + step.x, e.pos.z + step.z, r);
+      e.pos.x = resolved.x;
+      e.pos.z = resolved.z;
+      e.pos.y = groundHeight(e.pos.x, e.pos.z, this.cfg.seed);
+    }
+  }
+
   // A core is invulnerable until at least one of its lanes has lost every tower.
   private mobaCoreInvulnerable(core: Entity): boolean {
     const match = this.mobaMatch;
@@ -9392,12 +9436,14 @@ export class Sim {
     }
     for (const id of [...match.minionIds]) { const m = this.entities.get(id); if (!m || m.dead) match.minionIds.delete(id); }
     this.updateMobaCamps(match);
+    this.mobaSeparateUnits();
     for (const pid of match.teams.keys()) {
       const meta = this.players.get(pid);
       const e = this.entities.get(pid);
       if (!meta || !e) continue;
       if (!e.dead) {
         this.updateMobaRecall(meta, e);
+        this.mobaFountainHeal(e);
         continue;
       }
       if (meta.mobaRespawnLeft > 0) {

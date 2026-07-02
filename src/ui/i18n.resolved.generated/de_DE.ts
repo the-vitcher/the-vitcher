@@ -286,7 +286,8 @@ export const de_DE: EnTranslations = {
     "keybinds": {
       "emoteWheel": "Emote-Rad",
       "targetFriendly": "Nächsten Verbündeten anvisieren",
-      "targetFriendlyNext": "Freundliches Ziel wechseln"
+      "targetFriendlyNext": "Freundliches Ziel wechseln",
+      "mobaRecall": "Recall (The Clash)"
     },
     "options": {
       "clickMoveLeft": "Linksklick",

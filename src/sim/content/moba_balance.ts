@@ -108,3 +108,20 @@ export const MOBA_RANKS = {
 
 // Hero seat level (level 1, one skill point, DotA-style).
 export const MOBA_HERO_SEAT_LEVEL = 1;
+
+// The base fountain: standing on your own team's spawn pad restores health and
+// resource fast (percent of max per second, applied per tick).
+export const MOBA_FOUNTAIN = {
+  radius: 8, // yards from the fountain point
+  hpPctPerSec: 0.10,
+  resourcePctPerSec: 0.10,
+};
+
+// Soft unit separation: Clash mobs push each other apart so a wave never
+// stacks into one untargetable blob. Radius scales with the template's visual
+// scale; the per-tick displacement is capped so it reads as shuffling, not
+// teleporting.
+export const MOBA_SEPARATION = {
+  radiusPerScale: 0.55, // body radius = scale x this
+  maxStepPerSec: 2.5, // yards/second cap on the push-apart drift
+};

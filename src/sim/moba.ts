@@ -268,6 +268,42 @@ export const MOBA_MATCH_WARMUP_SEC = MOBA_TIMERS.warmupSec;
 // cancels it, and a fresh attempt waits out the cooldown (stamped at START, so a
 // cancelled recall cannot be spammed). ---
 export const MOBA_RECALL_CHANNEL_SEC = MOBA_TIMERS.recallChannelSec;
+export { MOBA_FOUNTAIN, MOBA_SEPARATION } from './content/moba_balance';
+
+// --- Soft unit separation (pure vector math; the sim applies the result) ---
+
+export interface MobaBody { id: number; x: number; z: number; r: number }
+
+// The capped push-apart step for one unit given its overlapping neighbors:
+// half of each pairwise overlap, pushed away along the center line (perfectly
+// stacked pairs tie-break on a fixed axis by id order so both sides separate
+// deterministically). Returns null when nothing overlaps.
+export function mobaSeparationStep(self: MobaBody, neighbors: readonly MobaBody[], maxStep: number): { x: number; z: number } | null {
+  let px = 0;
+  let pz = 0;
+  for (const n of neighbors) {
+    if (n.id === self.id) continue;
+    const dx = self.x - n.x;
+    const dz = self.z - n.z;
+    const d = Math.hypot(dx, dz);
+    const overlap = self.r + n.r - d;
+    if (overlap <= 0) continue;
+    if (d < 1e-6) {
+      // exactly stacked: deterministic axis split by id order
+      px += self.id < n.id ? overlap * 0.5 : -overlap * 0.5;
+      continue;
+    }
+    px += (dx / d) * overlap * 0.5;
+    pz += (dz / d) * overlap * 0.5;
+  }
+  if (px === 0 && pz === 0) return null;
+  const len = Math.hypot(px, pz);
+  if (len > maxStep) {
+    px = (px / len) * maxStep;
+    pz = (pz / len) * maxStep;
+  }
+  return { x: px, z: pz };
+}
 export const MOBA_RECALL_CD_SEC = MOBA_TIMERS.recallCdSec;
 
 // --- Structure / minion levels (drive HP/damage via the mob templates) ---

@@ -286,7 +286,8 @@ export const en_XA: EnTranslations = {
     "keybinds": {
       "emoteWheel": "[Éɱóţé Ŵĥééļ]",
       "targetFriendly": "[Ţáŕĝéţ Ñéáŕéšţ Ƒŕíéñðļý]",
-      "targetFriendlyNext": "[Çýçļé Ƒŕíéñðļý Ţáŕĝéţ]"
+      "targetFriendlyNext": "[Çýçļé Ƒŕíéñðļý Ţáŕĝéţ]",
+      "mobaRecall": "[Ŕéçáļļ (Ţĥé Çļášĥ)]"
     },
     "options": {
       "clickMoveLeft": "[Ļéƒţ Çļíçķ]",

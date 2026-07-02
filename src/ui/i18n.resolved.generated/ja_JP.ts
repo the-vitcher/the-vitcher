@@ -286,7 +286,8 @@ export const ja_JP: EnTranslations = {
     "keybinds": {
       "emoteWheel": "エモートホイール",
       "targetFriendly": "最も近い味方をターゲット",
-      "targetFriendlyNext": "味方ターゲットを順に切り替え"
+      "targetFriendlyNext": "味方ターゲットを順に切り替え",
+      "mobaRecall": "リコール（The Clash）"
     },
     "options": {
       "clickMoveLeft": "左クリック",

@@ -195,10 +195,12 @@ export class MobaHud {
       const pips = Array.from({ length: maxRank }, (_, p) => `<i class="pip${p < rank ? ' on' : ''}"></i>`).join('');
       const learnLabel = rank === 0 ? t('hudChrome.moba.learn') : t('hudChrome.moba.upgrade');
       return `<div class="mskill${rank === 0 ? ' unlearned' : ''}${ult ? ' ult' : ''}">
-        <img src="${iconDataUrl('ability', id, 34)}" alt="${esc(def.name)}" tabindex="0" data-ability="${esc(id)}" data-rank="${rank}" data-ult="${ult ? 1 : 0}">
-        <span class="pips" aria-hidden="true">${pips}</span>
-        ${locked ? `<span class="mskill-lock">${esc(t('hudChrome.moba.ultLocked', { level: String(MOBA_ULT_HERO_LEVEL) }))}</span>` : ''}
-        ${canLearn ? `<button type="button" class="mskill-learn" data-learn="${esc(id)}" aria-label="${esc(learnLabel)} ${esc(def.name)}">+</button>` : ''}
+        <span class="mskill-core">
+          <img src="${iconDataUrl('ability', id, 34)}" alt="${esc(def.name)}" tabindex="0" data-ability="${esc(id)}" data-rank="${rank}" data-ult="${ult ? 1 : 0}">
+          <span class="pips" aria-hidden="true">${pips}</span>
+          ${locked ? `<span class="mskill-lock">${esc(t('hudChrome.moba.ultLocked', { level: String(MOBA_ULT_HERO_LEVEL) }))}</span>` : ''}
+        </span>
+        ${canLearn ? `<button type="button" class="mskill-learn" data-learn="${esc(id)}" data-ability="${esc(id)}" data-rank="${rank}" data-ult="${ult ? 1 : 0}" aria-label="${esc(learnLabel)} ${esc(def.name)}">+</button>` : ''}
       </div>`;
     }).join('');
     const points = st.skillPoints > 0

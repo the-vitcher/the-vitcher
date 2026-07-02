@@ -2474,6 +2474,7 @@ export const zh_TW: Partial<Record<TranslationKey, string>> = {
   "hudChrome.spectator.none": "沒有存活的爬行者",
   "hudChrome.clash.tagline": "十位英雄。三條兵線。毫無體面。",
   "hudChrome.clash.loading": "正在進入 The Clash……",
+  "hudChrome.keybinds.mobaRecall": "回城（The Clash）",
   "hudChrome.clash.lobbyTitle": "遊戲大廳",
   "hudChrome.clash.host3": "建立 3v3",
   "hudChrome.clash.host5": "建立 5v5",

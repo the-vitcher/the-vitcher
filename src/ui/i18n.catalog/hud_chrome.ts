@@ -165,6 +165,7 @@ export const hudChromeStrings = {
     emoteWheel: "Emote Wheel",
     targetFriendly: "Target Nearest Friendly",
     targetFriendlyNext: "Cycle Friendly Target",
+    mobaRecall: "Recall (The Clash)",
   },
   // Click-to-move mouse-button toggle labels (Key Bindings panel). The button id
   // 0/2 maps to these at the HUD render boundary.

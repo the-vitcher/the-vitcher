@@ -249,7 +249,11 @@
     position: fixed; bottom: 148px; left: 50%; transform: translateX(-50%);
     z-index: 41; display: flex; align-items: flex-end; gap: 8px;
   }
-  .mskill { position: relative; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  /* Each skill cell is a ROW: the icon+pips column, with the learn "+" BESIDE
+     it (not floating over it) so hovering the icon for its tooltip is never
+     obstructed while deciding what to learn. */
+  .mskill { position: relative; display: flex; flex-direction: row; align-items: center; gap: 5px; }
+  .mskill-core { position: relative; display: flex; flex-direction: column; align-items: center; gap: 3px; }
   .mskill img { width: 34px; height: 34px; border-radius: 6px; border: 1px solid #6f5a2a; display: block; }
   .mskill.unlearned img { filter: grayscale(1) brightness(0.55); }
   .mskill.ult img { border-color: #b98cff; }
@@ -262,7 +266,6 @@
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
   }
   .mskill-learn {
-    position: absolute; top: -22px; left: 50%; transform: translateX(-50%);
     min-width: 40px; min-height: 40px; border-radius: 50%; cursor: pointer;
     border: 2px solid #ffd100; background: rgba(70, 54, 8, 0.95);
     color: #ffd100; font: 800 20px/1 system-ui, sans-serif;

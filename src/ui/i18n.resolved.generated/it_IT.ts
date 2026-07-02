@@ -286,7 +286,8 @@ export const it_IT: EnTranslations = {
     "keybinds": {
       "emoteWheel": "Ruota emote",
       "targetFriendly": "Bersaglia l'amico più vicino",
-      "targetFriendlyNext": "Scorri i bersagli amici"
+      "targetFriendlyNext": "Scorri i bersagli amici",
+      "mobaRecall": "Recall (The Clash)"
     },
     "options": {
       "clickMoveLeft": "Clic sinistro",
