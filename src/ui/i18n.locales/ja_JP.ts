@@ -2472,6 +2472,8 @@ export const ja_JP: Partial<Record<TranslationKey, string>> = {
   "hudChrome.spectator.prev": "前のクロウラー",
   "hudChrome.spectator.next": "次のクロウラー",
   "hudChrome.spectator.none": "生存中のクロウラーがいません",
+  "hudChrome.clash.tagline": "ヒーロー10人。レーン3本。品位ゼロ。",
+  "hudChrome.clash.loading": "The Clash に入場中...",
   "hudChrome.moba.heroSelectTitle": "ヒーローを選ぼう",
   "hudChrome.moba.changeHero": "ヒーロー変更",
   "hudChrome.moba.warmup": "クラッシュがまもなく始まる",

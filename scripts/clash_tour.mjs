@@ -28,11 +28,27 @@ page.on('console', (msg) => { if (msg.type() === 'error') errors.push('CONSOLE: 
 
 await page.goto(`${URL}/?clash=1`, { waitUntil: 'domcontentloaded', timeout: 60000 });
 await page.waitForSelector('#btn-offline', { timeout: 30000 });
+
+// --- Clash branding + username-only boot (no class/skin pickers) ---
+const branding = await page.evaluate(() => ({
+  clashMode: document.body.classList.contains('clash-mode'),
+  wordmarkShown: getComputedStyle(document.querySelector('#clash-brand')).display !== 'none',
+  logoHidden: getComputedStyle(document.querySelector('#title-logo')).display === 'none',
+  title: document.title,
+}));
+check('Clash chrome active (body class + wordmark, WoCC logo hidden)',
+  branding.clashMode && branding.wordmarkShown && branding.logoHidden, JSON.stringify(branding));
+check('page title is The Clash', branding.title === 'The Clash', branding.title);
+
 await page.evaluate(() => document.querySelector('#btn-offline').click());
 await sleep(200);
+const offlinePanel = await page.evaluate(() => ({
+  classRowHidden: getComputedStyle(document.querySelector('#offline-select .mini-class-row')).display === 'none',
+  nameShown: getComputedStyle(document.querySelector('#char-name')).display !== 'none',
+}));
+check('offline start is username-only (class row hidden, name input shown)',
+  offlinePanel.classRowHidden && offlinePanel.nameShown, JSON.stringify(offlinePanel));
 await page.type('#char-name', 'Clasher');
-await page.evaluate(() => document.querySelector('#offline-select .mini-class[data-class="warrior"]')?.click());
-await sleep(150);
 await page.evaluate(() => document.querySelector('#btn-start-offline')?.click());
 await page.waitForFunction(() => window.__game && window.__game.sim && window.__game.sim.player, { timeout: 60000 });
 await sleep(1500);

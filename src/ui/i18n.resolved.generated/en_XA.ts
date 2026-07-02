@@ -217,6 +217,10 @@ export const en_XA: EnTranslations = {
       "next": "[Ñéẋţ çŕáŵļéŕ]",
       "none": "[Ñó ļíʋé çŕáŵļéŕš]"
     },
+    "clash": {
+      "tagline": "[Ţéñ ĥéŕóéš. Ţĥŕéé ļáñéš. Žéŕó ðíĝñíţý.]",
+      "loading": "[Éñţéŕíñĝ ţĥé Çļášĥ...]"
+    },
     "moba": {
       "heroSelectTitle": "[Çĥóóšé ýóúŕ ĥéŕó]",
       "changeHero": "[Çĥáñĝé ĥéŕó]",

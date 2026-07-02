@@ -568,7 +568,10 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse): P
       // characters the account has on each realm (for the realm-list screen)
       const accountId = await bearerAccount(req);
       const characters = accountId !== null ? await characterCountsByRealm(accountId) : {};
-      return json(res, 200, { current: REALM, realms: REALM_DIRECTORY, characters });
+      // The Clash: a CLASH_MODE deployment advertises itself so the client can
+      // swap to Clash chrome and the streamlined (no charselect) entry flow.
+      const clash = process.env.CLASH_MODE === '1' ? 1 : 0;
+      return json(res, 200, { current: REALM, realms: REALM_DIRECTORY, characters, clash });
     }
     if (req.method === 'GET' && url === '/api/search') {
       const accountId = await bearerAccount(req);

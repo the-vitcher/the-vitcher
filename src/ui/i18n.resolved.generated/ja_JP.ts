@@ -217,6 +217,10 @@ export const ja_JP: EnTranslations = {
       "next": "次のクロウラー",
       "none": "生存中のクロウラーがいません"
     },
+    "clash": {
+      "tagline": "ヒーロー10人。レーン3本。品位ゼロ。",
+      "loading": "The Clash に入場中..."
+    },
     "moba": {
       "heroSelectTitle": "ヒーローを選ぼう",
       "changeHero": "ヒーロー変更",

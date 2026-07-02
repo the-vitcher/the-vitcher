@@ -2472,6 +2472,8 @@ export const ko_KR: Partial<Record<TranslationKey, string>> = {
   "hudChrome.spectator.prev": "이전 크롤러",
   "hudChrome.spectator.next": "다음 크롤러",
   "hudChrome.spectator.none": "생존한 크롤러 없음",
+  "hudChrome.clash.tagline": "영웅 10명. 라인 3개. 체면 제로.",
+  "hudChrome.clash.loading": "The Clash 입장 중...",
   "hudChrome.moba.heroSelectTitle": "영웅을 선택하세요",
   "hudChrome.moba.changeHero": "영웅 변경",
   "hudChrome.moba.warmup": "클래시가 곧 시작됩니다",

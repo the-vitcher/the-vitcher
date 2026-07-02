@@ -217,6 +217,10 @@ export const it_IT: EnTranslations = {
       "next": "Next crawler",
       "none": "No live crawlers"
     },
+    "clash": {
+      "tagline": "Ten heroes. Three lanes. Zero dignity.",
+      "loading": "Entering the Clash..."
+    },
     "moba": {
       "heroSelectTitle": "Choose your hero",
       "changeHero": "Change hero",

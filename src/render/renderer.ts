@@ -651,17 +651,21 @@ export class Renderer {
   private sunDir = new THREE.Vector3();
   private sunAzimuth = new THREE.Vector3(SUN_DIR.x, 0, SUN_DIR.z).normalize();
   private clouds: THREE.Sprite[] = [];
-  private waterView: WaterView;
-  private terrainView: TerrainView;
-  private foliage: FoliageView;
-  private fish: FishView;
-  private critters: CritterField;
-  private motes: MotesView;
-  private birds: BirdsView;
-  private impactSite: ImpactSiteView;
+  // The overworld subsystems are null in Clash (MOBA) mode: the battleground is
+  // a standalone world 9km from the overworld strip, so terrain/water/foliage/
+  // props/wildlife never build (faster boot, less memory). Never assume these
+  // exist without a guard.
+  private waterView: WaterView | null = null;
+  private terrainView: TerrainView | null = null;
+  private foliage: FoliageView | null = null;
+  private fish: FishView | null = null;
+  private critters: CritterField | null = null;
+  private motes: MotesView | null = null;
+  private birds: BirdsView | null = null;
+  private impactSite: ImpactSiteView | null = null;
   private fogScratch = new THREE.Color();
-  private flames: THREE.Mesh[];
-  private fireLights: THREE.PointLight[];
+  private flames: THREE.Mesh[] = [];
+  private fireLights: THREE.PointLight[] = [];
   private effectivePointLights = 0;
   private propsView!: {
     update(
@@ -900,43 +904,48 @@ export class Renderer {
       }
     }
 
-    // clouds, spread over the whole zone strip (3 sprite variants + a faint
-    // high cirrus layer on the full pipeline)
-    for (const cl of buildClouds(LOW_GFX).sprites) {
-      setRenderCategory(cl, 'sky');
-      this.clouds.push(cl);
-      this.scene.add(cl);
-    }
+    // The Clash (MOBA) is a standalone world: skip every overworld build (the
+    // strip sits 9km away and is never visible). clash_world.ts builds the
+    // battleground lazily via buildInterior instead.
+    if (!this.sim.cfg.mobaMode) {
+      // clouds, spread over the whole zone strip (3 sprite variants + a faint
+      // high cirrus layer on the full pipeline)
+      for (const cl of buildClouds(LOW_GFX).sprites) {
+        setRenderCategory(cl, 'sky');
+        this.clouds.push(cl);
+        this.scene.add(cl);
+      }
 
-    this.terrainView = buildTerrain(this.sim.cfg.seed);
-    setRenderCategory(this.terrainView.group, 'terrain');
-    this.scene.add(this.terrainView.group);
-    this.waterView = buildWater(this.sim.cfg.seed);
-    for (const mesh of this.waterView.meshes) {
-      setRenderCategory(mesh, 'water');
-      this.scene.add(mesh);
-    }
+      this.terrainView = buildTerrain(this.sim.cfg.seed);
+      setRenderCategory(this.terrainView.group, 'terrain');
+      this.scene.add(this.terrainView.group);
+      this.waterView = buildWater(this.sim.cfg.seed);
+      for (const mesh of this.waterView.meshes) {
+        setRenderCategory(mesh, 'water');
+        this.scene.add(mesh);
+      }
 
-    this.foliage = buildFoliage(this.sim.cfg.seed);
-    setRenderCategory(this.foliage.group, 'foliage');
-    this.scene.add(this.foliage.group);
-    this.fish = buildFish(this.sim.cfg.seed);
-    setRenderCategory(this.fish.group, 'fish');
-    this.scene.add(this.fish.group);
-    this.critters = buildCritters(this.sim.cfg.seed);
-    this.scene.add(this.critters.group);
-    this.motes = buildMotes(this.sim.cfg.seed);
-    this.scene.add(this.motes.group);
-    this.birds = buildBirds(this.sim.cfg.seed);
-    this.scene.add(this.birds.group);
-    this.impactSite = buildImpactSite(this.sim.cfg.seed);
-    this.scene.add(this.impactSite.group);
-    const props = buildProps(this.sim.cfg.seed);
-    setRenderCategory(props.group, 'props');
-    this.scene.add(props.group);
-    this.flames = props.flames;
-    this.fireLights = props.fireLights;
-    this.propsView = props;
+      this.foliage = buildFoliage(this.sim.cfg.seed);
+      setRenderCategory(this.foliage.group, 'foliage');
+      this.scene.add(this.foliage.group);
+      this.fish = buildFish(this.sim.cfg.seed);
+      setRenderCategory(this.fish.group, 'fish');
+      this.scene.add(this.fish.group);
+      this.critters = buildCritters(this.sim.cfg.seed);
+      this.scene.add(this.critters.group);
+      this.motes = buildMotes(this.sim.cfg.seed);
+      this.scene.add(this.motes.group);
+      this.birds = buildBirds(this.sim.cfg.seed);
+      this.scene.add(this.birds.group);
+      this.impactSite = buildImpactSite(this.sim.cfg.seed);
+      this.scene.add(this.impactSite.group);
+      const props = buildProps(this.sim.cfg.seed);
+      setRenderCategory(props.group, 'props');
+      this.scene.add(props.group);
+      this.flames = props.flames;
+      this.fireLights = props.fireLights;
+      this.propsView = props;
+    }
 
     // selection ring — a classic target reticle: a base ring plus four
     // inward-pointing ticks. The base ring is draped over the terrain each
@@ -1163,8 +1172,8 @@ export class Renderer {
       this.appliedBudgetLevels = { ...state.levels };
     }
     this.effectiveRenderScale = Math.min(this.renderBudgetMaxScale(), Math.max(this.renderBudgetMinScale(), state.levels.resolution));
-    this.foliage.setGrassQuality(state.levels.grass);
-    this.foliage.setModelQuality(state.levels.foliage);
+    this.foliage?.setGrassQuality(state.levels.grass);
+    this.foliage?.setModelQuality(state.levels.foliage);
     this.vfx.setQuality(state.levels.vfx);
     this.effectivePointLights = Math.max(1, Math.round(GFX.maxPointLights * state.levels.lighting));
     if (Math.abs(previousScale - this.effectiveRenderScale) >= 0.001) this.applyResolution();
@@ -1267,7 +1276,7 @@ export class Renderer {
       textures: info.memory.textures,
       programs: info.programs?.length ?? 0,
       views: this.views.size,
-      foliage: this.foliage.perfStats(),
+      foliage: this.foliage?.perfStats() ?? emptyFoliagePerfStats(),
       glVendor: this.glVendor,
       glRenderer: this.glRenderer,
       contextLost: this.contextLostCount,
@@ -1588,21 +1597,21 @@ export class Renderer {
     this.updateCamera(this.tmpV, dt);
     this.updateAmbience(p.pos.x, this.camera.position.y, dt);
     this.budgetFireLights(p.pos.x, p.pos.z);
-    this.waterView.update(this.time);
+    this.waterView?.update(this.time);
     const fogFar = (this.scene.fog as THREE.Fog).far;
-    this.terrainView.update(this.camera.position.x, this.camera.position.z, fogFar);
-    this.propsView.update(
+    this.terrainView?.update(this.camera.position.x, this.camera.position.z, fogFar);
+    this.propsView?.update(
       this.camera.position.x, this.camera.position.y, this.camera.position.z,
       this.cameraLookAt.x, this.cameraLookAt.y, this.cameraLookAt.z,
       fogFar,
     );
-    this.foliage.update(
+    this.foliage?.update(
       p.pos.x, p.pos.z,
       this.camera.position.x, this.camera.position.y, this.camera.position.z,
       this.cameraLookAt.x, this.cameraLookAt.y, this.cameraLookAt.z,
       fogFar,
     );
-    this.fish.update(p.pos.x, p.pos.z, dt);
+    this.fish?.update(p.pos.x, p.pos.z, dt);
     this.vfx.update(dt);
     const pv = this.views.get(p.id);
     if (pv) {
@@ -3257,7 +3266,7 @@ export class Renderer {
     worldStart = markWorldPhase('clouds', worldStart);
 
     // water shimmer (low-tier texture scroll; shader water rides uTime)
-    this.waterView.update(this.time);
+    this.waterView?.update(this.time);
     worldStart = markWorldPhase('water', worldStart);
     this.vfx.update(dt);
     this.updateFiestaRing(dt);
@@ -3270,9 +3279,9 @@ export class Renderer {
     // Fully-fogged terrain chunks / tree buckets are dropped before the
     // frustum; camera-ghost props hide against the current eye-to-camera ray.
     const fogFar = (this.scene.fog as THREE.Fog).far;
-    this.terrainView.update(this.camera.position.x, this.camera.position.z, fogFar);
+    this.terrainView?.update(this.camera.position.x, this.camera.position.z, fogFar);
     worldStart = markWorldPhase('terrain', worldStart);
-    this.propsView.update(
+    this.propsView?.update(
       this.camera.position.x, this.camera.position.y, this.camera.position.z,
       this.cameraLookAt.x, this.cameraLookAt.y, this.cameraLookAt.z,
       fogFar,
@@ -3282,18 +3291,18 @@ export class Renderer {
       this.cameraLookAt.x, this.cameraLookAt.y, this.cameraLookAt.z,
     );
     worldStart = markWorldPhase('props', worldStart);
-    this.foliage.update(
+    this.foliage?.update(
       p.pos.x, p.pos.z,
       this.camera.position.x, this.camera.position.y, this.camera.position.z,
       this.cameraLookAt.x, this.cameraLookAt.y, this.cameraLookAt.z,
       fogFar,
     );
     worldStart = markWorldPhase('foliage', worldStart);
-    this.fish.update(p.pos.x, p.pos.z, dt);
-    this.critters.update(p.pos.x, p.pos.z, dt);
-    this.motes.update(p.pos.x, p.pos.z, dt);
-    this.birds.update(p.pos.x, p.pos.z, dt);
-    this.impactSite.update(p.pos.x, p.pos.z, dt);
+    this.fish?.update(p.pos.x, p.pos.z, dt);
+    this.critters?.update(p.pos.x, p.pos.z, dt);
+    this.motes?.update(p.pos.x, p.pos.z, dt);
+    this.birds?.update(p.pos.x, p.pos.z, dt);
+    this.impactSite?.update(p.pos.x, p.pos.z, dt);
     worldStart = markWorldPhase('fish', worldStart);
     this.updateAmbience(p.pos.x, this.camera.position.y, dt);
     worldStart = markWorldPhase('ambience', worldStart);
@@ -3374,7 +3383,7 @@ export class Renderer {
     this.lastFrameStats = {
       phaseMs: framePhaseMs,
       worldPhaseMs,
-      foliage: this.foliage.perfStats(),
+      foliage: this.foliage?.perfStats() ?? emptyFoliagePerfStats(),
       renderDiagnostics,
       cameraPosition: {
         x: roundMs(this.camera.position.x),

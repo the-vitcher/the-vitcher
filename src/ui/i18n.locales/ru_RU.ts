@@ -2472,6 +2472,8 @@ export const ru_RU: Partial<Record<TranslationKey, string>> = {
   "hudChrome.spectator.prev": "Предыдущий краулер",
   "hudChrome.spectator.next": "Следующий краулер",
   "hudChrome.spectator.none": "Нет живых краулеров",
+  "hudChrome.clash.tagline": "Десять героев. Три линии. Ноль достоинства.",
+  "hudChrome.clash.loading": "Вход в The Clash...",
   "hudChrome.moba.heroSelectTitle": "Выберите героя",
   "hudChrome.moba.changeHero": "Сменить героя",
   "hudChrome.moba.warmup": "Столкновение вот-вот начнётся",

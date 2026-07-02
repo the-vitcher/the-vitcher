@@ -217,6 +217,10 @@ export const zh_TW: EnTranslations = {
       "next": "下一位爬行者",
       "none": "沒有存活的爬行者"
     },
+    "clash": {
+      "tagline": "十位英雄。三條兵線。毫無體面。",
+      "loading": "正在進入 The Clash……"
+    },
     "moba": {
       "heroSelectTitle": "選擇你的英雄",
       "changeHero": "更換英雄",

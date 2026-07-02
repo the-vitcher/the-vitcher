@@ -3847,6 +3847,73 @@
   }
   #loading-screen.visible { display: flex; }
   #loading-screen.fade { opacity: 0; }
+  /* ---- The Clash branding: body.clash-mode swaps the WoCC chrome for the
+     CSS-only placeholder wordmark and trims the offline panel to a
+     username-only start (the hero pick decides the class in-game). ---- */
+  #clash-brand, .ls-clash-wordmark { display: none; }
+  body.clash-mode #title-logo,
+  body.clash-mode #loading-screen .ls-logo,
+  body.clash-mode #token-ca { display: none; }
+  body.clash-mode #clash-brand { display: block; text-align: center; margin: 30px 0 26px; }
+  .clash-wordmark {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(44px, 9vw, 92px);
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    line-height: 1;
+    background: linear-gradient(180deg, #ffe9a8 0%, #ffb54a 45%, #b3541e 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 3px 14px rgba(255, 150, 40, 0.28));
+  }
+  .clash-tagline {
+    margin-top: 10px;
+    color: #d8c9a8;
+    font-size: clamp(14px, 2.2vw, 19px);
+    letter-spacing: 0.08em;
+  }
+  body.clash-mode #loading-screen .ls-clash-wordmark {
+    display: block;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    background: linear-gradient(180deg, #ffe9a8 0%, #ffb54a 45%, #b3541e 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 22px;
+  }
+  body.clash-mode #offline-select .mini-class-row,
+  body.clash-mode #offline-select #offline-skin-row,
+  body.clash-mode #offline-select .charselect-col-right { display: none; }
+  /* single compact column: name + Enter World, nothing below the fold.
+     The desktop charselect media block pins width/height with !important, so
+     the clash overrides carry !important + higher specificity to win. */
+  body.clash-mode #offline-select {
+    width: min(560px, 94vw) !important;
+    max-width: none !important;
+    height: auto !important;
+    min-height: 0;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  body.clash-mode #offline-select .charselect-layout {
+    display: flex;
+    flex-direction: column;
+  }
+  body.clash-mode #offline-select .charselect-col-left {
+    width: 100%;
+    height: auto;
+    justify-content: flex-start;
+  }
+  body.clash-mode #offline-select .char-create {
+    flex-grow: 0;
+    justify-content: flex-start;
+    gap: 6px;
+  }
+
   #loading-screen .ls-logo {
     width: min(380px, 64vw);
     height: auto;
@@ -8420,6 +8487,13 @@
         <!-- Main Logo -->
         <img class="main-logo" id="title-logo" src="/worldofclaudecraft-logo.png" data-i18n-alt="serverUnavailable.logoAlt" alt="World of ClaudeCraft" />
 
+        <!-- The Clash branding: CSS-only placeholder wordmark, shown (and the
+             WoCC logo hidden) when body.clash-mode is set. Polish later. -->
+        <div id="clash-brand">
+          <div class="clash-wordmark">THE CLASH</div>
+          <div class="clash-tagline" data-i18n="hudChrome.clash.tagline">Ten heroes. Three lanes. Zero dignity.</div>
+        </div>
+
         <div id="mode-select">
           <div class="play-console">
             <!-- Realm selector: a themed dropdown that defaults to Online and can switch to Offline.
@@ -8958,6 +9032,7 @@
 
   <div id="loading-screen">
     <img class="ls-logo" src="/worldofclaudecraft-logo.png" data-i18n-alt="serverUnavailable.logoAlt" alt="World of ClaudeCraft" />
+    <div class="ls-clash-wordmark">THE CLASH</div>
     <div class="ls-progress">
       <div class="ls-bar"><div id="ls-fill"></div></div>
       <div id="ls-status" data-i18n="loading.enteringWorld">Entering the world...</div>

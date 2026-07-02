@@ -85,6 +85,12 @@ export const hudChromeStrings = {
     none: "No live crawlers",
   },
   // The Clash (MOBA) HUD: hero select, match status, skills, recall, banners.
+  // The Clash landing/loading chrome ("THE CLASH" itself is a brand proper
+  // noun rendered verbatim; only the copy around it localizes).
+  clash: {
+    tagline: "Ten heroes. Three lanes. Zero dignity.",
+    loading: "Entering the Clash...",
+  },
   moba: {
     heroSelectTitle: "Choose your hero",
     changeHero: "Change hero",

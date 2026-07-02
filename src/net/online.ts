@@ -78,6 +78,9 @@ export interface RealmEntry {
 }
 
 export interface RealmDirectory {
+  // true when this deployment is a Clash (MOBA) server: the client swaps to
+  // Clash chrome and skips the MMO realm/character screens
+  clash: boolean;
   current: string;
   realms: RealmEntry[];
   characters: Record<string, number>; // realm name -> how many characters you have
@@ -135,11 +138,11 @@ export class Api {
   async realms(): Promise<RealmDirectory> {
     try {
       const res = await fetch(apiUrl('/api/realms'), { headers: this.token ? { Authorization: `Bearer ${this.token}` } : {} });
-      if (!res.ok) return { current: '', realms: [], characters: {} };
+      if (!res.ok) return { current: '', realms: [], characters: {}, clash: false };
       const d = await res.json();
-      return { current: d.current ?? '', realms: d.realms ?? [], characters: d.characters ?? {} };
+      return { current: d.current ?? '', realms: d.realms ?? [], characters: d.characters ?? {}, clash: d.clash === 1 };
     } catch {
-      return { current: '', realms: [], characters: {} };
+      return { current: '', realms: [], characters: {}, clash: false };
     }
   }
 

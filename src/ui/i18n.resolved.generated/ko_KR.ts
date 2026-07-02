@@ -217,6 +217,10 @@ export const ko_KR: EnTranslations = {
       "next": "다음 크롤러",
       "none": "생존한 크롤러 없음"
     },
+    "clash": {
+      "tagline": "영웅 10명. 라인 3개. 체면 제로.",
+      "loading": "The Clash 입장 중..."
+    },
     "moba": {
       "heroSelectTitle": "영웅을 선택하세요",
       "changeHero": "영웅 변경",

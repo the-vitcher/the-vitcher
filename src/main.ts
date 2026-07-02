@@ -573,7 +573,7 @@ function beginWorldEntry(): boolean {
 
 function enterLoadingState(statusText: string): void {
   hideMobilePreflightPrompt();
-  showLoadingScreen(statusText);
+  showLoadingScreen(clashChrome ? t('hudChrome.clash.loading') : statusText);
   $('#start-screen').style.display = 'none';
 }
 
@@ -1685,9 +1685,10 @@ function sanitizeOfflineName(raw: string): string {
 async function startOffline(playerClass: PlayerClass, name: string, skin = 0): Promise<void> {
   if (!(await prepareWorldEntry())) return;
   enterLoadingState(t('loading.world'));
-  // ?clash=1 boots the offline world as a Clash (MOBA) match: the player is
-  // seated into the three-lane battleground and the hero select opens.
-  const clash = new URLSearchParams(location.search).get('clash') === '1';
+  // Clash sessions (?clash=1 locally, or any CLASH_MODE deployment) boot the
+  // offline world as a MOBA match: the player is seated into the three-lane
+  // battleground and the hero select opens (the hero pick sets the class).
+  const clash = clashChrome;
   const sim = new Sim({ seed: WORLD_SEED, playerClass, playerName: name, mobaMode: clash });
   sim.setPlayerSkin(sim.playerId, skin);
   if (clash) sim.enterMobaMatch();
@@ -1701,6 +1702,23 @@ async function startOffline(playerClass: PlayerClass, name: string, skin = 0): P
 // ---------------------------------------------------------------------------
 
 const api = new Api();
+
+// ---------------------------------------------------------------------------
+// The Clash chrome: swaps the WoCC landing/loading branding for the Clash
+// wordmark (CSS: body.clash-mode) and streamlines entry. Forced locally with
+// ?clash=1; a CLASH_MODE deployment advertises itself on /api/realms.
+// ---------------------------------------------------------------------------
+let clashChrome = new URLSearchParams(location.search).get('clash') === '1';
+function enableClashChrome(): void {
+  clashChrome = true;
+  document.body.classList.add('clash-mode');
+  // Brand proper noun, verbatim across locales; drop the data-i18n hook so the
+  // static locale applier stops re-stamping the WoCC title over it.
+  document.querySelector('title')?.removeAttribute('data-i18n');
+  document.title = 'The Clash';
+}
+if (clashChrome) enableClashChrome();
+void api.realms().then((d) => { if (d.clash) enableClashChrome(); }).catch(() => { /* offline / no server */ });
 
 // Referral capture: a visitor who arrives from a shared player card link
 // (?ref=<slug>) carries the referrer's slug into registration. Read it once at
@@ -2092,11 +2110,53 @@ function realmPopulation(online: boolean, players: number): { labelKey: Translat
 // characters, with a "Change Realm" button back to this list.
 async function enterRealmFlow(): Promise<void> {
   const dir = await api.realms();
+  if (dir.clash) { await enterClashOnlineFlow(dir); return; }
   $('#realm-list-user').textContent = api.username ? `${api.username}` : '';
   const remembered = localStorage.getItem(LAST_REALM_KEY);
   const auto = dir.realms.find((r) => r.name === remembered);
   if (auto) { selectRealm(auto); return; }
   showRealmList(dir);
+}
+
+// The Clash online entry: no realm list, no character select. Pick the
+// remembered (or only) realm silently, enter with the first ready character,
+// auto-creating one from the account name if the roster is empty (the hero
+// pick sets the real class in-match). Any snag falls back to the normal
+// roster/create screens so nobody gets stuck.
+async function enterClashOnlineFlow(dir: import('./net/online').RealmDirectory): Promise<void> {
+  enableClashChrome();
+  const remembered = localStorage.getItem(LAST_REALM_KEY);
+  const entry = dir.realms.find((r) => r.name === remembered) ?? dir.realms[0];
+  if (!entry) { showRealmList(dir); return; }
+  api.setRealm(entry.url);
+  api.realm = entry.name;
+  localStorage.setItem(LAST_REALM_KEY, entry.name);
+  try {
+    const chars = await api.characters();
+    const ready = chars.find((c) => !c.online && !c.forceRename);
+    if (ready) { void enterWorld(ready); return; }
+    if (chars.length === 0) {
+      const name = clashAutoName(api.username ?? '');
+      if (name) {
+        try {
+          await api.createCharacter(name, 'warrior', 0);
+          const created = await api.characters();
+          const c = created.find((x) => !x.online && !x.forceRename);
+          if (c) { void enterWorld(c); return; }
+        } catch { /* name taken or rejected: use the create screen */ }
+      }
+    }
+  } catch { /* roster fetch failed: fall through to the normal screens */ }
+  show('#charselect-panel');
+  void refreshCharacters();
+}
+
+// Derive a valid character name from the account name (letters only, capped,
+// capitalized); null when nothing usable remains.
+function clashAutoName(username: string): string | null {
+  const cleaned = username.replace(/[^A-Za-z]/g, '').slice(0, 16);
+  const name = cleaned ? cleaned[0].toUpperCase() + cleaned.slice(1) : '';
+  return validateCharacterName(name) ? name : null;
 }
 
 // ── Home-page account portal ("Account" nav tab) ────────────────────────────

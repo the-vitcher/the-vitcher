@@ -217,6 +217,10 @@ export const ru_RU: EnTranslations = {
       "next": "Следующий краулер",
       "none": "Нет живых краулеров"
     },
+    "clash": {
+      "tagline": "Десять героев. Три линии. Ноль достоинства.",
+      "loading": "Вход в The Clash..."
+    },
     "moba": {
       "heroSelectTitle": "Выберите героя",
       "changeHero": "Сменить героя",

@@ -2472,6 +2472,8 @@ export const zh_TW: Partial<Record<TranslationKey, string>> = {
   "hudChrome.spectator.prev": "上一位爬行者",
   "hudChrome.spectator.next": "下一位爬行者",
   "hudChrome.spectator.none": "沒有存活的爬行者",
+  "hudChrome.clash.tagline": "十位英雄。三條兵線。毫無體面。",
+  "hudChrome.clash.loading": "正在進入 The Clash……",
   "hudChrome.moba.heroSelectTitle": "選擇你的英雄",
   "hudChrome.moba.changeHero": "更換英雄",
   "hudChrome.moba.warmup": "對決即將開始",
