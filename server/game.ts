@@ -246,6 +246,7 @@ function dynamicFields(e: Entity): Record<string, unknown> {
   if (e.dead) out.dead = 1;
   if (e.spectator) out.spec = 1;
   if (e.playerKiller) out.pk = 1;
+  if (e.mobaTeam) out.mt = e.mobaTeam; // The Clash: team tag for nameplates/HUD
   if (e.lootable) out.loot = 1;
   if (e.hostile) out.h = 1;
   if (e.castingAbility) {
@@ -391,6 +392,9 @@ export class GameServer {
   private readonly ipSessionCounts = new Map<string, number>();
   // The Crawl: this realm runs the hourly rotating dungeon season when CRAWL_MODE=1.
   private readonly crawlMode = process.env.CRAWL_MODE === '1';
+  // The Clash: this realm is a MOBA lobby when CLASH_MODE=1 (players auto-enter
+  // the match on join and play bespoke heroes).
+  private readonly mobaMode = process.env.CLASH_MODE === '1';
   // Absolute run index (wall-clock hour) the sim is currently playing; a change
   // means the hour rolled over and we start a fresh run. Seeded lazily on first tick.
   private crawlRunIndex: number | null = null;
@@ -401,6 +405,7 @@ export class GameServer {
       playerClass: 'warrior',
       noPlayer: true,
       crawlMode: process.env.CRAWL_MODE === '1',
+      mobaMode: process.env.CLASH_MODE === '1',
       devCommands: process.env.ALLOW_DEV_COMMANDS === '1',
       lockoutNowMs: () => Date.now(),
     });
@@ -725,6 +730,9 @@ export class GameServer {
       }
     }
     const pid = this.sim.addPlayer(cls, name, { state: state ?? undefined });
+    // The Clash realm is a MOBA lobby: every player is seated into the match on
+    // join (team assignment, base teleport, hero select from the HUD).
+    if (this.mobaMode) this.sim.enterMobaMatch(pid);
     if (isGm) {
       // GM characters: invulnerable, and always at the level cap (the row is
       // created without state, so the first join levels them up)
@@ -1297,6 +1305,12 @@ export class GameServer {
       case 'spectate': if (typeof msg.id === 'number') sim.spectate(msg.id, pid); break;
       case 'spectate_next': sim.spectateNext(pid); break;
       case 'spectate_prev': sim.spectatePrev(pid); break;
+      // The Clash (MOBA): all four validate inside the sim (mobaMode gate, hero
+      // ownership, skill points, cooldowns), so bad ids are safe no-ops.
+      case 'moba_enter': sim.enterMobaMatch(pid); break;
+      case 'moba_pick': if (typeof msg.hero === 'string') sim.pickMobaHero(msg.hero, pid); break;
+      case 'moba_learn': if (typeof msg.ability === 'string') sim.mobaLearnAbility(msg.ability, pid); break;
+      case 'moba_recall': sim.mobaRecall(pid); break;
       case 'challengeResponse':
         if (typeof msg.n === 'string' && typeof msg.r === 'string' && typeof msg.sig === 'string') {
           if (!verifyChallenge(msg.n, msg.r, msg.sig, session.clientSeed)) break;
@@ -1664,6 +1678,9 @@ export class GameServer {
       rn: this.crawlMode ? runOfDay(Date.now() / 1000) + 1 : undefined,
       rl: this.crawlMode ? Math.ceil(secondsLeftInRun(Date.now() / 1000)) : undefined,
       sw: this.crawlMode && p.spectator ? this.sim.spectateTargetName(p.id) ?? undefined : undefined,
+      // The Clash: the whole match view rides inline (small, changes every tick
+      // anyway on a clash realm; absent on normal realms so they stay byte-identical).
+      mst: this.mobaMode ? this.sim.mobaState(p.id) ?? undefined : undefined,
       ack: session.lastInputSeq,
     });
     const json = JSON.stringify(self);

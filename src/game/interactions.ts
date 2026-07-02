@@ -45,8 +45,12 @@ export function isAttackableEntity(
   e: Entity | undefined,
   playerId: number,
   activePvpOpponentSet: ReadonlySet<number> = new Set(),
+  selfTeam: 'A' | 'B' | null = null,
 ): boolean {
   if (!e || e.dead || e.id === playerId) return false;
+  // The Clash (MOBA): team decides everything — the enemy team (heroes, minions,
+  // towers, core) is attackable; your own team never is.
+  if (selfTeam && e.mobaTeam) return e.mobaTeam !== selfTeam;
   if (e.kind === 'mob') return e.hostile;
   return e.kind === 'player' && activePvpOpponentSet.has(e.id);
 }
@@ -57,9 +61,10 @@ export function hoverCursorKind(
   playerId: number,
   partyMemberIds: ReadonlySet<number>,
   activePvpOpponentSet: ReadonlySet<number> = new Set(),
+  selfTeam: 'A' | 'B' | null = null,
 ): HoverCursorKind {
   if (!e) return 'default';
-  if (isAttackableEntity(e, playerId, activePvpOpponentSet)) return 'attack';
+  if (isAttackableEntity(e, playerId, activePvpOpponentSet, selfTeam)) return 'attack';
   if (e.kind === 'npc') return 'friendly';
   if (e.kind === 'player' && e.id !== playerId) return 'friendly';
   void partyMemberIds;
@@ -100,9 +105,10 @@ export function handlePickedEntity(
         hud.openQuestDialog(id);
       }
       else hud.showError(t('questUi.errors.tooFar'));
-    } else if ((e.kind === 'mob' && !e.dead && e.hostile) || isActivePvpOpponent(world, e)) {
-      // Right-click a hostile mob (or an active PvP opponent) to start auto-attack,
-      // the classic-MMO convention the attack tooltip promises. A camera right-drag
+    } else if (isAttackableEntity(e, world.playerId ?? world.player.id, activePvpOpponentIds(world), world.player.mobaTeam ?? null)) {
+      // Right-click anything attackable (hostile mob, PvP opponent, or in The
+      // Clash any enemy-team unit) to target it and start auto-attack — the
+      // classic-MMO convention the attack tooltip promises. A camera right-drag
       // can't reach this: clickPickFromMouseGesture drops a right gesture past the
       // drag threshold, so only a deliberate right-click attacks.
       world.startAutoAttack();

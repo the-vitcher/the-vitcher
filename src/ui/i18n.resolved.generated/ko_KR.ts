@@ -217,6 +217,29 @@ export const ko_KR: EnTranslations = {
       "next": "다음 크롤러",
       "none": "생존한 크롤러 없음"
     },
+    "moba": {
+      "heroSelectTitle": "영웅을 선택하세요",
+      "changeHero": "영웅 변경",
+      "warmup": "클래시가 곧 시작됩니다",
+      "status": "타워 {a} : {b}  |  {time}",
+      "learn": "배우기",
+      "upgrade": "강화",
+      "skillPoints": "스킬 포인트: {count}",
+      "ultLocked": "레벨 {level}에 해금",
+      "recall": "귀환",
+      "recallChanneling": "귀환 중... {seconds}초",
+      "recallCooldown": "귀환 대기 {seconds}초",
+      "respawnIn": "{seconds}초 후 부활",
+      "victory": "승리",
+      "defeat": "패배",
+      "roles": {
+        "bruiser": "브루저",
+        "assassin": "암살자",
+        "marksman": "원거리 딜러",
+        "mage": "마법사",
+        "support": "서포터"
+      }
+    },
     "widgets": {
       "clockTitle": "현지 시각 - 클릭하면 12/24시간제 전환",
       "worldCoordinates": "세계 좌표",

@@ -1461,7 +1461,7 @@ async function startGame(world: IWorld, offlineSim: Sim | null, online: ClientWo
     }
     const id = renderer.pick(input.hoverX, input.hoverY);
     const entity = id !== null ? world.entities.get(id) : undefined;
-    input.setHoverCursor(hoverCursorKind(entity, world.playerId, partyMemberIds(), activePvpOpponentIds(world)));
+    input.setHoverCursor(hoverCursorKind(entity, world.playerId, partyMemberIds(), activePvpOpponentIds(world), world.player.mobaTeam ?? null));
   }
 
   function renderFacingOverride(): number | null {
@@ -1685,8 +1685,12 @@ function sanitizeOfflineName(raw: string): string {
 async function startOffline(playerClass: PlayerClass, name: string, skin = 0): Promise<void> {
   if (!(await prepareWorldEntry())) return;
   enterLoadingState(t('loading.world'));
-  const sim = new Sim({ seed: WORLD_SEED, playerClass, playerName: name });
+  // ?clash=1 boots the offline world as a Clash (MOBA) match: the player is
+  // seated into the three-lane battleground and the hero select opens.
+  const clash = new URLSearchParams(location.search).get('clash') === '1';
+  const sim = new Sim({ seed: WORLD_SEED, playerClass, playerName: name, mobaMode: clash });
   sim.setPlayerSkin(sim.playerId, skin);
+  if (clash) sim.enterMobaMatch();
   // Offline characters are not persisted (a fresh name is typed each session),
   // so the only stable handle is class + name. Keybinds scope to that pair.
   void startGame(sim, sim, null, `offline:${playerClass}:${name}`);

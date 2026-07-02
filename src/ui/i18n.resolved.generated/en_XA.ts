@@ -217,6 +217,29 @@ export const en_XA: EnTranslations = {
       "next": "[Ñéẋţ çŕáŵļéŕ]",
       "none": "[Ñó ļíʋé çŕáŵļéŕš]"
     },
+    "moba": {
+      "heroSelectTitle": "[Çĥóóšé ýóúŕ ĥéŕó]",
+      "changeHero": "[Çĥáñĝé ĥéŕó]",
+      "warmup": "[Ţĥé Çļášĥ íš áƀóúţ ţó ƀéĝíñ]",
+      "status": "[Ţóŵéŕš {a} : {b}  |  {time}]",
+      "learn": "[Ļéáŕñ]",
+      "upgrade": "[Úþĝŕáðé]",
+      "skillPoints": "[Šķíļļ þóíñţš: {count}]",
+      "ultLocked": "[Úñļóçķš áţ ļéʋéļ {level}]",
+      "recall": "[Ŕéçáļļ]",
+      "recallChanneling": "[Ŕéçáļļíñĝ... {seconds}š]",
+      "recallCooldown": "[Ŕéçáļļ ŕéáðý íñ {seconds}š]",
+      "respawnIn": "[Ŕéšþáŵñíñĝ íñ {seconds}š]",
+      "victory": "[ƲÍÇŢÓŔÝ]",
+      "defeat": "[ÐÉƑÉÁŢ]",
+      "roles": {
+        "bruiser": "[Ɓŕúíšéŕ]",
+        "assassin": "[Áššáššíñ]",
+        "marksman": "[Ɱáŕķšɱáñ]",
+        "mage": "[Ɱáĝé]",
+        "support": "[Šúþþóŕţ]"
+      }
+    },
     "widgets": {
       "clockTitle": "[Ļóçáļ ţíɱé - çļíçķ ţó ţóĝĝļé 12/24-ĥóúŕ]",
       "worldCoordinates": "[Ŵóŕļð çóóŕðíñáţéš]",

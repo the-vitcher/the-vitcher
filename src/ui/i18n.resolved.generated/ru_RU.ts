@@ -217,6 +217,29 @@ export const ru_RU: EnTranslations = {
       "next": "Следующий краулер",
       "none": "Нет живых краулеров"
     },
+    "moba": {
+      "heroSelectTitle": "Выберите героя",
+      "changeHero": "Сменить героя",
+      "warmup": "Столкновение вот-вот начнётся",
+      "status": "Башни {a} : {b}  |  {time}",
+      "learn": "Изучить",
+      "upgrade": "Улучшить",
+      "skillPoints": "Очки навыков: {count}",
+      "ultLocked": "Откроется на уровне {level}",
+      "recall": "Возврат",
+      "recallChanneling": "Возврат... {seconds} с",
+      "recallCooldown": "Возврат будет готов через {seconds} с",
+      "respawnIn": "Возрождение через {seconds} с",
+      "victory": "ПОБЕДА",
+      "defeat": "ПОРАЖЕНИЕ",
+      "roles": {
+        "bruiser": "Боец",
+        "assassin": "Убийца",
+        "marksman": "Стрелок",
+        "mage": "Маг",
+        "support": "Поддержка"
+      }
+    },
     "widgets": {
       "clockTitle": "Местное время — нажмите для переключения 12/24-часового формата",
       "worldCoordinates": "Координаты мира",

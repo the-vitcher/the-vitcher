@@ -217,6 +217,29 @@ export const ja_JP: EnTranslations = {
       "next": "次のクロウラー",
       "none": "生存中のクロウラーがいません"
     },
+    "moba": {
+      "heroSelectTitle": "ヒーローを選ぼう",
+      "changeHero": "ヒーロー変更",
+      "warmup": "クラッシュがまもなく始まる",
+      "status": "タワー {a} : {b}  |  {time}",
+      "learn": "習得",
+      "upgrade": "強化",
+      "skillPoints": "スキルポイント：{count}",
+      "ultLocked": "レベル{level}で解放",
+      "recall": "リコール",
+      "recallChanneling": "リコール中……{seconds}秒",
+      "recallCooldown": "リコール再使用まで{seconds}秒",
+      "respawnIn": "復活まで{seconds}秒",
+      "victory": "勝利",
+      "defeat": "敗北",
+      "roles": {
+        "bruiser": "ブルーザー",
+        "assassin": "アサシン",
+        "marksman": "マークスマン",
+        "mage": "メイジ",
+        "support": "サポート"
+      }
+    },
     "widgets": {
       "clockTitle": "現地時刻 - クリックで12/24時間表記を切り替え",
       "worldCoordinates": "ワールド座標",

@@ -17,7 +17,7 @@ import { RUNS_PER_DAY } from '../sim/crawl_run';
 import {
   isOverheadEmoteId,
   type AccountCosmetics, type ArenaInfo, type CharacterSearchResult, type DuelInfo, type FriendInfo,
-  type IWorld, type LeaderboardEntry, type MarketInfo, type OverheadEmoteId,
+  type IWorld, type LeaderboardEntry, type MarketInfo, type MobaStateView, type OverheadEmoteId,
   type PartyInfo, type PresenceStatus, type SocialInfo, type TradeInfo,
 } from '../world_api';
 
@@ -491,6 +491,8 @@ export class ClientWorld implements IWorld {
   spectateTargetNameValue: string | null = null;
   // Crawl season clock (run-of-day + seconds until the hourly reset), mirrored from self.
   crawlRunValue: { run: number; total: number; secondsLeft: number } | null = null;
+  // The Clash (MOBA) match view, mirrored whole from the self snapshot (mst).
+  mobaStateValue: MobaStateView | null = null;
   // Post-cap progression (Max-Level XP Overflow), mirrored from snapshot self.
   lifetimeXp = 0;
   prestigeRank = 0;
@@ -866,6 +868,7 @@ export class ClientWorld implements IWorld {
       e.dead = nowDead;
       e.spectator = !!w.spec;
       e.playerKiller = !!w.pk;
+      e.mobaTeam = w.mt === 'A' ? 'A' : w.mt === 'B' ? 'B' : null;
       e.lootable = !!w.loot;
       e.hostile = !!w.h;
       e.castingAbility = w.cast ?? null;
@@ -938,6 +941,7 @@ export class ClientWorld implements IWorld {
       this.xp = s.xp ?? 0;
       this.floorTimeLeftValue = typeof s.ftl === 'number' ? s.ftl : null;
       this.spectateTargetNameValue = typeof s.sw === 'string' ? s.sw : null;
+      this.mobaStateValue = s.mst && typeof s.mst === 'object' ? s.mst : null;
       // total is the shared RUNS_PER_DAY constant (identical on both hosts), so it
       // is not sent on the wire; only the live run index (rn) and reset countdown (rl) are.
       this.crawlRunValue = typeof s.rn === 'number' && typeof s.rl === 'number'
@@ -1213,6 +1217,21 @@ export class ClientWorld implements IWorld {
   }
   crawlRun(): { run: number; total: number; secondsLeft: number } | null {
     return this.crawlRunValue;
+  }
+  mobaState(): MobaStateView | null {
+    return this.mobaStateValue;
+  }
+  enterMobaMatch(): void {
+    this.cmd({ cmd: 'moba_enter' });
+  }
+  pickMobaHero(heroId: string): void {
+    this.cmd({ cmd: 'moba_pick', hero: heroId });
+  }
+  mobaLearnAbility(abilityId: string): void {
+    this.cmd({ cmd: 'moba_learn', ability: abilityId });
+  }
+  mobaRecall(): void {
+    this.cmd({ cmd: 'moba_recall' });
   }
   chat(text: string): void {
     this.cmd({ cmd: 'chat', text });

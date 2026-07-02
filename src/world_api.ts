@@ -25,6 +25,23 @@ export interface PartyInfo {
   members: PartyMemberInfo[];
 }
 
+// The Clash (MOBA) HUD view: everything the match/hero UI renders, mirrored
+// byte-for-byte between the offline Sim and the server snapshot.
+export interface MobaStateView {
+  phase: 'warmup' | 'playing' | 'ended';
+  myTeam: 'A' | 'B' | null;
+  heroId: string | null;
+  respawnLeft: number; // seconds until this hero respawns (0 = alive)
+  recallLeft: number; // seconds left on an active recall channel (0 = idle)
+  recallReadyIn: number; // seconds until recall may be used again (0 = ready)
+  skillPoints: number; // unspent skill points
+  skillRanks: Record<string, number>; // chosen rank per hero ability id
+  towersA: number; // standing towers per team (of 6)
+  towersB: number;
+  winner: 'A' | 'B' | null;
+  elapsed: number; // match seconds
+}
+
 export interface TradeOffer {
   items: InvSlot[];
   copper: number;
@@ -314,6 +331,14 @@ export interface IWorld {
   // total, and seconds before the hourly reset. Null when not in a live Crawl
   // season (the offline Sim has no hourly rotation, so it reports null).
   crawlRun(): { run: number; total: number; secondsLeft: number } | null;
+  // The Clash (MOBA): the live match view (null outside moba mode / no match),
+  // and the player actions that drive it. Hero/ability CONTENT is static data
+  // (sim/content/moba.ts) the UI imports directly, like other entity data.
+  mobaState(): MobaStateView | null;
+  enterMobaMatch(): void;
+  pickMobaHero(heroId: string): void;
+  mobaLearnAbility(abilityId: string): void;
+  mobaRecall(): void;
   chat(text: string): void;
   playEmote(emoteId: OverheadEmoteId): void;
   abandonPet(): void;

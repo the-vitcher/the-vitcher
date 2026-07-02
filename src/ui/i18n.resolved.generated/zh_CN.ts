@@ -217,6 +217,29 @@ export const zh_CN: EnTranslations = {
       "next": "下一位爬行者",
       "none": "没有存活的爬行者"
     },
+    "moba": {
+      "heroSelectTitle": "选择你的英雄",
+      "changeHero": "更换英雄",
+      "warmup": "对决即将开始",
+      "status": "防御塔 {a} : {b}  |  {time}",
+      "learn": "学习",
+      "upgrade": "升级",
+      "skillPoints": "技能点：{count}",
+      "ultLocked": "等级 {level} 解锁",
+      "recall": "回城",
+      "recallChanneling": "回城中……{seconds}秒",
+      "recallCooldown": "回城冷却 {seconds}秒",
+      "respawnIn": "{seconds}秒后复活",
+      "victory": "胜利",
+      "defeat": "失败",
+      "roles": {
+        "bruiser": "斗士",
+        "assassin": "刺客",
+        "marksman": "射手",
+        "mage": "法师",
+        "support": "辅助"
+      }
+    },
     "widgets": {
       "clockTitle": "本地时间 - 点击切换 12/24 小时制",
       "worldCoordinates": "世界坐标",

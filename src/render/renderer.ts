@@ -3637,8 +3637,12 @@ export class Renderer {
         const hpDisplay = e.dead || isSelf ? 'none' : '';
         const guild = isSelf ? '' : e.guild;
         // Crawl PvP: player-killers wear a red name (and a red skull on frames).
+        // The Clash: hero names tint by team relative to the VIEWER — allies stay
+        // friendly blue, the enemy team goes red — so both sides read correctly.
         const pk = e.playerKiller === true;
-        this.setNameplateStatic(v, `player|${e.name}|${guild}|${nameDisplay}|${hpDisplay}|${opacity}|${pk ? 'pk' : ''}`, e.name, pk ? '#ff5a5a' : '#7fb8ff', hpDisplay, '', 'np-marker', opacity, '', guild);
+        const selfTeam = this.sim.player?.mobaTeam ?? null;
+        const enemyHero = !!e.mobaTeam && !!selfTeam && e.mobaTeam !== selfTeam;
+        this.setNameplateStatic(v, `player|${e.name}|${guild}|${nameDisplay}|${hpDisplay}|${opacity}|${pk ? 'pk' : ''}|${enemyHero ? 'foe' : ''}`, e.name, pk || enemyHero ? '#ff5a5a' : '#7fb8ff', hpDisplay, '', 'np-marker', opacity, '', guild);
         v.nameEl.style.display = nameDisplay;
         // $WOC holder-tier flair, shown on OTHER players (own nameplate is hidden).
         this.setNameplateTier(v, isSelf ? 0 : (e.holderTier ?? 0));
@@ -3669,7 +3673,12 @@ export class Renderer {
         // A friendly controlled pet reads as friendly green; wild mobs keep the
         // classic level-difference ("con") color.
         const friendlyPet = isFriendlyPet(e, this.sim.entities, (pl) => this.isHostilePlayer(pl));
-        const color = mobNameColor(diff, e.dead, friendlyPet);
+        // The Clash: lane units (minions/towers/cores) tint by team relative to the
+        // viewer — own side friendly blue, enemy side hostile red — instead of the
+        // level-difference con color, so the lane reads at a glance.
+        const viewerTeam = this.sim.player?.mobaTeam ?? null;
+        const mobaColor = e.mobaTeam && viewerTeam ? (e.mobaTeam === viewerTeam ? '#7fb8ff' : '#ff5a5a') : null;
+        const color = e.dead ? mobNameColor(diff, true, friendlyPet) : (mobaColor ?? mobNameColor(diff, e.dead, friendlyPet));
         const mobName = e.ownerId !== null ? e.name : mobDisplayName(e.templateId);
         const name = e.dead ? t('worldContent.corpseName', { name: mobName }) : `[${e.level}${elite ? '+' : ''}] ${mobName}`;
         const hpDisplay = e.dead ? 'none' : '';

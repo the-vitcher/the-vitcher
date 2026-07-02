@@ -217,6 +217,29 @@ export const en: EnTranslations = {
       "next": "Next crawler",
       "none": "No live crawlers"
     },
+    "moba": {
+      "heroSelectTitle": "Choose your hero",
+      "changeHero": "Change hero",
+      "warmup": "The Clash is about to begin",
+      "status": "Towers {a} : {b}  |  {time}",
+      "learn": "Learn",
+      "upgrade": "Upgrade",
+      "skillPoints": "Skill points: {count}",
+      "ultLocked": "Unlocks at level {level}",
+      "recall": "Recall",
+      "recallChanneling": "Recalling... {seconds}s",
+      "recallCooldown": "Recall ready in {seconds}s",
+      "respawnIn": "Respawning in {seconds}s",
+      "victory": "VICTORY",
+      "defeat": "DEFEAT",
+      "roles": {
+        "bruiser": "Bruiser",
+        "assassin": "Assassin",
+        "marksman": "Marksman",
+        "mage": "Mage",
+        "support": "Support"
+      }
+    },
     "widgets": {
       "clockTitle": "Local time - click to toggle 12/24-hour",
       "worldCoordinates": "World coordinates",

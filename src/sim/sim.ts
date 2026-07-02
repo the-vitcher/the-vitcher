@@ -38,7 +38,7 @@ import {
   TAUNT_FORCE_SECONDS, addThreat, clearThreat, stealthDetectionRadius, threatEntries, threatModifier, topThreatValue,
 } from './threat';
 import { groundHeight, WATER_LEVEL } from './world';
-import type { AccountCosmetics, LeaderboardEntry } from '../world_api';
+import type { AccountCosmetics, LeaderboardEntry, MobaStateView } from '../world_api';
 import {
   AbilityDef, AbilityEffect, Aura, AuraKind, CAST_PUSHBACK_SEC, CHANNEL_PUSHBACK_FRACTION, CONSUME_DURATION, ItemDef,
   DEFAULT_PARTY_LOOT_STRATEGIES,
@@ -9184,6 +9184,28 @@ export class Sim {
       return standing;
     });
     return !mobaCoreVulnerable(standingPerLane);
+  }
+
+  // The live match view the HUD renders (IWorld.mobaState). Null outside moba
+  // mode or before a match exists.
+  mobaState(pid?: number): MobaStateView | null {
+    if (!this.cfg.mobaMode || !this.mobaMatch) return null;
+    const match = this.mobaMatch;
+    const r = this.resolve(pid);
+    return {
+      phase: match.phase,
+      myTeam: r?.e.mobaTeam ?? null,
+      heroId: r?.meta.mobaHeroId ?? null,
+      respawnLeft: Math.max(0, Math.ceil(r?.meta.mobaRespawnLeft ?? 0)),
+      recallLeft: Math.max(0, Math.ceil((r?.meta.mobaRecallLeft ?? 0) * 10) / 10),
+      recallReadyIn: r ? Math.max(0, Math.ceil(r.meta.mobaRecallReadyAt - this.time)) : 0,
+      skillPoints: r?.meta.mobaSkillPoints ?? 0,
+      skillRanks: r ? Object.fromEntries(r.meta.mobaSkillRanks) : {},
+      towersA: this.mobaStandingTowers('A'),
+      towersB: this.mobaStandingTowers('B'),
+      winner: match.winner,
+      elapsed: Math.floor(match.elapsed),
+    };
   }
 
   // Standing-tower count for a team (drives the HUD objective readout).

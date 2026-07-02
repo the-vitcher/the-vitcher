@@ -225,6 +225,114 @@
   }
   #spectator-bar button:hover { background: rgba(60, 45, 90, 0.95); }
   #spectator-bar button:focus-visible { outline: 2px solid #b9a3ff; outline-offset: 2px; }
+  /* --- The Clash (MOBA) HUD --- */
+  #moba-hud[hidden] { display: none; }
+  /* Inside a Clash match the MMO onboarding is noise: hide the new-adventurer
+     tutorial card and the quest tracker (there are no quests in the lane). */
+  body.moba-active .tut-card, body.moba-active #quest-tracker { display: none !important; }
+  #moba-status {
+    position: fixed; top: 10px; left: 50%; transform: translateX(-50%);
+    z-index: 42; display: flex; align-items: center; gap: 10px;
+    padding: 5px 12px; border-radius: 6px;
+    border: 1px solid #6f5a2a; background: rgba(16, 12, 5, 0.82);
+    color: #ffd77a; font: 600 14px/1.2 system-ui, sans-serif;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8); white-space: nowrap;
+  }
+  #moba-change-hero {
+    min-height: 40px; padding: 0 12px; border-radius: 6px; cursor: pointer;
+    border: 1px solid #6f5a2a; background: rgba(50, 38, 14, 0.9);
+    color: #ffe2a0; font: 600 13px/1 system-ui, sans-serif;
+  }
+  #moba-change-hero:hover { background: rgba(70, 54, 20, 0.95); }
+  #moba-change-hero:focus-visible { outline: 2px solid #ffd100; outline-offset: 2px; }
+  #moba-skills {
+    position: fixed; bottom: 148px; left: 50%; transform: translateX(-50%);
+    z-index: 41; display: flex; align-items: flex-end; gap: 8px;
+  }
+  .mskill { position: relative; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .mskill img { width: 34px; height: 34px; border-radius: 6px; border: 1px solid #6f5a2a; display: block; }
+  .mskill.unlearned img { filter: grayscale(1) brightness(0.55); }
+  .mskill.ult img { border-color: #b98cff; }
+  .mskill .pips { display: flex; gap: 2px; }
+  .mskill .pip { width: 8px; height: 4px; border-radius: 2px; background: rgba(255, 255, 255, 0.18); }
+  .mskill .pip.on { background: #ffd100; }
+  .mskill-lock {
+    position: absolute; top: -16px; left: 50%; transform: translateX(-50%);
+    color: #c9b8e8; font: 600 10px/1 system-ui, sans-serif; white-space: nowrap;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+  }
+  .mskill-learn {
+    position: absolute; top: -22px; left: 50%; transform: translateX(-50%);
+    min-width: 40px; min-height: 40px; border-radius: 50%; cursor: pointer;
+    border: 2px solid #ffd100; background: rgba(70, 54, 8, 0.95);
+    color: #ffd100; font: 800 20px/1 system-ui, sans-serif;
+    animation: mobaLearnPulse 1.2s ease-in-out infinite;
+  }
+  .mskill-learn:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+  @keyframes mobaLearnPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(255, 209, 0, 0.5); } 50% { box-shadow: 0 0 0 7px rgba(255, 209, 0, 0); } }
+  @media (prefers-reduced-motion: reduce) { .mskill-learn { animation: none; } }
+  .mskill-points {
+    align-self: center; margin-left: 6px; padding: 4px 10px; border-radius: 6px;
+    border: 1px solid #ffd100; background: rgba(40, 30, 6, 0.9);
+    color: #ffd100; font: 700 12px/1.2 system-ui, sans-serif; white-space: nowrap;
+  }
+  #moba-recall {
+    position: fixed; bottom: 96px; right: 14px; z-index: 41;
+    min-height: 44px; padding: 0 16px; border-radius: 8px; cursor: pointer;
+    border: 1px solid #4a7ab8; background: rgba(10, 20, 34, 0.88);
+    color: #a8d0ff; font: 700 13px/1.2 system-ui, sans-serif; white-space: nowrap;
+  }
+  #moba-recall:disabled { opacity: 0.6; cursor: default; }
+  #moba-recall:focus-visible { outline: 2px solid #a8d0ff; outline-offset: 2px; }
+  #moba-respawn {
+    position: fixed; top: 40%; left: 50%; transform: translate(-50%, -50%);
+    z-index: 44; padding: 10px 22px; border-radius: 10px;
+    border: 1px solid rgba(255, 90, 90, 0.6); background: rgba(20, 8, 8, 0.85);
+    color: #ffb0b0; font: 700 20px/1.3 system-ui, sans-serif; white-space: nowrap;
+  }
+  #moba-respawn[hidden] { display: none; }
+  #moba-banner {
+    position: fixed; top: 32%; left: 50%; transform: translate(-50%, -50%);
+    z-index: 45; padding: 16px 40px; border-radius: 12px;
+    font: 900 44px/1.1 system-ui, sans-serif; letter-spacing: 0.12em;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9); pointer-events: none;
+  }
+  #moba-banner.victory { color: #ffd100; border: 2px solid #ffd100; background: rgba(40, 32, 4, 0.8); }
+  #moba-banner.defeat { color: #ff6a6a; border: 2px solid #ff5a5a; background: rgba(34, 8, 8, 0.8); }
+  #moba-banner[hidden] { display: none; }
+  #moba-hero-select {
+    position: fixed; inset: 0; z-index: 60; overflow-y: auto;
+    background: rgba(6, 4, 2, 0.9); padding: 24px 16px 40px;
+  }
+  #moba-hero-select[hidden] { display: none; }
+  #moba-hero-select h2 {
+    text-align: center; color: #ffd100; margin: 6px 0 18px;
+    font: 800 26px/1.2 system-ui, sans-serif; letter-spacing: 0.06em;
+  }
+  #moba-hero-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px; width: 100%; max-width: 1180px; margin: 0 auto;
+  }
+  .mhs-card {
+    display: flex; flex-direction: column; gap: 4px; text-align: left; cursor: pointer;
+    padding: 12px; min-height: 40px; border-radius: 10px;
+    border: 1px solid #6f5a2a; border-left: 4px solid var(--hero-color, #ffd100);
+    background: rgba(22, 17, 8, 0.92); color: #e8dcc0;
+    font: 400 12px/1.4 system-ui, sans-serif;
+  }
+  .mhs-card:hover { background: rgba(36, 28, 12, 0.95); border-color: #a8862a; }
+  .mhs-card:focus-visible { outline: 2px solid #ffd100; outline-offset: 2px; }
+  .mhs-name { color: var(--hero-color, #ffd100); font-size: 17px; font-weight: 800; }
+  .mhs-title { color: #c8b890; font-style: italic; }
+  .mhs-role {
+    align-self: flex-start; padding: 2px 8px; border-radius: 10px; margin: 2px 0;
+    background: rgba(255, 209, 0, 0.12); border: 1px solid rgba(255, 209, 0, 0.35);
+    color: #ffd77a; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .mhs-blurb { color: #b8ac90; }
+  .mhs-abilities { display: flex; gap: 4px; margin-top: 6px; }
+  .mhs-ab { width: 28px; height: 28px; border-radius: 5px; border: 1px solid #6f5a2a; }
+  .mhs-ab.ult { border-color: #b98cff; }
   :root {
     --gold: #ffd100;
     --gold-dim: #c8a838;
@@ -8074,6 +8182,21 @@
       <span class="spec-label" data-i18n="hudChrome.spectator.watching">Now watching</span>
       <span class="spec-name" id="spec-name"></span>
       <button id="spec-next" type="button" data-i18n-aria="hudChrome.spectator.next" aria-label="Next crawler">&#8250;</button>
+    </div>
+
+    <div id="moba-hud" hidden>
+      <div id="moba-status" role="status" aria-live="polite">
+        <span id="moba-status-text"></span>
+        <button id="moba-change-hero" type="button" data-i18n="hudChrome.moba.changeHero">Change hero</button>
+      </div>
+      <div id="moba-skills" role="group"></div>
+      <button id="moba-recall" type="button" data-i18n="hudChrome.moba.recall">Recall</button>
+      <div id="moba-respawn" role="status" aria-live="polite" hidden></div>
+      <div id="moba-banner" role="alert" hidden></div>
+      <div id="moba-hero-select" role="dialog" aria-modal="true" data-i18n-aria="hudChrome.moba.heroSelectTitle" aria-label="Choose your hero" hidden>
+        <h2 data-i18n="hudChrome.moba.heroSelectTitle">Choose your hero</h2>
+        <div id="moba-hero-grid"></div>
+      </div>
     </div>
 
     <div id="minimap-wrap">
