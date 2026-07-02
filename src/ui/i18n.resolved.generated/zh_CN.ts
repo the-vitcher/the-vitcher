@@ -219,7 +219,17 @@ export const zh_CN: EnTranslations = {
     },
     "clash": {
       "tagline": "十位英雄。三条兵线。毫无体面。",
-      "loading": "正在进入 The Clash……"
+      "loading": "正在进入 The Clash……",
+      "lobbyTitle": "游戏大厅",
+      "host3": "创建 3v3",
+      "host5": "创建 5v5",
+      "joinLive": "加入战斗",
+      "lobbyEmpty": "还没有房间，创建一个并召集好友吧！",
+      "lobbyPlayers": "{joined}/{capacity} 名玩家",
+      "hostedBy": "{name} 的房间",
+      "join": "加入",
+      "leave": "离开",
+      "startNow": "立即开始"
     },
     "moba": {
       "heroSelectTitle": "选择你的英雄",

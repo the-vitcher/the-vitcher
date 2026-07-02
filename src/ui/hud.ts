@@ -56,6 +56,7 @@ import { iconDataUrl, QUALITY_COLOR, raidMarkerDataUrl, RAID_MARKER_NAMES } from
 import { UnitPortraitPainter } from './unit_portrait_painter';
 import { crestIdForEntity } from './unit_portrait';
 import { MobaHud } from './moba_hud';
+import { ClashLobby } from './clash_lobby';
 import { svgIcon } from './ui_icons';
 import { shouldPlayCombatImpactForTarget, shouldPlayCritSfxForTarget, shouldPlayMobVoiceSfxForEntity } from './combat_sfx';
 import { nextVoicedYell, voicedYellGain, type VoicedYellState } from './voice_events';
@@ -480,6 +481,7 @@ export class Hud {
   // The Clash (MOBA) HUD lives in its own module; the Hud only composes it
   // (constructed in the ctor: field initializers run before `sim` is assigned).
   private mobaHud: MobaHud;
+  private clashLobby: ClashLobby;
   private targetEliteTagEl = $('#tf-elite-tag');
   private targetNameEl = $('#tf-name');
   private targetLevelEl = $('#tf-level');
@@ -665,6 +667,7 @@ export class Hud {
     this.ignoredChatNames = this.loadIgnoredChatNames();
     this.meters = new Meters(sim);
     this.mobaHud = new MobaHud(sim, (el, html) => this.attachTooltip(el, html));
+    this.clashLobby = new ClashLobby(sim);
     this.initChatTabs();
     this.initChatBoxGeometry();
     this.initWindowManagement();
@@ -2698,6 +2701,7 @@ export class Hud {
     }
     this.updateCrawlOverlays();
     this.mobaHud.update();
+    this.clashLobby.update();
     const now = performance.now();
     const fastHud = now - this.lastHudFastAt >= 100;
     if (fastHud) { this.lastHudFastAt = now; this.reconcileSfx(); }

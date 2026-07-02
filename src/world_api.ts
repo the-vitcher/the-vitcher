@@ -50,6 +50,24 @@ export interface MobaStateView {
   elapsed: number; // match seconds
 }
 
+// The Clash pre-match lobby: pending games players can host and join before a
+// match starts (one live match per realm in v1; a full game auto-starts).
+export interface MobaLobbyGameView {
+  id: number;
+  host: string; // host character name (proper noun, verbatim)
+  teamSize: number; // 3 or 5
+  joined: number;
+  capacity: number; // teamSize * 2
+  mine: boolean; // this player is in the game
+  isHost: boolean; // this player hosts it
+}
+
+export interface MobaLobbyView {
+  games: MobaLobbyGameView[];
+  inGameId: number | null; // pending game this player sits in
+  liveMatch: boolean; // a match is running (joinable via enterMobaMatch)
+}
+
 export interface TradeOffer {
   items: InvSlot[];
   copper: number;
@@ -347,6 +365,13 @@ export interface IWorld {
   // and the player actions that drive it. Hero/ability CONTENT is static data
   // (sim/content/moba.ts) the UI imports directly, like other entity data.
   mobaState(): MobaStateView | null;
+  // The pre-match lobby (host a 3v3/5v5 game, join one from the list). Null
+  // outside moba mode or while this player is seated in a live match.
+  mobaLobby(): MobaLobbyView | null;
+  mobaCreateGame(teamSize: number): void;
+  mobaJoinGame(gameId: number): void;
+  mobaLeaveGame(): void;
+  mobaStartGame(): void;
   enterMobaMatch(): void;
   pickMobaHero(heroId: string): void;
   mobaLearnAbility(abilityId: string): void;

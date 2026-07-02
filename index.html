@@ -300,6 +300,39 @@
   #moba-banner.victory { color: #ffd100; border: 2px solid #ffd100; background: rgba(40, 32, 4, 0.8); }
   #moba-banner.defeat { color: #ff6a6a; border: 2px solid #ff5a5a; background: rgba(34, 8, 8, 0.8); }
   #moba-banner[hidden] { display: none; }
+  /* --- The Clash pre-match lobby --- */
+  #clash-lobby {
+    position: fixed; top: 14%; left: 50%; transform: translateX(-50%);
+    z-index: 46; width: min(480px, 94vw); max-height: 70vh; overflow-y: auto;
+    padding: 16px 18px 18px; border-radius: 12px;
+    border: 1px solid #6f5a2a; background: rgba(14, 11, 5, 0.92);
+    color: #e8dcbe; font: 500 14px/1.4 system-ui, sans-serif;
+  }
+  #clash-lobby[hidden] { display: none; }
+  #clash-lobby h2 {
+    margin: 0 0 12px; text-align: center; color: #ffd100;
+    font: 800 22px/1.2 system-ui, sans-serif; letter-spacing: 0.06em;
+  }
+  .clash-lobby-actions { display: flex; gap: 8px; justify-content: center; margin-bottom: 12px; flex-wrap: wrap; }
+  .clash-lobby-actions button, .clash-lobby-row button {
+    min-height: 40px; padding: 0 14px; border-radius: 8px; cursor: pointer;
+    border: 1px solid #ffd100; background: rgba(60, 46, 8, 0.92);
+    color: #ffd100; font: 700 13px/1.2 system-ui, sans-serif; white-space: nowrap;
+  }
+  .clash-lobby-actions button:hover, .clash-lobby-row button:hover { background: rgba(84, 64, 12, 0.95); }
+  .clash-lobby-actions button:focus-visible, .clash-lobby-row button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+  .clash-lobby-row button.secondary { border-color: #6f5a2a; color: #e8dcbe; background: rgba(38, 30, 12, 0.9); }
+  .clash-lobby-row {
+    display: flex; align-items: center; gap: 10px; padding: 9px 10px;
+    border: 1px solid rgba(111, 90, 42, 0.55); border-radius: 8px; margin-bottom: 8px;
+    background: rgba(26, 20, 8, 0.75);
+  }
+  .clash-lobby-row.mine { border-color: #ffd100; }
+  .clash-lobby-row .clg-host { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .clash-lobby-row .clg-size { color: #ffd77a; font-weight: 700; }
+  .clash-lobby-row .clg-count { color: #bdb190; }
+  .clash-lobby-row .clg-actions { display: flex; gap: 6px; }
+  .clash-lobby-empty { text-align: center; color: #bdb190; padding: 10px 0 4px; }
   #moba-hero-select {
     position: fixed; inset: 0; z-index: 60; overflow-y: auto;
     background: rgba(6, 4, 2, 0.9); padding: 24px 16px 40px;
@@ -8264,6 +8297,18 @@
         <h2 data-i18n="hudChrome.moba.heroSelectTitle">Choose your hero</h2>
         <div id="moba-hero-grid"></div>
       </div>
+    </div>
+
+    <!-- The Clash pre-match lobby: host a 3v3/5v5 game or join one from the
+         list. Shown between matches (src/ui/clash_lobby.ts drives it). -->
+    <div id="clash-lobby" hidden>
+      <h2 data-i18n="hudChrome.clash.lobbyTitle">Game Lobby</h2>
+      <div class="clash-lobby-actions">
+        <button id="clash-host-3" type="button" data-i18n="hudChrome.clash.host3">Host 3v3</button>
+        <button id="clash-host-5" type="button" data-i18n="hudChrome.clash.host5">Host 5v5</button>
+        <button id="clash-join-live" type="button" data-i18n="hudChrome.clash.joinLive" hidden>Join the battle</button>
+      </div>
+      <div id="clash-lobby-games" role="list"></div>
     </div>
 
     <div id="minimap-wrap">

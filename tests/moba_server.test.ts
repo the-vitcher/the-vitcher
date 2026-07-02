@@ -77,20 +77,49 @@ const clashServer = (): GameServer => {
 afterEach(() => { delete process.env.CLASH_MODE; });
 
 describe('The Clash online: CLASH_MODE realm', () => {
-  it('auto-seats joining players into the match on alternating teams', () => {
+  it('joiners land in the lobby (no auto-seat); host/join/start builds the match', () => {
     const server = clashServer();
     const a = join(server, fakeWs(), 1, 'Alpha');
     const b = join(server, fakeWs(), 2, 'Beta');
     const sim: any = (server as any).sim;
+    expect(sim.mobaMatch).toBeFalsy();
+    // Alpha hosts a 3v3, Beta joins it from the list, Alpha starts early.
+    server.handleMessage(a, JSON.stringify({ t: 'cmd', cmd: 'moba_create', size: 3 }));
+    const gameId = sim.mobaLobby(a.pid).games[0].id;
+    expect(sim.mobaLobby(b.pid).games).toHaveLength(1);
+    server.handleMessage(b, JSON.stringify({ t: 'cmd', cmd: 'moba_join', game: gameId }));
+    expect(sim.mobaLobby(a.pid).games[0].joined).toBe(2);
+    server.handleMessage(a, JSON.stringify({ t: 'cmd', cmd: 'moba_start' }));
     expect(sim.mobaMatch).toBeTruthy();
     expect(sim.entities.get(a.pid)?.mobaTeam).toBe('A');
     expect(sim.entities.get(b.pid)?.mobaTeam).toBe('B');
+    // the lobby cleared and both players read as seated (lobby view null)
+    expect(sim.mobaLobby(a.pid)).toBeNull();
+  });
+
+  it('sends the lobby view (mlb) on the wire, decoded by ClientWorld', () => {
+    const server = clashServer();
+    const fc = fakeWs();
+    const session = join(server, fc, 1, 'Alpha');
+    server.handleMessage(session, JSON.stringify({ t: 'cmd', cmd: 'moba_create', size: 5 }));
+    (server as any).sim.tick();
+    (server as any).broadcastSnapshots();
+    const snap = lastSnap(fc.sent);
+    expect(snap.self.mlb).toBeTruthy();
+    expect(snap.self.mlb.games).toHaveLength(1);
+    expect(snap.self.mlb.games[0]).toMatchObject({ teamSize: 5, joined: 1, capacity: 10, mine: true, isHost: true, host: 'Alpha' });
+    const client = bareClient(session.pid);
+    (client as any).applySnapshot(snap);
+    expect(client.mobaLobby()?.games[0].capacity).toBe(10);
+    expect(client.mobaLobby()?.inGameId).toBe(snap.self.mlb.games[0].id);
   });
 
   it('sends the match view (mst) and team tags (mt) on the wire, decoded by ClientWorld', () => {
     const server = clashServer();
     const fc = fakeWs();
     const session = join(server, fc, 1, 'Alpha');
+    server.handleMessage(session, JSON.stringify({ t: 'cmd', cmd: 'moba_create', size: 3 }));
+    server.handleMessage(session, JSON.stringify({ t: 'cmd', cmd: 'moba_start' }));
     (server as any).sim.tick();
     (server as any).broadcastSnapshots();
     const snap = lastSnap(fc.sent);

@@ -17,7 +17,7 @@ import { RUNS_PER_DAY } from '../sim/crawl_run';
 import {
   isOverheadEmoteId,
   type AccountCosmetics, type ArenaInfo, type CharacterSearchResult, type DuelInfo, type FriendInfo,
-  type IWorld, type LeaderboardEntry, type MarketInfo, type MobaStateView, type OverheadEmoteId,
+  type IWorld, type LeaderboardEntry, type MarketInfo, type MobaLobbyView, type MobaStateView, type OverheadEmoteId,
   type PartyInfo, type PresenceStatus, type SocialInfo, type TradeInfo,
 } from '../world_api';
 
@@ -496,6 +496,8 @@ export class ClientWorld implements IWorld {
   crawlRunValue: { run: number; total: number; secondsLeft: number } | null = null;
   // The Clash (MOBA) match view, mirrored whole from the self snapshot (mst).
   mobaStateValue: MobaStateView | null = null;
+  // The Clash pre-match lobby view, mirrored whole from the self snapshot (mlb).
+  mobaLobbyValue: MobaLobbyView | null = null;
   // Post-cap progression (Max-Level XP Overflow), mirrored from snapshot self.
   lifetimeXp = 0;
   prestigeRank = 0;
@@ -946,6 +948,7 @@ export class ClientWorld implements IWorld {
       this.floorTimeLeftValue = typeof s.ftl === 'number' ? s.ftl : null;
       this.spectateTargetNameValue = typeof s.sw === 'string' ? s.sw : null;
       this.mobaStateValue = s.mst && typeof s.mst === 'object' ? s.mst : null;
+      this.mobaLobbyValue = s.mlb && typeof s.mlb === 'object' ? s.mlb : null;
       // total is the shared RUNS_PER_DAY constant (identical on both hosts), so it
       // is not sent on the wire; only the live run index (rn) and reset countdown (rl) are.
       this.crawlRunValue = typeof s.rn === 'number' && typeof s.rl === 'number'
@@ -1224,6 +1227,21 @@ export class ClientWorld implements IWorld {
   }
   mobaState(): MobaStateView | null {
     return this.mobaStateValue;
+  }
+  mobaLobby(): MobaLobbyView | null {
+    return this.mobaLobbyValue;
+  }
+  mobaCreateGame(teamSize: number): void {
+    this.cmd({ cmd: 'moba_create', size: teamSize });
+  }
+  mobaJoinGame(gameId: number): void {
+    this.cmd({ cmd: 'moba_join', game: gameId });
+  }
+  mobaLeaveGame(): void {
+    this.cmd({ cmd: 'moba_leave' });
+  }
+  mobaStartGame(): void {
+    this.cmd({ cmd: 'moba_start' });
   }
   enterMobaMatch(): void {
     this.cmd({ cmd: 'moba_enter' });

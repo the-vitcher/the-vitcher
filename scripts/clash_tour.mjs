@@ -194,6 +194,29 @@ check('match ends with my team winning', win.phase === 'ended' && win.winner ===
 check('victory banner shows', banner.visible && banner.cls.includes('victory'), JSON.stringify(banner));
 await page.screenshot({ path: 'tmp/clash_04_victory.png' });
 
+// --- Post-match lobby: host a fresh 3v3 and start a rematch ---
+await page.waitForFunction(() => document.querySelector('#clash-lobby')?.hidden === false, { timeout: 8000 }).catch(() => {});
+check('post-match lobby appears', await page.evaluate(() => document.querySelector('#clash-lobby')?.hidden === false));
+await page.evaluate(() => document.querySelector('#clash-host-3')?.click());
+await page.waitForFunction(() => !!document.querySelector('#clash-lobby-games .clash-lobby-row'), { timeout: 8000 }).catch(() => {});
+const hosted = await page.evaluate(() => {
+  const row = document.querySelector('#clash-lobby-games .clash-lobby-row');
+  return { row: !!row, mine: row?.classList.contains('mine') ?? false, lobby: window.__game.sim.mobaLobby() };
+});
+check('hosted 3v3 shows in the game list', hosted.row && hosted.mine && hosted.lobby?.games?.length === 1, JSON.stringify(hosted.lobby));
+await page.screenshot({ path: 'tmp/clash_05_lobby.png' });
+await page.evaluate(() => document.querySelector('#clash-lobby-games [data-act="start"]')?.click());
+await page.waitForFunction(
+  () => window.__game.sim.mobaState()?.phase === 'warmup' && document.querySelector('#clash-lobby')?.hidden === true,
+  { timeout: 10000 },
+).catch(() => {});
+const rematch = await page.evaluate(() => {
+  const sim = window.__game.sim;
+  const st = sim.mobaState();
+  return { phase: st?.phase, towersB: st?.towersB, lobbyHidden: document.querySelector('#clash-lobby')?.hidden };
+});
+check('rematch starts on a fresh lane (all towers back)', rematch.phase === 'warmup' && rematch.towersB === 9 && rematch.lobbyHidden === true, JSON.stringify(rematch));
+
 console.log(errors.length ? `\nPAGE ERRORS:\n${errors.slice(0, 8).join('\n')}` : '\nno page errors');
 await browser.close();
 process.exit(fail > 0 ? 1 : 0);

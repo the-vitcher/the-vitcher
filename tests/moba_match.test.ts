@@ -701,3 +701,110 @@ describe('The Clash: minimap structure view', () => {
     expect(st2.towersAliveB[1]).toEqual([false, false, false]);
   });
 });
+
+describe('The Clash: pre-match lobby', () => {
+  const addP = (sim: Sim, name: string) => sim.addPlayer('warrior', name);
+
+  it('hosting shows in every player\'s list; a full roster auto-starts 3v3', () => {
+    const sim = makeMobaSim();
+    const pids = ['A1', 'A2', 'A3', 'B1', 'B2', 'B3'].map((n) => addP(sim, n));
+    expect(sim.mobaMatch).toBeFalsy();
+    sim.mobaCreateGame(3, pids[0]);
+    const view = sim.mobaLobby(pids[1])!;
+    expect(view.games).toHaveLength(1);
+    expect(view.games[0]).toMatchObject({ teamSize: 3, joined: 1, capacity: 6, mine: false, host: 'A1' });
+    const gameId = view.games[0].id;
+    for (const pid of pids.slice(1)) sim.mobaJoinGame(gameId, pid);
+    // sixth join filled the game: the match started and the lobby cleared
+    expect(sim.mobaMatch).toBeTruthy();
+    expect(sim.mobaMatch!.teams.size).toBe(6);
+    const teams = [...sim.mobaMatch!.teams.values()];
+    expect(teams.filter((t) => t === 'A')).toHaveLength(3);
+    expect(teams.filter((t) => t === 'B')).toHaveLength(3);
+    expect(sim.mobaLobby(pids[0])).toBeNull(); // seated players see no lobby
+  });
+
+  it('the host force-starts early with an uneven roster', () => {
+    const sim = makeMobaSim();
+    const host = addP(sim, 'Host');
+    const other = addP(sim, 'Other');
+    sim.mobaCreateGame(5, host);
+    sim.mobaJoinGame(sim.mobaLobby(other)!.games[0].id, other);
+    expect(sim.mobaMatch).toBeFalsy();
+    sim.mobaStartGame(host);
+    expect(sim.mobaMatch).toBeTruthy();
+    expect(sim.mobaMatch!.teams.size).toBe(2);
+    // the third player was never in the game and stays out of the match
+    const outsider = addP(sim, 'Late');
+    expect(sim.mobaMatch!.teams.has(outsider)).toBe(false);
+    expect(sim.mobaLobby(outsider)!.liveMatch).toBe(true);
+  });
+
+  it('leaving removes the player; a host leaving disbands the game', () => {
+    const sim = makeMobaSim();
+    const host = addP(sim, 'Host');
+    const other = addP(sim, 'Other');
+    sim.mobaCreateGame(3, host);
+    const id = sim.mobaLobby(host)!.games[0].id;
+    sim.mobaJoinGame(id, other);
+    sim.mobaLeaveGame(other);
+    expect(sim.mobaLobby(host)!.games[0].joined).toBe(1);
+    sim.mobaLeaveGame(host);
+    expect(sim.mobaLobby(other)!.games).toHaveLength(0);
+  });
+
+  it('a disconnecting player drops out of pending games', () => {
+    const sim = makeMobaSim();
+    const host = addP(sim, 'Host');
+    const other = addP(sim, 'Other');
+    sim.mobaCreateGame(3, host);
+    sim.mobaJoinGame(sim.mobaLobby(other)!.games[0].id, other);
+    sim.removePlayer(other);
+    expect(sim.mobaLobby(host)!.games[0].joined).toBe(1);
+  });
+
+  it('starting is gated while a match runs, and bad sizes are no-ops', () => {
+    const sim = makeMobaSim();
+    const host = addP(sim, 'Host');
+    sim.mobaCreateGame(4, host); // only 3 and 5 exist
+    expect(sim.mobaLobby(host)!.games).toHaveLength(0);
+    sim.mobaCreateGame(3, host);
+    sim.mobaStartGame(host);
+    expect(sim.mobaMatch).toBeTruthy();
+    // a second host cannot start a new game over the live match
+    const rival = addP(sim, 'Rival');
+    sim.mobaCreateGame(3, rival);
+    sim.mobaStartGame(rival);
+    expect(sim.mobaMatch!.teams.has(rival)).toBe(false);
+    expect(sim.mobaMatch!.phase).not.toBe('ended');
+  });
+
+  it('rematch: starting after a finished match resets the whole lane', () => {
+    const sim = makeMobaSim();
+    const host = addP(sim, 'Host');
+    sim.mobaCreateGame(3, host);
+    sim.mobaStartGame(host);
+    const first = sim.mobaMatch!;
+    const hero = entOf(sim, host);
+    // run the first match to a win: raze a lane, then the core
+    for (const id of first.towersB[1]) kill(sim, entOf(sim, id), hero);
+    kill(sim, entOf(sim, first.coreB), hero);
+    for (let i = 0; i < 10; i++) sim.tick();
+    expect(first.phase).toBe('ended');
+    // ended matches put the winner back in the lobby view
+    expect(sim.mobaLobby(host)).toBeTruthy();
+    // host a fresh game: the lane resets (all structures alive again)
+    sim.mobaCreateGame(3, host);
+    sim.mobaStartGame(host);
+    const second = sim.mobaMatch!;
+    expect(second).not.toBe(first);
+    expect(second.phase).toBe('warmup');
+    const st = sim.mobaState(host)!;
+    expect(st.towersA).toBe(9);
+    expect(st.towersB).toBe(9);
+    expect(st.coreAliveB).toBe(true);
+    // no leftover wave minions from the first match
+    const leftovers = [...sim.entities.values()].filter((e) => first.minionIds.has(e.id));
+    expect(leftovers).toHaveLength(0);
+  });
+});

@@ -219,7 +219,17 @@ export const ko_KR: EnTranslations = {
     },
     "clash": {
       "tagline": "영웅 10명. 라인 3개. 체면 제로.",
-      "loading": "The Clash 입장 중..."
+      "loading": "The Clash 입장 중...",
+      "lobbyTitle": "게임 로비",
+      "host3": "3v3 만들기",
+      "host5": "5v5 만들기",
+      "joinLive": "전투 참가",
+      "lobbyEmpty": "아직 게임이 없습니다. 하나 만들어 친구를 모아보세요!",
+      "lobbyPlayers": "플레이어 {joined}/{capacity}",
+      "hostedBy": "{name}의 게임",
+      "join": "참가",
+      "leave": "나가기",
+      "startNow": "지금 시작"
     },
     "moba": {
       "heroSelectTitle": "영웅을 선택하세요",

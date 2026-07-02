@@ -219,7 +219,17 @@ export const ja_JP: EnTranslations = {
     },
     "clash": {
       "tagline": "ヒーロー10人。レーン3本。品位ゼロ。",
-      "loading": "The Clash に入場中..."
+      "loading": "The Clash に入場中...",
+      "lobbyTitle": "ゲームロビー",
+      "host3": "3v3 を作成",
+      "host5": "5v5 を作成",
+      "joinLive": "戦いに参加",
+      "lobbyEmpty": "まだゲームがありません。作成して仲間を集めよう!",
+      "lobbyPlayers": "プレイヤー {joined}/{capacity}",
+      "hostedBy": "{name} のゲーム",
+      "join": "参加",
+      "leave": "退出",
+      "startNow": "今すぐ開始"
     },
     "moba": {
       "heroSelectTitle": "ヒーローを選ぼう",

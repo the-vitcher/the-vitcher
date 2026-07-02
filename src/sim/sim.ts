@@ -40,7 +40,7 @@ import {
   TAUNT_FORCE_SECONDS, addThreat, clearThreat, stealthDetectionRadius, threatEntries, threatModifier, topThreatValue,
 } from './threat';
 import { groundHeight, WATER_LEVEL } from './world';
-import type { AccountCosmetics, LeaderboardEntry, MobaStateView } from '../world_api';
+import type { AccountCosmetics, LeaderboardEntry, MobaLobbyView, MobaStateView } from '../world_api';
 import {
   AbilityDef, AbilityEffect, Aura, AuraKind, CAST_PUSHBACK_SEC, CHANNEL_PUSHBACK_FRACTION, CONSUME_DURATION, ItemDef,
   DEFAULT_PARTY_LOOT_STRATEGIES,
@@ -1162,6 +1162,8 @@ export class Sim {
     if (duel) this.endDuel(duel, duel.a === pid ? duel.b : duel.a);
     // arena: leaving the queue is free; disconnecting mid-bout forfeits it
     this.arenaDequeue(pid);
+    // Clash lobby: a leaver drops out of any pending game (host leave disbands)
+    this.mobaLobbyLeave(pid);
     const match = this.arenaMatches.get(pid);
     if (match) {
       const team = this.arenaTeamOf(match, pid);
@@ -9025,6 +9027,89 @@ export class Sim {
   // + rules) and src/sim/content/moba.ts (heroes, structures, minions).
   // -------------------------------------------------------------------------
 
+  // --- Pre-match lobby: host a 3v3/5v5 game, join one, start when ready. ---
+  // One live match per realm in v1: starting a game replaces an ENDED match
+  // (never a running one) and clears every pending game. Matchmaking meta, not
+  // gameplay, but it lives in the sim so both hosts share one implementation
+  // and the view mirrors over the wire like the match state does.
+
+  private mobaLobbyGames: { id: number; hostPid: number; teamSize: number; pids: number[] }[] = [];
+  private mobaLobbyNextId = 1;
+
+  // The lobby view (IWorld.mobaLobby). Null outside moba mode or while this
+  // player is seated in a live (non-ended) match.
+  mobaLobby(pid?: number): MobaLobbyView | null {
+    if (!this.cfg.mobaMode) return null;
+    const r = this.resolve(pid);
+    const match = this.mobaMatch;
+    const liveMatch = !!match && match.phase !== 'ended';
+    if (r && liveMatch && match.teams.has(r.e.id)) return null;
+    const games = this.mobaLobbyGames.map((g) => ({
+      id: g.id,
+      host: this.entities.get(g.hostPid)?.name ?? '?',
+      teamSize: g.teamSize,
+      joined: g.pids.length,
+      capacity: g.teamSize * 2,
+      mine: r ? g.pids.includes(r.e.id) : false,
+      isHost: r ? g.hostPid === r.e.id : false,
+    }));
+    const mine = r ? this.mobaLobbyGames.find((g) => g.pids.includes(r.e.id)) : undefined;
+    return { games, inGameId: mine?.id ?? null, liveMatch };
+  }
+
+  // Host a pending game (team size 3 or 5). Leaves any other pending game first.
+  mobaCreateGame(teamSize: number, pid?: number): void {
+    if (!this.cfg.mobaMode) return;
+    const r = this.resolve(pid);
+    if (!r || (teamSize !== 3 && teamSize !== 5)) return;
+    this.mobaLobbyLeave(r.e.id);
+    this.mobaLobbyGames.push({ id: this.mobaLobbyNextId++, hostPid: r.e.id, teamSize, pids: [r.e.id] });
+  }
+
+  // Join a pending game from the list; a full roster starts the match at once.
+  mobaJoinGame(gameId: number, pid?: number): void {
+    if (!this.cfg.mobaMode) return;
+    const r = this.resolve(pid);
+    const game = this.mobaLobbyGames.find((g) => g.id === gameId);
+    if (!r || !game || game.pids.includes(r.e.id)) return;
+    if (game.pids.length >= game.teamSize * 2) return;
+    this.mobaLobbyLeave(r.e.id);
+    game.pids.push(r.e.id);
+    if (game.pids.length >= game.teamSize * 2) this.mobaLobbyStart(game);
+  }
+
+  mobaLeaveGame(pid?: number): void {
+    const r = this.resolve(pid);
+    if (r) this.mobaLobbyLeave(r.e.id);
+  }
+
+  // The host starts early with whoever joined (teams alternate, sides may be
+  // uneven). Gated while a match is running: the lane holds one match at a time.
+  mobaStartGame(pid?: number): void {
+    if (!this.cfg.mobaMode) return;
+    const r = this.resolve(pid);
+    const game = r ? this.mobaLobbyGames.find((g) => g.hostPid === r.e.id) : undefined;
+    if (!game || game.pids.length < 1) return;
+    this.mobaLobbyStart(game);
+  }
+
+  private mobaLobbyStart(game: { id: number; hostPid: number; teamSize: number; pids: number[] }): void {
+    if (this.mobaMatch && this.mobaMatch.phase !== 'ended') return;
+    const roster = game.pids.filter((id) => this.players.has(id));
+    if (roster.length === 0) return;
+    this.mobaLobbyGames = [];
+    this.startMobaMatch(roster, game.teamSize);
+  }
+
+  // Drop a player from any pending game; a hostless (or empty) game disbands.
+  private mobaLobbyLeave(pid: number): void {
+    for (const game of this.mobaLobbyGames) {
+      const i = game.pids.indexOf(pid);
+      if (i >= 0) game.pids.splice(i, 1);
+    }
+    this.mobaLobbyGames = this.mobaLobbyGames.filter((g) => g.hostPid !== pid && g.pids.length > 0);
+  }
+
   // Enter the lane and (re)start the match. Claims the lane instance (its structures
   // spawn + get team-tagged in claimInstance), builds the match, and seats the caller.
   enterMobaMatch(pid?: number): void {
@@ -9048,11 +9133,21 @@ export class Sim {
 
   // Start a fresh match: assign teams over the given pids (default: all players),
   // claim the lane instance, record its structures, and seat every player.
-  startMobaMatch(pids?: number[]): void {
+  startMobaMatch(pids?: number[], teamSize?: number): void {
     if (!this.cfg.mobaMode) return;
     const roster = pids ?? [...this.players.keys()];
-    // Find or claim a lane instance (a synthetic 'moba' key: one shared match in v1).
+    // Rematch: tear the previous match's world down (wave minions, camp creeps,
+    // razed structures) so the lane re-claims in a pristine state.
     let inst = this.instances.find((i) => i.dungeonId === 'moba_lane' && i.partyKey === 'moba');
+    const prev = this.mobaMatch;
+    if (prev && inst) {
+      for (const id of prev.minionIds) if (this.entities.has(id)) this.dropEntity(id);
+      for (const camp of prev.camps) for (const id of camp.ids) if (this.entities.has(id)) this.dropEntity(id);
+      this.freeInstance(inst);
+      inst = undefined;
+      this.mobaMatch = null;
+    }
+    // Find or claim a lane instance (a synthetic 'moba' key: one shared match in v1).
     if (!inst) {
       inst = this.instances.find((i) => i.dungeonId === 'moba_lane' && i.partyKey === null);
       if (!inst) return;
@@ -9060,7 +9155,7 @@ export class Sim {
     }
     const origin = this.instanceOriginOf(inst);
     const match: MobaMatch = {
-      slot: inst.slot, teams: assignMobaTeams(roster, this.cfg.mobaTeamSize ?? 5),
+      slot: inst.slot, teams: assignMobaTeams(roster, teamSize ?? this.cfg.mobaTeamSize ?? 5),
       coreA: -1, coreB: -1, towersA: [[], [], []], towersB: [[], [], []], minionIds: new Set(),
       waveTimer: MOBA_FIRST_WAVE_SEC, waveIndex: 0, elapsed: 0,
       camps: MOBA_JUNGLE_CAMPS.map(() => ({ ids: [], respawnLeft: 0 })),

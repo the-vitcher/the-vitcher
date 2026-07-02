@@ -219,7 +219,17 @@ export const en_CA: EnTranslations = {
     },
     "clash": {
       "tagline": "Ten heroes. Three lanes. Zero dignity.",
-      "loading": "Entering the Clash..."
+      "loading": "Entering the Clash...",
+      "lobbyTitle": "Game Lobby",
+      "host3": "Host 3v3",
+      "host5": "Host 5v5",
+      "joinLive": "Join the battle",
+      "lobbyEmpty": "No games yet - host one and rally your friends!",
+      "lobbyPlayers": "{joined}/{capacity} players",
+      "hostedBy": "{name}'s game",
+      "join": "Join",
+      "leave": "Leave",
+      "startNow": "Start now"
     },
     "moba": {
       "heroSelectTitle": "Choose your hero",

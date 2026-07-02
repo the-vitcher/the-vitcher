@@ -219,7 +219,17 @@ export const en_XA: EnTranslations = {
     },
     "clash": {
       "tagline": "[Ţéñ ĥéŕóéš. Ţĥŕéé ļáñéš. Žéŕó ðíĝñíţý.]",
-      "loading": "[Éñţéŕíñĝ ţĥé Çļášĥ...]"
+      "loading": "[Éñţéŕíñĝ ţĥé Çļášĥ...]",
+      "lobbyTitle": "[Ĝáɱé Ļóƀƀý]",
+      "host3": "[Ĥóšţ 3ʋ3]",
+      "host5": "[Ĥóšţ 5ʋ5]",
+      "joinLive": "[Ĵóíñ ţĥé ƀáţţļé]",
+      "lobbyEmpty": "[Ñó ĝáɱéš ýéţ - ĥóšţ óñé áñð ŕáļļý ýóúŕ ƒŕíéñðš!]",
+      "lobbyPlayers": "[{joined}/{capacity} þļáýéŕš]",
+      "hostedBy": "[{name}'š ĝáɱé]",
+      "join": "[Ĵóíñ]",
+      "leave": "[Ļéáʋé]",
+      "startNow": "[Šţáŕţ ñóŵ]"
     },
     "moba": {
       "heroSelectTitle": "[Çĥóóšé ýóúŕ ĥéŕó]",

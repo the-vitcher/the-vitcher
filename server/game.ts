@@ -732,7 +732,9 @@ export class GameServer {
     const pid = this.sim.addPlayer(cls, name, { state: state ?? undefined });
     // The Clash realm is a MOBA lobby: every player is seated into the match on
     // join (team assignment, base teleport, hero select from the HUD).
-    if (this.mobaMode) this.sim.enterMobaMatch(pid);
+    // The Clash: joiners land in the pre-match lobby (host/join a 3v3 or 5v5
+    // game); a running match stays joinable via the moba_enter command.
+
     if (isGm) {
       // GM characters: invulnerable, and always at the level cap (the row is
       // created without state, so the first join levels them up)
@@ -1311,6 +1313,10 @@ export class GameServer {
       // The Clash (MOBA): all four validate inside the sim (mobaMode gate, hero
       // ownership, skill points, cooldowns), so bad ids are safe no-ops.
       case 'moba_enter': sim.enterMobaMatch(pid); break;
+      case 'moba_create': if (typeof msg.size === 'number') sim.mobaCreateGame(msg.size, pid); break;
+      case 'moba_join': if (typeof msg.game === 'number') sim.mobaJoinGame(msg.game, pid); break;
+      case 'moba_leave': sim.mobaLeaveGame(pid); break;
+      case 'moba_start': sim.mobaStartGame(pid); break;
       case 'moba_pick': if (typeof msg.hero === 'string') sim.pickMobaHero(msg.hero, pid); break;
       case 'moba_learn': if (typeof msg.ability === 'string') sim.mobaLearnAbility(msg.ability, pid); break;
       case 'moba_recall': sim.mobaRecall(pid); break;
@@ -1684,6 +1690,7 @@ export class GameServer {
       // The Clash: the whole match view rides inline (small, changes every tick
       // anyway on a clash realm; absent on normal realms so they stay byte-identical).
       mst: this.mobaMode ? this.sim.mobaState(p.id) ?? undefined : undefined,
+      mlb: this.mobaMode ? this.sim.mobaLobby(p.id) ?? undefined : undefined,
       ack: session.lastInputSeq,
     });
     const json = JSON.stringify(self);

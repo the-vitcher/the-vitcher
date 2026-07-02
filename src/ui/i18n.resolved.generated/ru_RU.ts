@@ -219,7 +219,17 @@ export const ru_RU: EnTranslations = {
     },
     "clash": {
       "tagline": "Десять героев. Три линии. Ноль достоинства.",
-      "loading": "Вход в The Clash..."
+      "loading": "Вход в The Clash...",
+      "lobbyTitle": "Лобби игр",
+      "host3": "Создать 3v3",
+      "host5": "Создать 5v5",
+      "joinLive": "В бой",
+      "lobbyEmpty": "Игр пока нет: создайте свою и зовите друзей!",
+      "lobbyPlayers": "Игроки: {joined}/{capacity}",
+      "hostedBy": "Игра {name}",
+      "join": "Войти",
+      "leave": "Выйти",
+      "startNow": "Начать сейчас"
     },
     "moba": {
       "heroSelectTitle": "Выберите героя",
