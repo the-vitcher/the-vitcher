@@ -1,0 +1,17 @@
+name = "urge-worker"
+main = "src/index.ts"
+compatibility_date = "2026-07-01"
+
+# Create the namespace first: npx wrangler kv namespace create RATE_KV
+# then paste the id it prints below.
+[[kv_namespaces]]
+binding = "RATE_KV"
+id = "REPLACE_WITH_KV_NAMESPACE_ID"
+
+[vars]
+COACH_MODEL = "claude-haiku-4-5"
+REPORT_MODEL = "claude-sonnet-5"
+
+# Secrets (never commit values):
+#   npx wrangler secret put ANTHROPIC_API_KEY
+#   npx wrangler secret put REVENUECAT_API_KEY   (optional, gates /report)

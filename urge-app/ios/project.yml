@@ -1,0 +1,25 @@
+# XcodeGen manifest. Run: brew install xcodegen && xcodegen generate
+# Then open Urge.xcodeproj, set your team under Signing, and run on a device.
+name: Urge
+options:
+  bundleIdPrefix: com.yourname
+  deploymentTarget:
+    iOS: "17.0"
+targets:
+  Urge:
+    type: application
+    platform: iOS
+    sources:
+      - Urge
+    info:
+      path: Urge/Info.plist
+      properties:
+        CFBundleDisplayName: Urge
+        UILaunchScreen: {}
+        CFBundleURLTypes:
+          - CFBundleURLSchemes:
+              - urge
+    settings:
+      base:
+        TARGETED_DEVICE_FAMILY: "1"
+        SWIFT_VERSION: "5.9"

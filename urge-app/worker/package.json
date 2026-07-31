@@ -1,0 +1,21 @@
+{
+  "name": "urge-worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.60.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260730.1",
+    "typescript": "^5.5.0",
+    "vitest": "^3.0.0",
+    "wrangler": "^4.0.0"
+  }
+}
