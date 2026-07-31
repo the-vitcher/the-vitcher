@@ -113,21 +113,30 @@ describe('mergeMoments', () => {
 });
 
 describe('isProfileCacheValid', () => {
-  const cache = { profile: emptyProfile(NOW), momentCountAtCompute: 5, clusterWindowAtCompute: 8 };
+  const cache = {
+    profile: emptyProfile(NOW),
+    momentCountAtCompute: 5,
+    clusterWindowAtCompute: 8,
+    lookbackAtCompute: 2.5,
+  };
 
   it('is valid when nothing that feeds the profile changed', () => {
-    expect(isProfileCacheValid(cache, 5, 8)).toBe(true);
+    expect(isProfileCacheValid(cache, 5, 8, 2.5)).toBe(true);
   });
 
   it('invalidates when a moment is added or removed', () => {
-    expect(isProfileCacheValid(cache, 6, 8)).toBe(false);
+    expect(isProfileCacheValid(cache, 6, 8, 2.5)).toBe(false);
   });
 
   it('invalidates when the cluster window is retuned', () => {
-    expect(isProfileCacheValid(cache, 5, 12)).toBe(false);
+    expect(isProfileCacheValid(cache, 5, 12, 2.5)).toBe(false);
+  });
+
+  it('invalidates when the lookback is retuned, which re-times every moment without changing the count', () => {
+    expect(isProfileCacheValid(cache, 5, 8, 0)).toBe(false);
   });
 
   it('invalidates a missing cache', () => {
-    expect(isProfileCacheValid(null, 5, 8)).toBe(false);
+    expect(isProfileCacheValid(null, 5, 8, 2.5)).toBe(false);
   });
 });

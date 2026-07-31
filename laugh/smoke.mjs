@@ -127,6 +127,13 @@ try {
     JSON.stringify(tSecs) === JSON.stringify([100, 102, 104, 106]),
     JSON.stringify(tSecs),
   );
+  // A retime changes no moment count, so a cache keyed only on the count would go
+  // stale here while still reporting itself valid.
+  check(
+    'the profile recomputes after a retime rather than serving a stale cache',
+    retimed?.data?.profile?.medianSecondsToFirstLaugh === 100,
+    `medianSecondsToFirstLaugh = ${retimed?.data?.profile?.medianSecondsToFirstLaugh}`,
+  );
 
   await ask({
     type: 'laugh:saveSettings',

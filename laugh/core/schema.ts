@@ -19,6 +19,12 @@ export type ProfileCache = {
   profile: TasteProfile;
   momentCountAtCompute: number;
   clusterWindowAtCompute: number;
+  /**
+   * Retuning the lookback re-times every stored moment without changing how many
+   * there are, so the count alone cannot detect it. Position buckets, time to first
+   * laugh, and the episode boundaries themselves all move with tSec.
+   */
+  lookbackAtCompute: number;
 };
 
 function clampNumber(value: unknown, fallback: number, min: number, max: number): number {
@@ -48,10 +54,15 @@ export function isProfileCacheValid(
   cache: ProfileCache | null,
   momentCount: number,
   clusterWindowSec: number,
+  lookbackSec: number,
 ): boolean {
   if (!cache || !cache.profile) return false;
   if (cache.profile.version !== SCHEMA_VERSION) return false;
-  return cache.momentCountAtCompute === momentCount && cache.clusterWindowAtCompute === clusterWindowSec;
+  return (
+    cache.momentCountAtCompute === momentCount &&
+    cache.clusterWindowAtCompute === clusterWindowSec &&
+    cache.lookbackAtCompute === lookbackSec
+  );
 }
 
 export type ExportBundle = {

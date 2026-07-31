@@ -131,7 +131,7 @@ export async function getProfile(): Promise<TasteProfile> {
   const stored = await chrome.storage.local.get(STORAGE_KEYS.profileCache);
   const cache = (stored[STORAGE_KEYS.profileCache] ?? null) as ProfileCache | null;
 
-  if (isProfileCacheValid(cache, moments.length, settings.clusterWindowSec)) {
+  if (isProfileCacheValid(cache, moments.length, settings.clusterWindowSec, settings.lookbackSec)) {
     return cache!.profile;
   }
 
@@ -144,6 +144,7 @@ export async function getProfile(): Promise<TasteProfile> {
     profile,
     momentCountAtCompute: moments.length,
     clusterWindowAtCompute: settings.clusterWindowSec,
+    lookbackAtCompute: settings.lookbackSec,
   };
   await chrome.storage.local.set({ [STORAGE_KEYS.profileCache]: nextCache });
 
