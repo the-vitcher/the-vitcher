@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Laugh settings</title>
+    <link rel="stylesheet" href="../feed/feed.css" />
+    <style>
+      main { max-width: 640px; }
+      .field { margin-bottom: 22px; }
+      .field h3 { margin: 0 0 4px; font-size: 15px; }
+      .field p { margin: 0 0 10px; color: var(--muted); font-size: 13px; }
+      .field input[type='range'] { width: 260px; vertical-align: middle; }
+      .field input[type='text'] {
+        width: 100%; padding: 8px 10px; border-radius: 8px;
+        border: 1px solid var(--line); background: var(--surface-2); color: var(--text); font: inherit;
+      }
+      .value { display: inline-block; min-width: 56px; font-variant-numeric: tabular-nums; }
+      .saved { color: var(--accent); margin-left: 10px; opacity: 0; transition: opacity 150ms ease; }
+      .saved.show { opacity: 1; }
+      label.toggle { display: flex; gap: 10px; align-items: center; cursor: pointer; }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <h1>Laugh settings</h1>
+      <span class="saved" id="saved">Saved</span>
+    </header>
+
+    <main>
+      <section class="panel">
+        <div class="field">
+          <h3>Reaction lag</h3>
+          <p>
+            You laugh, then you reach for the key, so the press lands after the joke. Laugh rewinds
+            every mark by this much to estimate where the punchline actually was. Changing it also
+            re-times the moments you already saved, because the raw press time is kept.
+          </p>
+          <input type="range" id="lookback" min="0" max="8" step="0.5" />
+          <span class="value" id="lookback-value"></span>
+        </div>
+
+        <div class="field">
+          <h3>Laugh window</h3>
+          <p>
+            Presses this close together count as one laugh with an intensity, rather than several
+            separate moments.
+          </p>
+          <input type="range" id="cluster" min="0" max="30" step="1" />
+          <span class="value" id="cluster-value"></span>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="field">
+          <label class="toggle">
+            <input type="checkbox" id="show-button" />
+            <span>Show a mark button in the YouTube player bar</span>
+          </label>
+        </div>
+        <div class="field">
+          <label class="toggle">
+            <input type="checkbox" id="in-page-hotkey" />
+            <span>
+              Also listen for Ctrl+Shift+L inside the page, as a fallback when the browser shortcut
+              is unbound or taken
+            </span>
+          </label>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="field">
+          <h3>YouTube Data API key (not used yet)</h3>
+          <p>
+            Discovery is not built yet. When it lands it will use this key to find new videos that
+            match your profile. The key is stored only in this browser and is never included in an
+            export. Restrict it to the YouTube Data API v3 in the Google Cloud console.
+          </p>
+          <input type="text" id="api-key" placeholder="Paste an API key to store it for later" />
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="field">
+          <h3>Your data</h3>
+          <p>Everything stays in this browser. Nothing is sent anywhere.</p>
+          <button class="button" id="open-feed" type="button">Open the feed</button>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="../dist/options.js"></script>
+  </body>
+</html>

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Laugh</title>
+    <link rel="stylesheet" href="feed.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <h1>Laugh</h1>
+      <div class="stats" id="stats"></div>
+      <div class="actions">
+        <label class="button" for="import-file">Import</label>
+        <input type="file" id="import-file" accept="application/json" hidden />
+        <button class="button" id="export">Export</button>
+        <button class="button" id="options">Settings</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="panel" id="profile-panel"></section>
+
+      <section class="toolbar">
+        <label>
+          Sort
+          <select id="sort">
+            <option value="recent">Most recent</option>
+            <option value="laughs">Most laughs</option>
+            <option value="title">Title</option>
+          </select>
+        </label>
+        <label>
+          Channel
+          <select id="channel-filter">
+            <option value="">All channels</option>
+          </select>
+        </label>
+        <span class="spacer"></span>
+        <button class="button danger" id="clear">Clear everything</button>
+      </section>
+
+      <section id="feed" class="feed"></section>
+      <p class="empty" id="empty" hidden>
+        Nothing marked yet. Open a YouTube video and press Ctrl+Shift+L (Command+Shift+L on a Mac)
+        the moment something lands.
+      </p>
+    </main>
+
+    <script type="module" src="../dist/feed.js"></script>
+  </body>
+</html>

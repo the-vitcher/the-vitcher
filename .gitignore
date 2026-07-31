@@ -27,6 +27,9 @@ tmp/
 # i18n release-fill worklist (generated; regenerate via `npm run i18n:worklist`)
 docs/i18n-scaling/worklist/
 
+# laugh extension build output
+laugh/dist/
+
 # python
 __pycache__/
 *.pyc

@@ -1,0 +1,83 @@
+:root {
+  color-scheme: dark;
+}
+
+body {
+  width: 280px;
+  margin: 0;
+  padding: 14px;
+  background: #0f0f0f;
+  color: #f1f1f1;
+  font: 14px/1.5 Roboto, Arial, sans-serif;
+}
+
+h1 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  letter-spacing: 0.5px;
+}
+
+.summary {
+  color: #a0a0a0;
+  margin-bottom: 10px;
+}
+
+.channels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 12px;
+}
+
+.chip {
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: #262626;
+  font-size: 12px;
+}
+
+button {
+  font: inherit;
+  color: #f1f1f1;
+  background: #1b1b1b;
+  border: 1px solid #333;
+  border-radius: 999px;
+  padding: 7px 12px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #262626;
+}
+
+button.primary {
+  width: 100%;
+  background: #7cc4ff;
+  color: #0f0f0f;
+  border-color: #7cc4ff;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+button.primary:disabled {
+  background: #1b1b1b;
+  color: #6a6a6a;
+  border-color: #333;
+  cursor: default;
+}
+
+.row {
+  display: flex;
+  gap: 8px;
+}
+
+.row button {
+  flex: 1;
+}
+
+.hint {
+  color: #8a8a8a;
+  font-size: 12px;
+  margin: 10px 0 0;
+  min-height: 1em;
+}
