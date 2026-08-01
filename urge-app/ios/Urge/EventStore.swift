@@ -46,7 +46,14 @@ final class EventStore: ObservableObject {
 
   @discardableResult
   func logUrge(urgeID: UUID?) -> UrgeEvent {
-    let event = UrgeEvent(id: UUID(), timestamp: Date(), urgeID: urgeID, outcome: nil, triggerTag: nil)
+    let event = UrgeEvent(
+      id: UUID(),
+      timestamp: Date(),
+      urgeID: urgeID,
+      outcome: nil,
+      triggerTag: nil,
+      closedAt: nil
+    )
     events.append(event)
     save()
     return event
@@ -55,6 +62,7 @@ final class EventStore: ObservableObject {
   func setOutcome(_ outcome: Outcome, for eventID: UUID) {
     guard let i = events.firstIndex(where: { $0.id == eventID }) else { return }
     events[i].outcome = outcome
+    events[i].closedAt = Date()
     save()
   }
 
@@ -138,7 +146,10 @@ final class EventStore: ObservableObject {
     let week = recentEvents(days: 7)
     let rode = week.filter { $0.outcome == .rode }.count
     let bands = countsByHourBand(days: 7)
-    let topBand = bands.firstIndex(of: bands.max() ?? 0) ?? 0
+    let peak = bands.max() ?? 0
+    // With no history there is no peak band; say so rather than implying
+    // a pattern the user does not have.
+    let commonHour = peak > 0 ? Self.bandLabels[bands.firstIndex(of: peak) ?? 0] : "none"
     let formatter = DateFormatter()
     formatter.dateFormat = "HH:mm"
 
@@ -147,8 +158,9 @@ final class EventStore: ObservableObject {
       .filter({ $0.id != event.id && $0.outcome != nil })
       .sorted(by: { $0.timestamp > $1.timestamp })
       .first,
-      let outcome = previous.outcome {
-      last = CoachContext.Last(outcome: outcome.rawValue, minutes: 10)
+      let outcome = previous.outcome,
+      let minutes = previous.minutesToClose {
+      last = CoachContext.Last(outcome: outcome.rawValue, minutes: minutes)
     }
 
     return CoachContext(
@@ -159,7 +171,7 @@ final class EventStore: ObservableObject {
       week: CoachContext.Week(
         events: week.count,
         rode: rode,
-        commonHour: Self.bandLabels[topBand]
+        commonHour: commonHour
       ),
       last: last
     )

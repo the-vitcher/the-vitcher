@@ -34,6 +34,16 @@ describe("buildCoachUserMessage", () => {
     expect(msg).toContain("minutes_to_pass: 12");
   });
 
+  it("says there is no history instead of implying a pattern", () => {
+    const msg = buildCoachUserMessage({
+      ...coachCtx,
+      week: { events: 0, rode: 0, common_hour: "none" },
+      last: null,
+    });
+    expect(msg).toContain("this_week={no history yet}");
+    expect(msg).not.toContain("common_hour");
+  });
+
   it("omits tag and last event when absent", () => {
     const msg = buildCoachUserMessage({ ...coachCtx, tag: null, last: null });
     expect(msg).not.toContain("tag=");

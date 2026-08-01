@@ -43,4 +43,12 @@ struct UrgeEvent: Codable, Identifiable, Equatable {
   var urgeID: UUID?
   var outcome: Outcome?
   var triggerTag: TriggerTag?
+  // Set when the user closes the event out. Lets us report how long an urge
+  // actually took to pass instead of guessing.
+  var closedAt: Date?
+
+  var minutesToClose: Int? {
+    guard let closedAt else { return nil }
+    return max(Int(closedAt.timeIntervalSince(timestamp) / 60), 0)
+  }
 }

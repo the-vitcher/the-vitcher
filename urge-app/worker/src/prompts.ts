@@ -32,8 +32,12 @@ export function buildCoachUserMessage(ctx: CoachContext): string {
     `local_time=${ctx.local_time}`,
   ];
   if (ctx.tag) parts.push(`tag=${ctx.tag}`);
+  // No history means no pattern. Say so explicitly so the model does not
+  // invent one for a brand new user.
   parts.push(
-    `this_week={events: ${ctx.week.events}, rode: ${ctx.week.rode}, common_hour: ${ctx.week.common_hour}}`,
+    ctx.week.events === 0
+      ? "this_week={no history yet}"
+      : `this_week={events: ${ctx.week.events}, rode: ${ctx.week.rode}, common_hour: ${ctx.week.common_hour}}`,
   );
   if (ctx.last) {
     parts.push(`last_event={outcome: ${ctx.last.outcome}, minutes_to_pass: ${ctx.last.minutes}}`);
