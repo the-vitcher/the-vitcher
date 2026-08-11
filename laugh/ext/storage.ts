@@ -18,7 +18,15 @@ import {
   type ProfileCache,
 } from '../core/schema';
 import { buildProfile } from '../core/profile';
-import type { LaughMoment, Settings, TasteProfile } from '../core/types';
+import { normalizeLedger, type QuotaLedger } from '../core/quota';
+import type { LaughMoment, ScoredCandidate, Settings, TasteProfile } from '../core/types';
+
+export type SuggestionCache = {
+  fetchedAt: number;
+  ranked: ScoredCandidate[];
+  notes: string[];
+  unitsSpent: number;
+};
 
 let chain: Promise<unknown> = Promise.resolve();
 
@@ -119,6 +127,48 @@ export function importMoments(incoming: LaughMoment[]): Promise<{ imported: numb
     const merged = mergeMoments(existing, incoming);
     await chrome.storage.local.set({ [STORAGE_KEYS.moments]: merged });
     return { imported: merged.length - existing.length, total: merged.length };
+  });
+}
+
+export async function readLedger(now: number): Promise<QuotaLedger> {
+  const stored = await chrome.storage.local.get(STORAGE_KEYS.quota);
+  return normalizeLedger(stored[STORAGE_KEYS.quota], now);
+}
+
+export function writeLedger(ledger: QuotaLedger): Promise<void> {
+  return serialize(async () => {
+    await chrome.storage.local.set({ [STORAGE_KEYS.quota]: ledger });
+  });
+}
+
+export async function readDismissed(): Promise<string[]> {
+  const stored = await chrome.storage.local.get(STORAGE_KEYS.dismissed);
+  const raw = stored[STORAGE_KEYS.dismissed];
+  return Array.isArray(raw) ? raw.filter((id): id is string => typeof id === 'string') : [];
+}
+
+export function dismissSuggestion(videoId: string): Promise<string[]> {
+  return serialize(async () => {
+    const existing = await readDismissed();
+    if (existing.includes(videoId)) return existing;
+    // Bounded, so a long-lived install cannot grow this without limit.
+    const next = [...existing, videoId].slice(-500);
+    await chrome.storage.local.set({ [STORAGE_KEYS.dismissed]: next });
+    return next;
+  });
+}
+
+export async function readSuggestions(): Promise<SuggestionCache | null> {
+  const stored = await chrome.storage.local.get(STORAGE_KEYS.suggestions);
+  const raw = stored[STORAGE_KEYS.suggestions];
+  if (!raw || typeof raw !== 'object') return null;
+  const cache = raw as SuggestionCache;
+  return Array.isArray(cache.ranked) ? cache : null;
+}
+
+export function writeSuggestions(cache: SuggestionCache): Promise<void> {
+  return serialize(async () => {
+    await chrome.storage.local.set({ [STORAGE_KEYS.suggestions]: cache });
   });
 }
 

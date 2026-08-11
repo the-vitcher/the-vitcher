@@ -13,6 +13,9 @@ export const STORAGE_KEYS = {
   moments: 'laugh:v1:moments',
   settings: 'laugh:v1:settings',
   profileCache: 'laugh:v1:profileCache',
+  quota: 'laugh:v1:quota',
+  suggestions: 'laugh:v1:suggestions',
+  dismissed: 'laugh:v1:dismissed',
 } as const;
 
 export type ProfileCache = {
@@ -46,6 +49,7 @@ export function normalizeSettings(raw: unknown): Settings {
     showPlayerButton: asBoolean(r.showPlayerButton, DEFAULT_SETTINGS.showPlayerButton),
     inPageHotkey: asBoolean(r.inPageHotkey, DEFAULT_SETTINGS.inPageHotkey),
     apiKey: typeof r.apiKey === 'string' ? r.apiKey.trim() : '',
+    allowSearchQuota: asBoolean(r.allowSearchQuota, DEFAULT_SETTINGS.allowSearchQuota),
   };
 }
 
@@ -78,6 +82,7 @@ export type ExportBundle = {
 export function buildExportBundle(moments: LaughMoment[], settings: Settings, now: number): ExportBundle {
   // The API key is a credential, not data. It never leaves storage in an export.
   const { apiKey: _apiKey, ...safeSettings } = settings;
+  void _apiKey;
   return {
     app: 'laugh',
     schemaVersion: SCHEMA_VERSION,

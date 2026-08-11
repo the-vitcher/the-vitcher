@@ -62,24 +62,60 @@ and the tested surface is everything else.
 ## Storage
 
 `chrome.storage.local`, version-prefixed keys (`laugh:v1:moments`,
-`laugh:v1:settings`, `laugh:v1:profileCache`). A moment is roughly 250 bytes, so
+`laugh:v1:settings`, `laugh:v1:profileCache`, `laugh:v1:quota`,
+`laugh:v1:suggestions`, `laugh:v1:dismissed`). A moment is roughly 250 bytes, so
 10,000 moments is about 2.5MB, well inside the default quota.
 
 Every write is serialized through one promise chain in `ext/storage.ts` and happens
 only in the service worker, so two fast presses cannot clobber each other. Nothing is
 held in worker module scope between wakes, since MV3 terminates the worker when idle.
 
-Nothing is sent anywhere. The feed's Export button writes a JSON file you can import
-back, and it never includes the API key.
+Your marks are never sent anywhere. The only outbound requests Laugh ever makes are
+the YouTube Data API calls for discovery, and only once you have configured a key.
+Those send your top channel ids and (if you enable search) your top profile terms;
+they never send your moments. The feed's Export button writes a JSON file you can
+import back, and it never includes the API key.
 
-## Phase 2: discovery
+## Discovery
 
-Not built. The scoring that ranks a candidate video against your profile is written
-and tested (`core/scoring.ts`), and `ext/youtube_api.ts` defines the
-`CandidateSource` interface it will be fed from. Only a `NullCandidateSource` ships
-today, so adding discovery means adding one implementation.
+Built, and dormant until you add a key. Without one the feed says so and never
+touches the network; paste a key into settings and the "Might be funny" panel starts
+working.
 
-Ranking weights:
+To get one: create a project in the Google Cloud console, enable **YouTube Data API
+v3**, create an API key, and restrict it to that API. It is free. The key lives in
+`chrome.storage.local`, never in this repo, and is stripped from exports (there is a
+test for that).
+
+### How a refresh spends quota
+
+The free tier is 10,000 units a day and the costs are wildly uneven, so the flow is
+built around the cheap calls:
+
+| Call | Cost | Role in a refresh |
+|---|---|---|
+| `channels.list` | 1 | one call resolves up to 50 channels to their uploads playlists |
+| `playlistItems.list` | 1 | one call per channel, walking recent uploads |
+| `videos.list` | 1 per 50 ids | batch hydration for titles, runtimes, publish dates |
+| `search.list` | **100** | opt-in only, one keyword query built from your top terms |
+
+A full refresh over the channels you already laugh at costs **about 10 units**, so
+hundreds of refreshes a day rather than a hundred. Keyword search is off by default
+because one call costs as much as ten complete refreshes; when enabled it is still
+blocked below a 2,000 unit reserve.
+
+The ledger is keyed on the **Pacific** calendar date, because that is when Google
+resets the quota, and it follows the daylight-saving shift rather than a fixed
+offset.
+
+Only channels with a known channel id can be walked. A channel Laugh has only ever
+seen by name would need a `search.list` to resolve, which is not worth 100 units, so
+those are skipped and the panel says so.
+
+`fetch` is injected into `YouTubeDataApiSource`, so the whole orchestrator is tested
+against canned payloads with no key and no network.
+
+### Ranking weights
 
 | Signal | Weight | Source |
 |---|---|---|
@@ -101,26 +137,11 @@ everything equally and reorder nothing. It answers "is now a good moment to show
 anything", not "which of these is best". The feed uses it today as a live readout
 under the hour histogram.
 
-**On the API key.** The YouTube Data API v3 is free with a default quota of 10,000
-units per day, and the quota shape dictates the design:
-
-| Call | Cost | Role |
-|---|---|---|
-| `search.list` | 100 units | expensive, roughly 100 calls a day, use sparingly |
-| `playlistItems.list` | 1 unit | walking a channel's uploads is nearly free |
-| `videos.list` | 1 unit per call, 50 ids | batch hydration, effectively free |
-| `channels.list` | 1 unit | resolving uploads playlist ids |
-
-So: take the channels from your profile, walk their uploads playlists, batch-hydrate
-ids 50 at a time, and spend `search.list` only on a couple of profile-term queries a
-day.
-
-A plain API key (not OAuth) is enough for public read data. A key shipped inside an
-extension is visible to anyone who unpacks it, which is acceptable for a personal
-single-user tool provided you enter it in the options page (it lives in
-`chrome.storage.local`, never in this repo) and restrict it to the YouTube Data API
-v3 in the Google Cloud console. The options page already stores it; nothing reads it
-yet.
+**A note on key exposure.** A plain API key (not OAuth) is enough for public read
+data. A key shipped inside an extension is visible to anyone who unpacks it, which is
+acceptable for a personal single-user tool as long as you enter it through the options
+page and restrict it to the YouTube Data API v3 in the Google Cloud console. Do not
+commit it.
 
 ## Tests
 

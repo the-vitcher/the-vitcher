@@ -71,13 +71,26 @@
 
       <section class="panel">
         <div class="field">
-          <h3>YouTube Data API key (not used yet)</h3>
+          <h3>YouTube Data API key</h3>
           <p>
-            Discovery is not built yet. When it lands it will use this key to find new videos that
-            match your profile. The key is stored only in this browser and is never included in an
-            export. Restrict it to the YouTube Data API v3 in the Google Cloud console.
+            With a key, the feed can go looking for videos that match your profile. It is free:
+            create a project in the Google Cloud console, enable the YouTube Data API v3, and make an
+            API key. Restrict that key to the YouTube Data API. It is stored only in this browser and
+            is never included in an export.
           </p>
-          <input type="text" id="api-key" placeholder="Paste an API key to store it for later" />
+          <input type="text" id="api-key" placeholder="Paste your YouTube Data API key" />
+        </div>
+
+        <div class="field">
+          <label class="toggle">
+            <input type="checkbox" id="allow-search" />
+            <span>Allow keyword search when looking for videos</span>
+          </label>
+          <p>
+            Off by default. Walking the channels you already laugh at costs about 10 of your 10,000
+            daily quota units, so it is nearly free. A keyword search costs 100 units per call, which
+            is why it is opt-in. Laugh keeps a 2,000 unit reserve and will not search below it.
+          </p>
         </div>
       </section>
 

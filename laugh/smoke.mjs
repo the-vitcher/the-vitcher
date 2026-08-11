@@ -143,6 +143,45 @@ try {
   check('export never carries the api key', !JSON.stringify(exported).includes('SECRET123'));
   check('export carries the moments', exported?.data?.moments?.length === 4);
 
+  // Discovery, with no key: reports itself unavailable and never touches the network.
+  const settings = (allowSearchQuota, apiKey) => ({
+    lookbackSec: 2.5,
+    clusterWindowSec: 8,
+    showPlayerButton: true,
+    inPageHotkey: true,
+    allowSearchQuota,
+    apiKey,
+  });
+
+  await ask({ type: 'laugh:saveSettings', settings: settings(false, '') });
+
+  const suggestions = await ask({ type: 'laugh:getSuggestions' });
+  check('getSuggestions replies', suggestions?.ok === true, JSON.stringify(suggestions));
+  check('reports itself unconfigured without a key', suggestions?.data?.configured === false);
+  check('no suggestions before a refresh', suggestions?.data?.ranked?.length === 0);
+
+  const unkeyed = await ask({ type: 'laugh:refreshSuggestions' });
+  check('refresh without a key is safe', unkeyed?.ok === true, JSON.stringify(unkeyed));
+  check('refresh without a key spends no quota', unkeyed?.data?.quotaSpentToday === 0);
+  check(
+    'refresh without a key explains why',
+    (unkeyed?.data?.notes ?? []).join(' ').includes('API key'),
+    JSON.stringify(unkeyed?.data?.notes),
+  );
+
+  // With a key but no channel carrying a resolvable id, the guard must stop before
+  // spending anything. The marked fixture video deliberately has no channelId, so
+  // this path issues no request and needs no network.
+  await ask({ type: 'laugh:saveSettings', settings: settings(false, 'not-a-real-key') });
+  const keyed = await ask({ type: 'laugh:refreshSuggestions' });
+  check('a configured key is reported', keyed?.data?.configured === true);
+  check('spends nothing when no channel has a resolvable id', keyed?.data?.quotaSpentToday === 0);
+  check(
+    'says why it could not look',
+    (keyed?.data?.notes ?? []).join(' ').includes('No channels with a known id'),
+    JSON.stringify(keyed?.data?.notes),
+  );
+
   for (const path of ['popup/popup.html', 'options/options.html']) {
     const tab = await browser.newPage();
     const errors = [];

@@ -31,6 +31,8 @@ export type Settings = {
   showPlayerButton: boolean;
   inPageHotkey: boolean;
   apiKey: string;
+  /** search.list costs 100 quota units a call, so it is opt-in. */
+  allowSearchQuota: boolean;
 };
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -39,6 +41,7 @@ export const DEFAULT_SETTINGS: Settings = {
   showPlayerButton: true,
   inPageHotkey: true,
   apiKey: '',
+  allowSearchQuota: false,
 };
 
 /** Consecutive presses inside one laugh, collapsed into a single event. */

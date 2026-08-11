@@ -17,6 +17,7 @@ const clusterValue = byId('cluster-value');
 const showButton = byId<HTMLInputElement>('show-button');
 const inPageHotkey = byId<HTMLInputElement>('in-page-hotkey');
 const apiKey = byId<HTMLInputElement>('api-key');
+const allowSearch = byId<HTMLInputElement>('allow-search');
 const saved = byId('saved');
 
 function paint(): void {
@@ -31,6 +32,7 @@ function paint(): void {
   }
   if (showButton) showButton.checked = settings.showPlayerButton;
   if (inPageHotkey) inPageHotkey.checked = settings.inPageHotkey;
+  if (allowSearch) allowSearch.checked = settings.allowSearchQuota;
   if (apiKey && document.activeElement !== apiKey) apiKey.value = settings.apiKey;
 }
 
@@ -62,6 +64,7 @@ lookback?.addEventListener('input', () => update({ lookbackSec: Number(lookback.
 cluster?.addEventListener('input', () => update({ clusterWindowSec: Number(cluster.value) }));
 showButton?.addEventListener('change', () => update({ showPlayerButton: showButton.checked }));
 inPageHotkey?.addEventListener('change', () => update({ inPageHotkey: inPageHotkey.checked }));
+allowSearch?.addEventListener('change', () => update({ allowSearchQuota: allowSearch.checked }));
 apiKey?.addEventListener('input', () => update({ apiKey: apiKey.value }));
 
 byId('open-feed')?.addEventListener('click', () => {

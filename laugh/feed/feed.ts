@@ -6,7 +6,7 @@ import { formatHour, formatRelativeTime, formatTimestamp, thumbnailUrl, watchUrl
 import { funniestHour } from '../core/profile';
 import { surfacingReadiness } from '../core/scoring';
 import { channelKey } from '../core/metadata';
-import type { Snapshot } from '../ext/messages';
+import type { Snapshot, SuggestionsView } from '../ext/messages';
 import { send } from '../ext/messages';
 import type { TasteProfile } from '../core/types';
 import { byId, downloadJson, el, replace } from '../ui/dom';
@@ -222,6 +222,79 @@ function render(): void {
   replace(byId('feed'), ...sortGroups(visible).map(renderGroup));
 }
 
+function renderSuggestions(view: SuggestionsView): void {
+  const host = byId('suggestions');
+  const quota = byId('quota');
+  if (!host) return;
+
+  if (!view.configured) {
+    replace(
+      host,
+      el('p', {
+        class: 'note',
+        text: 'Add a YouTube Data API key in settings and Laugh can go looking for videos that match your profile.',
+      }),
+    );
+    replace(quota, '');
+    return;
+  }
+
+  const rows = view.ranked.slice(0, 12).map((entry) =>
+    el(
+      'article',
+      { class: 'suggestion' },
+      el('img', { src: thumbnailUrl(entry.candidate.videoId), alt: '', loading: 'lazy' }),
+      el(
+        'div',
+        {},
+        el('a', {
+          class: 'video-title',
+          href: `https://www.youtube.com/watch?v=${entry.candidate.videoId}`,
+          target: '_blank',
+          rel: 'noreferrer',
+          text: entry.candidate.title,
+        }),
+        el('div', { class: 'video-meta', text: entry.candidate.channelName }),
+        el(
+          'div',
+          { class: 'reasons' },
+          ...entry.reasons.map((reason) => el('span', { class: 'reason', text: reason })),
+        ),
+      ),
+      el(
+        'div',
+        { class: 'card-actions' },
+        el('span', { class: 'score', text: entry.score.toFixed(2) }),
+        el('button', {
+          class: 'button',
+          type: 'button',
+          'data-dismiss': entry.candidate.videoId,
+          text: 'Not funny',
+        }),
+      ),
+    ),
+  );
+
+  replace(
+    host,
+    ...view.notes.map((note) => el('p', { class: 'note', text: note })),
+    ...(rows.length > 0
+      ? rows
+      : [el('p', { class: 'note', text: 'Nothing suggested yet. Try looking for new videos.' })]),
+  );
+
+  const when = view.fetchedAt ? `checked ${formatRelativeTime(view.fetchedAt, Date.now())}` : 'never checked';
+  replace(
+    quota,
+    `${when}. API quota used today: ${view.quotaSpentToday} of ${view.quotaSpentToday + view.quotaRemaining} units.`,
+  );
+}
+
+async function loadSuggestions(): Promise<void> {
+  const reply = await send({ type: 'laugh:getSuggestions' });
+  if (reply.ok) renderSuggestions(reply.data);
+}
+
 async function mutate(message: Parameters<typeof send>[0]): Promise<void> {
   const reply = await send(message);
   if (!reply.ok) {
@@ -306,4 +379,29 @@ byId('options')?.addEventListener('click', () => {
   void chrome.runtime.openOptionsPage();
 });
 
+byId('refresh-suggestions')?.addEventListener('click', async (event) => {
+  const button = event.target as HTMLButtonElement;
+  button.disabled = true;
+  button.textContent = 'Looking...';
+  try {
+    const reply = await send({ type: 'laugh:refreshSuggestions' });
+    if (reply.ok) renderSuggestions(reply.data);
+    else window.alert(reply.error);
+  } finally {
+    button.disabled = false;
+    button.textContent = 'Look for new';
+  }
+});
+
+byId('suggestions')?.addEventListener('click', async (event) => {
+  const target = event.target;
+  if (!(target instanceof HTMLElement)) return;
+  const videoId = target.getAttribute('data-dismiss');
+  if (!videoId) return;
+
+  const reply = await send({ type: 'laugh:dismissSuggestion', videoId });
+  if (reply.ok) renderSuggestions(reply.data);
+});
+
 void load();
+void loadSuggestions();

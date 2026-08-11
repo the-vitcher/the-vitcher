@@ -3,7 +3,7 @@
 // the only way anything else changes state.
 
 import type { ExportBundle } from '../core/schema';
-import type { LaughMoment, Settings, TasteProfile, VideoMeta } from '../core/types';
+import type { LaughMoment, ScoredCandidate, Settings, TasteProfile, VideoMeta } from '../core/types';
 
 /** Content script to worker: record a press. */
 export type MarkMessage = {
@@ -38,7 +38,27 @@ export type SaveSettingsMessage = { type: 'laugh:saveSettings'; settings: Settin
 export type ExportMessage = { type: 'laugh:export' };
 export type ImportMessage = { type: 'laugh:import'; bundle: unknown };
 
+/** Page to worker: cached suggestions, no network and no quota spent. */
+export type GetSuggestionsMessage = { type: 'laugh:getSuggestions' };
+
+/** Page to worker: spend quota and go looking for new candidates. */
+export type RefreshSuggestionsMessage = { type: 'laugh:refreshSuggestions' };
+
+export type DismissSuggestionMessage = { type: 'laugh:dismissSuggestion'; videoId: string };
+
+export type SuggestionsView = {
+  ranked: ScoredCandidate[];
+  notes: string[];
+  fetchedAt: number | null;
+  configured: boolean;
+  quotaRemaining: number;
+  quotaSpentToday: number;
+};
+
 export type LaughMessage =
+  | GetSuggestionsMessage
+  | RefreshSuggestionsMessage
+  | DismissSuggestionMessage
   | MarkMessage
   | RequestMarkMessage
   | GetSnapshotMessage
@@ -70,7 +90,9 @@ export type ReplyFor<M extends LaughMessage> = M extends MarkMessage
         ? Reply<{ imported: number; total: number }>
         : M extends RequestMarkMessage
           ? Reply<MarkResult>
-          : Reply<Snapshot>;
+          : M extends GetSuggestionsMessage | RefreshSuggestionsMessage | DismissSuggestionMessage
+            ? Reply<SuggestionsView>
+            : Reply<Snapshot>;
 
 /**
  * Send to the worker and surface a disconnected worker as a normal failed reply
