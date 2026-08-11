@@ -13,6 +13,7 @@ import { mergeStrings, mergeEntities, mergeExtra } from './merge';
 import { gameStrings } from './game';
 import { hudChromeStrings } from './hud_chrome';
 import { guideStrings } from './guide';
+import { grayscaleStrings } from './grayscale';
 
 // Re-export the catalog public surface (every name the old i18n.en.ts exported).
 export { shellStrings } from './shell';
@@ -23,6 +24,7 @@ export { itemStrings, itemNames } from './items';
 export { mergeStrings, mergeEntities, mergeExtra } from './merge';
 export { hudChromeStrings } from './hud_chrome';
 export { guideStrings } from './guide';
+export { grayscaleStrings } from './grayscale';
 export {
   gameStrings, gameStringsEnCA, gameStringsEs, gameStringsEsES, gameStringsFrFR,
   gameStringsFrCA, gameStringsItIT, gameStringsDeDE, gameStringsZhCN, gameStringsZhTW,
@@ -48,6 +50,7 @@ export const en = {
   game: gameStrings,
   hudChrome: hudChromeStrings,
   guide: guideStrings,
+  grayscale: grayscaleStrings,
   // Cosmetic skin-select event overlay. Rarity names reuse itemUi.quality.*.
   skinEvent: {
     title: "Cosmetic Cache",

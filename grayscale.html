@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<!-- Content surface, NOT the game: allow pinch-zoom and user scaling (WCAG 1.4.4 /
+     1.4.10). The game shell locks scaling; this page intentionally does not. -->
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#0d0d0d" />
+<meta name="color-scheme" content="dark" />
+<title>Grayscale</title>
+<meta name="description" content="A companion app for World of ClaudeCraft. Time spent off the phone is the only thing that levels your character and sends it on raids." />
+<!-- Personal progress tool, not a landing page: nothing here is worth indexing. -->
+<meta name="robots" content="noindex, nofollow" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..700&family=Alegreya+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+
+<!-- i18n stored-locale modulepreload (mirrors index.html / guide.html). For a returning
+     visitor whose stored locale is non-English, preload that locale's content-hashed
+     chunk before the main module parses. The production build templates the
+     { locale: chunkUrl } map over the sentinel; in dev the sentinel is undefined and the
+     try/catch makes this a no-op. Reads ONLY localStorage.locale; one same-origin preload. -->
+<script>
+  (function () {
+    try {
+      var loc = localStorage.getItem('locale');
+      if (!loc) return;
+      var map = __I18N_LOCALE_CHUNKS__;
+      var href = map && map[loc];
+      if (typeof href !== 'string') return;
+      var link = document.createElement('link');
+      link.rel = 'modulepreload';
+      link.href = href;
+      link.crossOrigin = 'anonymous';
+      document.head.appendChild(link);
+    } catch (e) {
+      // No stored locale / no templated map (dev) / storage blocked: do nothing.
+    }
+  })();
+</script>
+</head>
+<body class="grayscale-body">
+<div id="grayscale-app"></div>
+<noscript>
+  <div style="max-width:560px;margin:48px auto;padding:0 24px;color:#ededed;font-family:Georgia,serif;">
+    <h1>Grayscale</h1>
+    <p>This app needs JavaScript enabled. You can still
+      <a href="/play" style="color:#d8d8d8">play the game</a>.</p>
+  </div>
+</noscript>
+<script type="module" src="/src/grayscale/main.ts"></script>
+</body>
+</html>

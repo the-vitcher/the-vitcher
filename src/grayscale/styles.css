@@ -1,0 +1,308 @@
+/* Grayscale app styles. The palette is achromatic by construction, and the root
+   also carries `filter: grayscale(1)` so nothing can ever reintroduce colour,
+   including anything added later. That is the product promise, not decoration:
+   a screen worth putting down should not be competing for attention. */
+
+:root {
+  --gs-bg: #0d0d0d;
+  --gs-surface: #171717;
+  --gs-surface-raised: #1f1f1f;
+  --gs-line: #2e2e2e;
+  --gs-text: #ededed;
+  --gs-text-dim: #9a9a9a;
+  --gs-text-faint: #6b6b6b;
+  --gs-accent: #d8d8d8;
+  --gs-radius: 10px;
+
+  color-scheme: dark;
+  filter: grayscale(1);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 24px 16px 64px;
+  background: var(--gs-bg);
+  color: var(--gs-text);
+  font-family: "Alegreya Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+#grayscale-app {
+  max-width: 640px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ---- header ---- */
+
+.gs-header { text-align: center; margin-bottom: 8px; }
+
+.gs-title {
+  margin: 0;
+  font-family: Cinzel, Georgia, serif;
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.gs-tagline {
+  margin: 6px 0 0;
+  color: var(--gs-text-dim);
+  font-style: italic;
+}
+
+/* ---- cards ---- */
+
+.gs-card {
+  background: var(--gs-surface);
+  border: 1px solid var(--gs-line);
+  border-radius: var(--gs-radius);
+  padding: 20px;
+}
+
+.gs-heading {
+  margin: 0 0 14px;
+  font-family: Cinzel, Georgia, serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gs-text-dim);
+}
+
+.gs-hint {
+  margin: 12px 0 0;
+  color: var(--gs-text-faint);
+  font-size: 0.85rem;
+}
+
+.gs-warning {
+  margin: 0;
+  padding: 12px 16px;
+  border: 1px dashed var(--gs-line);
+  border-radius: var(--gs-radius);
+  color: var(--gs-text-dim);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+/* ---- focus ---- */
+
+.gs-focus { text-align: center; }
+
+.gs-focus-state {
+  margin: 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gs-text-faint);
+}
+
+.gs-focus-elapsed {
+  margin: 8px 0 18px;
+  font-family: Cinzel, Georgia, serif;
+  font-size: 2.25rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- buttons ---- */
+
+.gs-button {
+  appearance: none;
+  border: 1px solid var(--gs-accent);
+  border-radius: var(--gs-radius);
+  background: transparent;
+  color: var(--gs-text);
+  font: inherit;
+  font-size: 0.85rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 12px 28px;
+  cursor: pointer;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.gs-button:hover:not(:disabled) { background: var(--gs-accent); color: var(--gs-bg); }
+.gs-button:focus-visible { outline: 2px solid var(--gs-text); outline-offset: 2px; }
+
+.gs-button:disabled {
+  border-color: var(--gs-line);
+  color: var(--gs-text-faint);
+  cursor: not-allowed;
+}
+
+/* ---- character ---- */
+
+.gs-level {
+  margin: 0 0 12px;
+  font-family: Cinzel, Georgia, serif;
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.gs-xp-bar {
+  height: 6px;
+  background: var(--gs-bg);
+  border: 1px solid var(--gs-line);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.gs-xp-fill { height: 100%; background: var(--gs-accent); }
+
+.gs-xp-text {
+  margin: 8px 0 18px;
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--gs-text-dim);
+}
+
+.gs-stats {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 14px 20px;
+}
+
+/* One cell per stat, label stacked over value. The wrapper is what keeps the
+   pairs together; a bare dt/dd would each become its own grid item. */
+.gs-stat { min-width: 0; }
+
+.gs-stat-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gs-text-faint);
+}
+
+.gs-stat-value {
+  margin: 2px 0 0;
+  font-size: 1.05rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- raids ---- */
+
+.gs-raid {
+  border-top: 1px solid var(--gs-line);
+  padding: 16px 0 4px;
+}
+
+.gs-raid:first-of-type { border-top: none; padding-top: 0; }
+.gs-raid-locked { opacity: 0.55; }
+
+.gs-raid-name {
+  margin: 0;
+  font-family: Cinzel, Georgia, serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.gs-badge {
+  font-family: "Alegreya Sans", system-ui, sans-serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gs-bg);
+  background: var(--gs-accent);
+  border-radius: 999px;
+  padding: 2px 9px;
+}
+
+.gs-raid-tagline {
+  margin: 6px 0 10px;
+  color: var(--gs-text-dim);
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+.gs-raid-meta, .gs-run-meta {
+  margin: 0 0 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.gs-chip {
+  border: 1px solid var(--gs-line);
+  border-radius: 999px;
+  padding: 3px 11px;
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  color: var(--gs-text-dim);
+  font-variant-numeric: tabular-nums;
+}
+
+.gs-raid-blocked {
+  margin: 10px 0 0;
+  font-size: 0.78rem;
+  color: var(--gs-text-faint);
+}
+
+/* ---- run log ---- */
+
+.gs-run {
+  border-top: 1px solid var(--gs-line);
+  padding: 16px 0 4px;
+}
+
+.gs-run:first-of-type { border-top: none; padding-top: 0; }
+
+.gs-run-headline {
+  margin: 0 0 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--gs-text-dim);
+}
+
+.gs-run-cleared .gs-run-headline { color: var(--gs-text); }
+
+.gs-run-bosses { margin: 0 0 12px; padding: 0; list-style: none; }
+
+.gs-boss {
+  font-size: 0.85rem;
+  padding: 2px 0;
+}
+
+.gs-boss::before { content: "+ "; color: var(--gs-text-faint); }
+.gs-boss-failed { color: var(--gs-text-faint); }
+.gs-boss-failed::before { content: "- "; }
+
+.gs-run-loot {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.gs-loot-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gs-text-faint);
+}
+
+.gs-loot {
+  border: 1px solid var(--gs-accent);
+  border-radius: var(--gs-radius);
+  padding: 2px 10px;
+  font-size: 0.8rem;
+}
+
+.gs-loot-empty { font-size: 0.8rem; color: var(--gs-text-faint); }
+
+@media (prefers-reduced-motion: reduce) {
+  .gs-button { transition: none; }
+}

@@ -1247,6 +1247,93 @@ export const en_XA: EnTranslations = {
       "home": "[Ɓáçķ ţó ţĥé óʋéŕʋíéŵ]"
     }
   },
+  "grayscale": {
+    "title": "[Ĝŕáýšçáļé]",
+    "tagline": "[Ýóúŕ áţţéñţíóñ íš ţĥé óñļý çúŕŕéñçý ĥéŕé.]",
+    "documentTitle": "[Ĝŕáýšçáļé: ƒóçúš, áñð ýóúŕ çĥáŕáçţéŕ ŕáíðš]",
+    "focus": {
+      "idle": "[Ñóţ ƒóçúšíñĝ]",
+      "active": "[Ƒóçúšíñĝ]",
+      "start": "[Šţáŕţ ƒóçúšíñĝ]",
+      "stop": "[Šţóþ ƒóçúšíñĝ]",
+      "elapsed": "[{minutes} ɱíñ ţĥíš šéššíóñ]",
+      "hint": "[Þúţ ţĥé þĥóñé ðóŵñ. Ţĥé ţíɱéŕ íš ţĥé óñļý ţĥíñĝ ţĥáţ ɱóʋéš ţĥé çĥáŕáçţéŕ.]"
+    },
+    "stats": {
+      "banked": "[Ɓáñķéð]",
+      "bankedUnit": "[{minutes} ɱíñ]",
+      "today": "[Ţóðáý]",
+      "todayOfGoal": "[{minutes} / {goal} ɱíñ]",
+      "streak": "[Šţŕéáķ]",
+      "streakUnit": "[{days} ð]",
+      "lifetime": "[Ļíƒéţíɱé ƒóçúš]",
+      "level": "[Ļéʋéļ {level}]",
+      "xp": "[{xp} / {next} ẊÞ]",
+      "xpCapped": "[{xp} ẊÞ þášţ ţĥé çáþ]",
+      "might": "[Ɱíĝĥţ]",
+      "ward": "[Ŵáŕð]"
+    },
+    "raids": {
+      "heading": "[Ŕáíðš]",
+      "send": "[Šéñð]",
+      "cost": "[{minutes} ɱíñ]",
+      "requiresLevel": "[Ŕéɋúíŕéš ļéʋéļ {level}]",
+      "cleared": "[Çļéáŕéð]",
+      "attempts": "[{attempts} áţţéɱþţš]",
+      "blocked": {
+        "level": "[{levels} ɱóŕé ļéʋéļš]",
+        "minutes": "[{minutes} ɱóŕé ɱíñúţéš]",
+        "focusing": "[Ɓáñķ ţĥé šéššíóñ ƒíŕšţ]"
+      },
+      "hollowCrypt": {
+        "name": "[Ţĥé Ĥóļļóŵ Çŕýþţ]",
+        "tagline": "[Šóɱéţĥíñĝ íñ ţĥé ðáŕķ ķééþš çóúñţ óƒ ţĥé ðáýš ýóú šķíþþéð.]"
+      },
+      "sunkenBastion": {
+        "name": "[Ţĥé Šúñķéñ Ɓášţíóñ]",
+        "tagline": "[Á ĝáŕŕíšóñ ţĥáţ ðŕóŵñéð ĥóļðíñĝ á ļíñé ñóƀóðý ŕéɱéɱƀéŕš.]"
+      },
+      "nythraxis": {
+        "name": "[Ñýţĥŕáẋíš]",
+        "tagline": "[Ţĥé ļášţ ţĥíñĝ ţĥáţ ŵíļļ éʋéŕ ášķ ƒóŕ ýóúŕ ƒúļļ áţţéñţíóñ.]"
+      }
+    },
+    "bosses": {
+      "sextonMarrow": "[Šéẋţóñ Ɱáŕŕóŵ]",
+      "morthen": "[Ɱóŕţĥéñ ţĥé Ĝŕáʋéçáļļéŕ]",
+      "bastionRevenant": "[Ɓášţíóñ Ŕéʋéñáñţ]",
+      "knightCommanderOlen": "[Ķñíĝĥţ-Çóɱɱáñðéŕ Óļéñ]",
+      "voskarEmberwing": "[Ʋóšķáŕ Éɱƀéŕŵíñĝ]",
+      "nythraxis": "[Ñýţĥŕáẋíš]"
+    },
+    "items": {
+      "boneFragments": "[Ɓóñé Ƒŕáĝɱéñţš]",
+      "cryptboneGreaves": "[Çŕýþţƀóñé Ĝŕéáʋéš]",
+      "cryptboneHelm": "[Çŕýþţƀóñé Ĥéļɱ]",
+      "mistveilCord": "[Ɱíšţʋéíļ Çóŕð]",
+      "mistveilGrips": "[Ɱíšţʋéíļ Ĝŕíþš]",
+      "tideboundWard": "[Ţíðéƀóúñð Ŵáŕð]",
+      "emberwingScale": "[Éɱƀéŕŵíñĝ Šçáļé]",
+      "ashenCrown": "[Ášĥéñ Çŕóŵñ]",
+      "quietMind": "[Ţĥé Ɋúíéţ Ɱíñð]"
+    },
+    "run": {
+      "heading": "[Ŕéçéñţ ŕúñš]",
+      "empty": "[Ñó ŕúñš ýéţ. Ƒóçúš ƒóŕ á ŵĥíļé, ţĥéñ šéñð ţĥé çĥáŕáçţéŕ íñ.]",
+      "cleared": "[Çļéáŕéð {raid}]",
+      "wiped": "[Ŵíþéð óñ {boss}]",
+      "bossDefeated": "[{boss} ðóŵñ]",
+      "bossWipes": "[{boss} ðóŵñ áƒţéŕ {wipes} ŵíþéš]",
+      "bossNotReached": "[{boss} ñóţ ŕéáçĥéð]",
+      "attemptsUsed": "[{used} / {total} áţţéɱþţš]",
+      "lootHeading": "[Ļóóţ]",
+      "lootEmpty": "[Ñóţĥíñĝ ðŕóþþéð]",
+      "spent": "[Šþéñţ {minutes} ɱíñ]"
+    },
+    "storage": {
+      "unavailable": "[Þŕóĝŕéšš çáññóţ ƀé šáʋéð íñ ţĥíš ƀŕóŵšéŕ, šó ţĥíš šéššíóñ ŵíļļ ñóţ þéŕšíšţ.]"
+    }
+  },
   "skinEvent": {
     "title": "[Çóšɱéţíç Çáçĥé]",
     "subtitle": "[Ýóú úñļóçķéð á {rank} ŕéŵáŕð — çĥóóšé áñý šķíñ áţ óŕ ƀéļóŵ íţ.]",
