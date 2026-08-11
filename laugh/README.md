@@ -79,6 +79,28 @@ and tested (`core/scoring.ts`), and `ext/youtube_api.ts` defines the
 `CandidateSource` interface it will be fed from. Only a `NullCandidateSource` ships
 today, so adding discovery means adding one implementation.
 
+Ranking weights:
+
+| Signal | Weight | Source |
+|---|---|---|
+| Channel affinity | 0.42 | `profile.channels`, normalized against your top channel |
+| Term overlap | 0.33 | `profile.terms`, capped so a keyword-stuffed title cannot win |
+| Position fit | 0.15 | candidate runtime judged against `medianVideoDurationSec` and `frontLoadBias` |
+| Freshness | 0.10 | publish date, 14-day half-life |
+
+Position fit is the signal that ties *where* you laugh to *what gets surfaced*. The
+anchor is the median runtime of videos you laugh at; how much longer than that is
+acceptable comes from the shape of the position histogram. Laughs piled into the
+first third mean runtime past that point is dead weight, so the tolerance tightens to
+1.5x the median. Laughs spread through the runtime widen it to about 4.5x.
+
+**Time of day is deliberately not a weight.** `surfacingReadiness(profile, now)`
+scores how receptive you tend to be at the current hour, but that value is identical
+for every candidate in one ranking call, so folding it into the score would scale
+everything equally and reorder nothing. It answers "is now a good moment to show
+anything", not "which of these is best". The feed uses it today as a live readout
+under the hour histogram.
+
 **On the API key.** The YouTube Data API v3 is free with a default quota of 10,000
 units per day, and the quota shape dictates the design:
 

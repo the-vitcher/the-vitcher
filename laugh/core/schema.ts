@@ -4,7 +4,7 @@
 // here is pure: the chrome.storage calls live in ext/storage.ts.
 
 import { normalizeMoments } from './moment';
-import { DEFAULT_SETTINGS } from './types';
+import { DEFAULT_SETTINGS, PROFILE_VERSION } from './types';
 import type { LaughMoment, Settings, TasteProfile } from './types';
 
 export const SCHEMA_VERSION = 1;
@@ -57,7 +57,9 @@ export function isProfileCacheValid(
   lookbackSec: number,
 ): boolean {
   if (!cache || !cache.profile) return false;
-  if (cache.profile.version !== SCHEMA_VERSION) return false;
+  // Profile shape, not storage shape: a profile cached under an older derivation is
+  // missing fields the scorer now reads.
+  if (cache.profile.version !== PROFILE_VERSION) return false;
   return (
     cache.momentCountAtCompute === momentCount &&
     cache.clusterWindowAtCompute === clusterWindowSec &&

@@ -4,6 +4,7 @@
 import { clusterMoments, groupByVideo, type VideoGroup } from '../core/cluster';
 import { formatHour, formatRelativeTime, formatTimestamp, thumbnailUrl, watchUrl } from '../core/format';
 import { funniestHour } from '../core/profile';
+import { surfacingReadiness } from '../core/scoring';
 import { channelKey } from '../core/metadata';
 import type { Snapshot } from '../ext/messages';
 import { send } from '../ext/messages';
@@ -98,6 +99,8 @@ function renderProfile(profile: TasteProfile): void {
     el('div', { class: 'metric-label', text: 'median time to your first laugh' }),
   );
 
+  const readiness = surfacingReadiness(profile, Date.now());
+
   const clock = el(
     'div',
     {},
@@ -106,6 +109,7 @@ function renderProfile(profile: TasteProfile): void {
       class: 'metric-label',
       text: peakCount > 0 ? `your funniest hour (${peakCount} marked)` : 'your funniest hour',
     }),
+    el('div', { class: 'metric-label', text: `Right now: ${readiness.reason.toLowerCase()}` }),
     el(
       'div',
       { class: 'hour-bars' },

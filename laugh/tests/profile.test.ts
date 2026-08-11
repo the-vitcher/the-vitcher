@@ -1,6 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import { createMoment } from '../core/moment';
-import { buildProfile, emptyProfile, funniestHour, median, recencyWeight, RECENCY_HALF_LIFE_MS } from '../core/profile';
+import {
+  buildProfile,
+  emptyProfile,
+  frontLoadBias,
+  funniestHour,
+  median,
+  recencyWeight,
+  RECENCY_HALF_LIFE_MS,
+  UNIFORM_FRONT_LOAD_BIAS,
+} from '../core/profile';
 import type { LaughMoment, VideoMeta } from '../core/types';
 
 const NOW = 1_700_000_000_000;
@@ -170,6 +179,74 @@ describe('buildProfile', () => {
     const profile = buildProfile(moments, { ...OPTIONS, maxChannels: 5, maxTerms: 3 });
     expect(profile.channels).toHaveLength(5);
     expect(profile.terms).toHaveLength(3);
+  });
+});
+
+describe('frontLoadBias', () => {
+  it('reports the uniform share when there is nothing measured', () => {
+    expect(frontLoadBias(new Array(10).fill(0))).toBe(UNIFORM_FRONT_LOAD_BIAS);
+  });
+
+  it('is the uniform share for an even spread', () => {
+    expect(frontLoadBias(new Array(10).fill(4))).toBeCloseTo(0.3, 10);
+  });
+
+  it('approaches 1 when every laugh lands early', () => {
+    const histogram = new Array(10).fill(0);
+    histogram[0] = 8;
+    histogram[1] = 2;
+    expect(frontLoadBias(histogram)).toBe(1);
+  });
+
+  it('approaches 0 when every laugh lands late', () => {
+    const histogram = new Array(10).fill(0);
+    histogram[8] = 5;
+    histogram[9] = 5;
+    expect(frontLoadBias(histogram)).toBe(0);
+  });
+});
+
+describe('duration and position statistics', () => {
+  it('takes the median runtime of the videos you laugh at', () => {
+    const moments = [
+      moment('aaaaaaaaaaa', 100, NOW, { durationSec: 120 }),
+      moment('bbbbbbbbbbb', 100, NOW, { durationSec: 600 }),
+      moment('ccccccccccc', 100, NOW, { durationSec: 1800 }),
+    ];
+    expect(buildProfile(moments, OPTIONS).medianVideoDurationSec).toBe(600);
+  });
+
+  it('counts a video runtime once however many times you laughed in it', () => {
+    const moments = [
+      moment('aaaaaaaaaaa', 100, NOW, { durationSec: 120 }),
+      moment('aaaaaaaaaaa', 400, NOW, { durationSec: 120 }),
+      moment('aaaaaaaaaaa', 700, NOW, { durationSec: 120 }),
+      moment('bbbbbbbbbbb', 100, NOW, { durationSec: 600 }),
+    ];
+    // Three episodes in the short video would drag the median down if runtimes were
+    // counted per episode rather than per video.
+    expect(buildProfile(moments, OPTIONS).medianVideoDurationSec).toBe(360);
+  });
+
+  it('ignores videos with an unknown runtime', () => {
+    const moments = [
+      moment('aaaaaaaaaaa', 100, NOW, { durationSec: undefined }),
+      moment('bbbbbbbbbbb', 100, NOW, { durationSec: 600 }),
+    ];
+    expect(buildProfile(moments, OPTIONS).medianVideoDurationSec).toBe(600);
+  });
+
+  it('derives the front-load bias from the marks', () => {
+    const moments = [
+      moment('aaaaaaaaaaa', 30, NOW, { durationSec: 600 }),
+      moment('bbbbbbbbbbb', 60, NOW, { durationSec: 600 }),
+    ];
+    expect(buildProfile(moments, OPTIONS).frontLoadBias).toBe(1);
+  });
+
+  it('falls back to the uniform bias with no measurable positions', () => {
+    const moments = [moment('aaaaaaaaaaa', 30, NOW, { durationSec: undefined })];
+    expect(buildProfile(moments, OPTIONS).frontLoadBias).toBe(UNIFORM_FRONT_LOAD_BIAS);
   });
 });
 

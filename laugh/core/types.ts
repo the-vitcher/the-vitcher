@@ -68,8 +68,16 @@ export type TermWeight = {
   videos: number;
 };
 
+/**
+ * Bumped whenever the derived profile gains or changes a field, so cached profiles
+ * from an older shape are recomputed. Deliberately separate from the storage
+ * SCHEMA_VERSION: the moment format is unchanged by a profile change, and exports
+ * should not claim a new schema because a derived statistic moved.
+ */
+export const PROFILE_VERSION = 2;
+
 export type TasteProfile = {
-  version: 1;
+  version: number;
   computedAt: number;
   momentCount: number;
   episodeCount: number;
@@ -78,8 +86,16 @@ export type TasteProfile = {
   terms: TermWeight[];
   medianLaughsPerVideo: number;
   medianSecondsToFirstLaugh: number;
+  /** Median runtime of the videos you laugh at. The anchor for judging length. */
+  medianVideoDurationSec: number;
   /** 10 buckets over normalized position in the video, 0.0 to 1.0. */
   positionHistogram: number[];
+  /**
+   * Share of laughs landing in the first 30% of a video, 0 to 1. A uniform spread
+   * gives 0.3. High means your payoff comes early, so runtime past that is dead
+   * weight; low means longer videos keep earning.
+   */
+  frontLoadBias: number;
   /** 24 buckets over local hour of the mark. */
   hourHistogram: number[];
 };

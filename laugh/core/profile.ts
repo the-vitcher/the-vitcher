@@ -11,7 +11,23 @@
 import { clusterMoments } from './cluster';
 import { channelKey } from './metadata';
 import { uniqueTokens } from './tokenize';
+import { PROFILE_VERSION } from './types';
 import type { ChannelAffinity, LaughMoment, TasteProfile, TermWeight } from './types';
+
+/** A uniform spread over the 10 position buckets puts 30% in the first three. */
+export const UNIFORM_FRONT_LOAD_BIAS = 0.3;
+
+/**
+ * Share of laughs landing in the first 30% of a video. Falls back to the uniform
+ * value when there is nothing to measure, so callers get a neutral signal rather
+ * than a confident zero.
+ */
+export function frontLoadBias(positionHistogram: number[]): number {
+  const total = positionHistogram.reduce((sum, count) => sum + count, 0);
+  if (total === 0) return UNIFORM_FRONT_LOAD_BIAS;
+  const front = positionHistogram.slice(0, 3).reduce((sum, count) => sum + count, 0);
+  return front / total;
+}
 
 /** Weight of a mark decays by half every 30 days, so taste can move. */
 export const RECENCY_HALF_LIFE_MS = 30 * 24 * 60 * 60 * 1000;
@@ -51,6 +67,8 @@ export function buildProfile(moments: LaughMoment[], options: BuildProfileOption
   const hourHistogram = new Array<number>(24).fill(0);
   const laughsPerVideo = new Map<string, number>();
   const firstLaughSec = new Map<string, number>();
+  // Keyed by video so a video with many episodes contributes one runtime, not many.
+  const durationByVideo = new Map<string, number>();
   // Terms come from titles, which are per video, so each video contributes once.
   const countedVideosForTerms = new Set<string>();
 
@@ -91,6 +109,7 @@ export function buildProfile(moments: LaughMoment[], options: BuildProfileOption
     if (video.durationSec && video.durationSec > 0) {
       const fraction = Math.min(0.999, Math.max(0, episode.tSec / video.durationSec));
       positionHistogram[Math.floor(fraction * 10)] += 1;
+      durationByVideo.set(video.videoId, video.durationSec);
     }
 
     hourHistogram[new Date(episode.lastMarkedAt).getHours()] += 1;
@@ -127,7 +146,7 @@ export function buildProfile(moments: LaughMoment[], options: BuildProfileOption
     .slice(0, maxTerms);
 
   return {
-    version: 1,
+    version: PROFILE_VERSION,
     computedAt: now,
     momentCount: moments.length,
     episodeCount: episodes.length,
@@ -136,7 +155,9 @@ export function buildProfile(moments: LaughMoment[], options: BuildProfileOption
     terms,
     medianLaughsPerVideo: median([...laughsPerVideo.values()]),
     medianSecondsToFirstLaugh: median([...firstLaughSec.values()]),
+    medianVideoDurationSec: median([...durationByVideo.values()]),
     positionHistogram,
+    frontLoadBias: frontLoadBias(positionHistogram),
     hourHistogram,
   };
 }
@@ -156,7 +177,7 @@ export function funniestHour(profile: TasteProfile): number | null {
 
 export function emptyProfile(now: number): TasteProfile {
   return {
-    version: 1,
+    version: PROFILE_VERSION,
     computedAt: now,
     momentCount: 0,
     episodeCount: 0,
@@ -165,7 +186,9 @@ export function emptyProfile(now: number): TasteProfile {
     terms: [],
     medianLaughsPerVideo: 0,
     medianSecondsToFirstLaugh: 0,
+    medianVideoDurationSec: 0,
     positionHistogram: new Array<number>(10).fill(0),
+    frontLoadBias: UNIFORM_FRONT_LOAD_BIAS,
     hourHistogram: new Array<number>(24).fill(0),
   };
 }

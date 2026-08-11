@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { createMoment } from '../core/moment';
 import { buildProfile } from '../core/profile';
-import { rankCandidates, scoreCandidate } from '../core/scoring';
+import { emptyProfile } from '../core/profile';
+import { rankCandidates, scoreCandidate, surfacingReadiness } from '../core/scoring';
 import type { Candidate, LaughMoment, VideoMeta } from '../core/types';
 
 const NOW = 1_700_000_000_000;
@@ -107,6 +108,137 @@ describe('scoreCandidate', () => {
     const scored = scoreCandidate(empty, candidate(), { now: NOW });
     expect(Number.isFinite(scored.score)).toBe(true);
     expect(scored.reasons).toEqual([]);
+  });
+});
+
+describe('positionFit, via scoreCandidate', () => {
+  // A profile whose laughs all land in the first third of ten-minute videos.
+  const frontLoaded = buildProfile(
+    ['aaaaaaaaaaa', 'bbbbbbbbbbb', 'ccccccccccc', 'ddddddddddd', 'eeeeeeeeeee', 'fffffffffff'].map((id) =>
+      createMoment({
+        video: {
+          videoId: id,
+          title: 'A sketch',
+          channelName: 'Ch',
+          durationSec: 600,
+          capturedAt: NOW,
+        },
+        pressedAtSec: 30,
+        lookbackSec: 0,
+        markedAt: NOW,
+      }),
+    ),
+    { clusterWindowSec: 8, now: NOW },
+  );
+
+  // Same runtimes, but the laughs land right at the end.
+  const spread = buildProfile(
+    ['aaaaaaaaaaa', 'bbbbbbbbbbb', 'ccccccccccc', 'ddddddddddd', 'eeeeeeeeeee', 'fffffffffff'].map((id, i) =>
+      createMoment({
+        video: {
+          videoId: id,
+          title: 'A sketch',
+          channelName: 'Ch',
+          durationSec: 600,
+          capturedAt: NOW,
+        },
+        // Evenly stepped through the runtime, so the position mass is not front-loaded.
+        pressedAtSec: 30 + i * 90,
+        lookbackSec: 0,
+        markedAt: NOW,
+      }),
+    ),
+    { clusterWindowSec: 8, now: NOW },
+  );
+
+  it('measures the anchors it needs off the marks', () => {
+    expect(frontLoaded.medianVideoDurationSec).toBe(600);
+    expect(frontLoaded.frontLoadBias).toBe(1);
+    expect(spread.frontLoadBias).toBeLessThan(1);
+  });
+
+  const score = (profile: typeof frontLoaded, durationSec: number) =>
+    scoreCandidate(profile, candidate({ durationSec }), { now: NOW }).score;
+
+  it('penalizes a long video when your laughs come early', () => {
+    // 1.5x the median is the tolerance at full front-load, so 4x is well past it.
+    expect(score(frontLoaded, 2400)).toBeLessThan(score(frontLoaded, 600));
+  });
+
+  it('tolerates that same long video when your laughs spread through the runtime', () => {
+    expect(score(spread, 2400)).toBeGreaterThan(score(frontLoaded, 2400));
+  });
+
+  it('penalizes a video far shorter than the ones you laugh at', () => {
+    expect(score(frontLoaded, 60)).toBeLessThan(score(frontLoaded, 600));
+  });
+
+  it('reorders a ranking by length, which is the point of the signal', () => {
+    const ranked = rankCandidates(
+      frontLoaded,
+      [
+        candidate({ videoId: 'longlonglon', durationSec: 3600 }),
+        candidate({ videoId: 'rightlength', durationSec: 600 }),
+      ],
+      { now: NOW },
+    );
+    expect(ranked[0].candidate.videoId).toBe('rightlength');
+  });
+
+  it('stays neutral when the candidate runtime is unknown', () => {
+    const scored = scoreCandidate(frontLoaded, candidate({ durationSec: undefined }), { now: NOW });
+    expect(scored.reasons).not.toContain('About the length you laugh at');
+    expect(Number.isFinite(scored.score)).toBe(true);
+  });
+
+  it('stays neutral when the profile has no runtime anchor', () => {
+    const scored = scoreCandidate(emptyProfile(NOW), candidate({ durationSec: 600 }), { now: NOW });
+    expect(Number.isFinite(scored.score)).toBe(true);
+  });
+});
+
+describe('surfacingReadiness', () => {
+  function profileWithHours(counts: Record<number, number>) {
+    const profile = emptyProfile(NOW);
+    for (const [hour, count] of Object.entries(counts)) profile.hourHistogram[Number(hour)] = count;
+    return profile;
+  }
+
+  function at(hour: number): number {
+    const date = new Date(NOW);
+    date.setHours(hour, 0, 0, 0);
+    return date.getTime();
+  }
+
+  it('stays neutral until there is enough history', () => {
+    const result = surfacingReadiness(profileWithHours({ 22: 3 }), at(22));
+    expect(result.score).toBe(0.5);
+    expect(result.reason).toContain('Not enough history');
+  });
+
+  it('scores high inside your peak hours', () => {
+    const result = surfacingReadiness(profileWithHours({ 21: 6, 22: 10, 23: 6 }), at(22));
+    expect(result.score).toBe(1);
+    expect(result.reason).toBe('This is one of your funny hours');
+  });
+
+  it('scores low in an hour you never mark anything', () => {
+    const result = surfacingReadiness(profileWithHours({ 21: 6, 22: 10, 23: 6 }), at(9));
+    expect(result.score).toBeLessThanOrEqual(0.3);
+    expect(result.reason).toBe('You rarely mark anything at this hour');
+  });
+
+  it('smooths across neighbouring hours rather than reading one spiky bucket', () => {
+    // Hour 21 is empty itself but sits beside the peak, so it should not read as dead.
+    const result = surfacingReadiness(profileWithHours({ 20: 8, 22: 8 }), at(21));
+    expect(result.score).toBeGreaterThan(0.3);
+  });
+
+  it('is identical for every candidate, which is why it is not a scoring weight', () => {
+    const profile = profileWithHours({ 22: 12 });
+    const a = surfacingReadiness(profile, at(22));
+    const b = surfacingReadiness(profile, at(22));
+    expect(a.score).toBe(b.score);
   });
 });
 
